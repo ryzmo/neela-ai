@@ -15,7 +15,8 @@ export default function Monitoring() {
 
   const {
 
-    history
+    history,
+    data
 
   } = useAquaAgent();
 
@@ -92,11 +93,13 @@ export default function Monitoring() {
           />
 
           <SensorBox
-            title="Ammonia"
-            value="0.12"
-            unit="ppm"
-            trend="➡ Stable"
-          />
+            title="Buzzer"
+            value={
+                data?.buzzer || "OFF"
+            }
+            unit=""
+            trend=""
+            />
 
         </div>
 

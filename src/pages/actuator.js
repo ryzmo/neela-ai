@@ -15,7 +15,9 @@ export default function ActuatorPage() {
 
       pump: false,
 
-      stabilizer: false
+      stabilizer: false,
+
+      buzzer:false
 
     });
 
@@ -136,7 +138,7 @@ export default function ActuatorPage() {
 
         {/* ACTUATOR STATUS */}
 
-        <div className="grid grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-5">
 
           <ActuatorCard
             title="Aerator"
@@ -185,6 +187,18 @@ export default function ActuatorPage() {
               )
             }
           />
+
+          <ActuatorCard
+            title="Buzzer"
+            status={
+                actuator.buzzer
+            }
+            onToggle={() =>
+                toggleActuator(
+                "buzzer"
+                )
+            }
+            />
 
         </div>
 

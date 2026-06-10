@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import {
-
   LayoutDashboard,
   Settings,
   Radio,
@@ -15,224 +15,307 @@ import {
   TriangleAlert,
   BarChart3,
   Menu,
-  X
-
+  X,
+  Fish,
 } from "lucide-react";
 
 export default function Sidebar() {
+  const [open, setOpen] = useState(false);
 
-  const [open, setOpen] =
-    useState(false);
+  const router = useRouter();
 
   const menuItems = [
-
     {
-      icon: <LayoutDashboard />,
+      icon: LayoutDashboard,
       label: "Dashboard",
-      href: "/"
+      href: "/dashboard",
     },
-
     {
-      icon: <Radio />,
+      icon: Radio,
       label: "IoT Simulator",
-      href: "/simulator"
+      href: "/simulator",
     },
-
     {
-      icon: <Activity />,
+      icon: Activity,
       label: "Monitoring",
-      href: "/monitoring"
+      href: "/monitoring",
     },
-
     {
-      icon: <Cpu />,
+      icon: Cpu,
       label: "Actuator Control",
-      href: "/actuator"
+      href: "/actuator",
     },
-
     {
-      icon: <BrainCircuit />,
+      icon: BrainCircuit,
       label: "AI Center",
-      href: "/ai-center"
+      href: "/ai-center",
     },
-
     {
-      icon: <History />,
+      icon: History,
       label: "Decision Logs",
-      href: "/decision-history"
+      href: "/decision-history",
     },
-
     {
-      icon: <TriangleAlert />,
+      icon: TriangleAlert,
       label: "Alerts",
-      href: "/alerts"
+      href: "/alerts",
     },
-
     {
-      icon: <BarChart3 />,
+      icon: BarChart3,
       label: "Analytics",
-      href: "/analytics"
+      href: "/analytics",
     },
-
     {
-      icon: <Settings />,
+      icon: Settings,
       label: "Settings",
-      href: "/settings"
-    }
-
+      href: "/settings",
+    },
   ];
 
   return (
-
     <>
-
-      {/* MOBILE HEADER */}
-
+      {/* Mobile Header */}
       <div
         className="
           md:hidden
           flex
           items-center
           justify-between
-          bg-blue-700
+          px-5
+          py-4
+          bg-white/10
+          backdrop-blur-xl
+          border-b
+          border-white/20
           text-white
-          p-4
+          relative
+          z-50
         "
       >
+        <div className="flex items-center gap-2">
+          <Fish className="text-cyan-300" size={28} />
 
-        <h1 className="font-bold text-xl">
+          <div>
+            <h1 className="font-black text-xl">
+              NEELA AI
+            </h1>
 
-          AQUAAGENT
-
-        </h1>
+            <p className="text-xs text-white/70">
+              Smart Aquaculture
+            </p>
+          </div>
+        </div>
 
         <button
-          onClick={() =>
-            setOpen(!open)
-          }
+          onClick={() => setOpen(!open)}
+          className="
+            p-2
+            rounded-xl
+            bg-white/10
+            hover:bg-white/20
+            transition-all
+          "
         >
-
-          {
-            open
-            ? <X />
-            : <Menu />
-          }
-
+          {open ? <X /> : <Menu />}
         </button>
-
       </div>
 
-      {/* OVERLAY */}
+      {/* Overlay */}
+      {open && (
+        <div
+          className="
+            fixed
+            inset-0
+            bg-black/40
+            backdrop-blur-sm
+            z-40
+            md:hidden
+          "
+          onClick={() => setOpen(false)}
+        />
+      )}
 
-      {
-        open && (
-
-          <div
-            className="
-              fixed
-              inset-0
-              bg-black/40
-              z-40
-              md:hidden
-            "
-            onClick={() =>
-              setOpen(false)
-            }
-          />
-
-        )
-      }
-
-      {/* SIDEBAR */}
-
-      <div
-
+      {/* Sidebar */}
+      <aside
         className={`
-
-          fixed
-          md:static
-
-          top-0
-          left-0
-
-          h-screen
-
+          fixed md:static
+          top-0 left-0
+          min-h-screen
           w-72
-
-          bg-blue-700
-          text-white
-
-          p-8
-
           z-50
 
-          transform
-          transition-transform
-          duration-300
+          backdrop-blur-2xl
+          border-r border-white/20
+
+          transform transition-transform duration-300
 
           ${
             open
-            ? "translate-x-0"
-            : "-translate-x-full md:translate-x-0"
+              ? "translate-x-0"
+              : "-translate-x-full md:translate-x-0"
           }
-
         `}
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(26,111,196,0.95) 0%, rgba(30,155,212,0.92) 50%, rgba(93,211,240,0.9) 100%)",
+        }}
       >
+        {/* Bubble Decorations */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 right-6 w-16 h-16 rounded-full bg-white/10" />
 
-        <h1 className="text-3xl font-bold">
+          <div className="absolute top-60 left-8 w-8 h-8 rounded-full bg-white/10" />
 
-          AQUAAGENT
+          <div className="absolute bottom-32 right-10 w-12 h-12 rounded-full bg-white/10" />
+        </div>
 
-        </h1>
+        <div className="relative z-10 flex flex-col h-full p-8">
 
-        <ul className="mt-10 space-y-6">
+          {/* Logo */}
+          <Link
+  href="/"
+  onClick={() => setOpen(false)}
+  className="
+    flex
+    items-center
+    gap-3
+    cursor-pointer
+    group
+    mb-10
+  "
+>
+  <div
+    className="
+      p-3
+      rounded-2xl
+      bg-white/20
+      backdrop-blur-md
+      transition-all
+      group-hover:bg-white/30
+    "
+  >
+    <Fish
+      size={30}
+      className="
+        text-cyan-200
+        group-hover:text-white
+        transition-colors
+      "
+    />
+  </div>
 
-          {
+  <div>
+    <h1
+      className="
+        text-3xl
+        font-black
+        text-white
+        group-hover:text-cyan-200
+        transition-colors
+      "
+    >
+      NEELA AI
+    </h1>
 
-            menuItems.map(
+    <p className="text-sm text-white/70">
+      Smart Aquaculture
+    </p>
+  </div>
+</Link>
 
-              (item,index) => (
+          {/* Navigation */}
+          <nav className="flex-1">
+            <ul className="space-y-3">
+              {menuItems.map((item) => {
+                const Icon = item.icon;
 
-                <li
-                  key={index}
-                >
+                const active =
+                  router.pathname === item.href;
 
-                  <Link
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      onClick={() =>
+                        setOpen(false)
+                      }
+                      className={`
+                        flex
+                        items-center
+                        gap-4
+                        px-4
+                        py-3
+                        rounded-2xl
+                        transition-all
+                        duration-200
 
-                    href={item.href}
+                        ${
+                          active
+                            ? `
+                              bg-white/25
+                              backdrop-blur-md
+                              text-white
+                              shadow-lg
+                              scale-[1.02]
+                            `
+                            : `
+                              text-white/80
+                              hover:bg-white/15
+                              hover:text-white
+                              hover:translate-x-1
+                            `
+                        }
+                      `}
+                    >
+                      <Icon size={22} />
 
-                    onClick={() =>
-                      setOpen(false)
-                    }
+                      <span className="font-semibold">
+                        {item.label}
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
 
-                    className="
-                      flex
-                      gap-3
-                      hover:text-blue-200
-                    "
+          {/* Status Card */}
+          <div
+            className="
+              mt-6
+              p-4
+              rounded-2xl
+              bg-white/15
+              backdrop-blur-md
+              border border-white/20
+            "
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <div
+                className="
+                  w-3
+                  h-3
+                  rounded-full
+                  bg-green-400
+                  animate-pulse
+                "
+              />
 
-                  >
+              <span className="font-bold text-white">
+                System Online
+              </span>
+            </div>
 
-                    {item.icon}
+            <p className="text-sm text-white/70">
+              AI Engine Active
+            </p>
 
-                    {item.label}
-
-                  </Link>
-
-                </li>
-
-              )
-
-            )
-
-          }
-
-        </ul>
-
-      </div>
-
+            <p className="text-sm text-white/70">
+              Pond Monitoring Running
+            </p>
+          </div>
+        </div>
+      </aside>
     </>
-
   );
-
 }

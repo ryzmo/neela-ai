@@ -73,7 +73,7 @@ export default function AIDecisionSummary({
 
       {/* Actuator Status */}
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
 
         <div>
 
@@ -128,6 +128,20 @@ export default function AIDecisionSummary({
           <StatusBadge
             value={data.ph_neutralizer}
           />
+
+        </div>
+
+        <div>
+
+        <p className="text-gray-500 mb-2">
+
+            Buzzer
+
+        </p>
+
+        <StatusBadge
+            value={data.buzzer}
+        />
 
         </div>
 

@@ -91,6 +91,31 @@ export default function AlertsPage() {
 
         </h1>
 
+        {
+  data.buzzer === "ON" && (
+
+    <div className="
+      bg-red-600
+      text-white
+      rounded-2xl
+      p-5
+      mb-8
+      animate-pulse
+    ">
+
+      🚨 Emergency Buzzer Activated
+
+      <div className="text-sm mt-1">
+
+        AI detected HIGH or CRITICAL pond condition.
+
+      </div>
+
+    </div>
+
+  )
+}
+
         {/* ACTIVE ALERTS */}
 
         <div className="bg-white rounded-2xl shadow p-8 mb-8">
