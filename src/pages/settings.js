@@ -314,46 +314,6 @@ export default function SettingsPage() {
 
         </div>
 
-        {/* NOTIFICATION */}
-
-        <div className="bg-white rounded-2xl shadow p-8 mb-8">
-
-          <h2 className="text-2xl font-bold mb-6">
-
-            Notification Settings
-
-          </h2>
-
-          <div className="space-y-4">
-
-            <label className="flex gap-3">
-
-              <input type="checkbox" />
-
-              Email Notifications
-
-            </label>
-
-            <label className="flex gap-3">
-
-              <input type="checkbox" />
-
-              WhatsApp Notifications
-
-            </label>
-
-            <label className="flex gap-3">
-
-              <input type="checkbox" />
-
-              Critical Alert Only
-
-            </label>
-
-          </div>
-
-        </div>
-
         {/* SAVE */}
 
         <button

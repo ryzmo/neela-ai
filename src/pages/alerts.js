@@ -1,81 +1,408 @@
+import {
+  useState,
+  useEffect,
+  useRef
+} from "react";
 import Sidebar from "../components/Sidebar";
 import useAquaAgent from "../hooks/useAquaAgent";
+
+
 
 export default function AlertsPage() {
 
   const { data, history } =
     useAquaAgent();
 
-  const activeAlerts = [];
+  const [newEmail, setNewEmail] = useState("");
 
-  if (
-    Number(data.sensor_data?.do) < 5
-  ) {
+  const [emails, setEmails] = useState([]);
+  const [sending, setSending] = useState(false);
 
-    activeAlerts.push({
+const [autoEmailEnabled, setAutoEmailEnabled] =
+  useState(true);
 
-      title: "Low Dissolved Oxygen",
+const [repeatInterval, setRepeatInterval] =
+  useState(30); // menit
 
-      severity: "CRITICAL",
+const lastEmailTimeRef = useRef(0);
 
-      message:
-        "DO level below recommended threshold."
+const lastCriticalStateRef =
+  useRef(false);
+  const activeAlerts = [
 
-    });
+  Number(data.sensor_data?.do) < 5 && {
 
-  }
+    title:
+      "Low Dissolved Oxygen",
 
-  if (
-    Number(data.sensor_data?.temperature) > 30
-  ) {
+    severity:
+      "CRITICAL",
 
-    activeAlerts.push({
+    message:
+      "DO level below recommended threshold.",
 
-      title: "High Temperature",
+  },
 
-      severity: "WARNING",
+  Number(data.sensor_data?.temperature) > 30 && {
 
-      message:
-        "Water temperature exceeds optimal range."
+    title:
+      "High Temperature",
 
-    });
+    severity:
+      "WARNING",
 
-  }
+    message:
+      "Water temperature exceeds optimal range.",
 
-  if (
+  },
+
+  (
     Number(data.sensor_data?.ph) < 6.5 ||
+
     Number(data.sensor_data?.ph) > 8
-  ) {
 
-    activeAlerts.push({
+  ) && {
 
-      title: "Unstable pH",
+    title:
+      "Unstable pH",
 
-      severity: "WARNING",
+    severity:
+      "WARNING",
 
-      message:
-        "pH outside safe operating range."
+    message:
+      "pH outside safe operating range.",
 
-    });
+  },
+
+  Number(data.sensor_data?.ammonia) > 0.5 && {
+
+    title:
+      "High Ammonia",
+
+    severity:
+      "CRITICAL",
+
+    message:
+      "Ammonia concentration is dangerous.",
+
+  },
+
+].filter(Boolean);
+
+// Load settings from localStorage
+useEffect(() => {
+
+  const savedEmails =
+    localStorage.getItem(
+      "alertEmails"
+    );
+
+  const savedAutoEmail =
+    localStorage.getItem(
+      "autoEmailEnabled"
+    );
+
+  const savedInterval =
+    localStorage.getItem(
+      "repeatInterval"
+    );
+
+  if (savedEmails) {
+
+    setEmails(
+      JSON.parse(
+        savedEmails
+      )
+    );
 
   }
 
   if (
-    Number(data.sensor_data?.ammonia) > 0.5
+    savedAutoEmail !==
+    null
   ) {
 
-    activeAlerts.push({
-
-      title: "High Ammonia",
-
-      severity: "CRITICAL",
-
-      message:
-        "Ammonia concentration is dangerous."
-
-    });
+    setAutoEmailEnabled(
+      JSON.parse(
+        savedAutoEmail
+      )
+    );
 
   }
+
+  if (
+    savedInterval
+  ) {
+
+    setRepeatInterval(
+      Number(
+        savedInterval
+      )
+    );
+
+  }
+
+}, []);
+
+useEffect(() => {
+
+  localStorage.setItem(
+
+    "alertEmails",
+
+    JSON.stringify(
+      emails
+    )
+
+  );
+
+}, [emails]);
+
+useEffect(() => {
+
+  localStorage.setItem(
+
+    "autoEmailEnabled",
+
+    JSON.stringify(
+      autoEmailEnabled
+    )
+
+  );
+
+}, [
+  autoEmailEnabled
+]);
+
+useEffect(() => {
+
+  localStorage.setItem(
+
+    "repeatInterval",
+
+    repeatInterval.toString()
+
+  );
+
+}, [
+  repeatInterval
+]);
+
+const criticalAlerts =
+  activeAlerts.filter(
+    alert =>
+      alert.severity ===
+      "CRITICAL"
+  );
+
+const hasCriticalAlert =
+  criticalAlerts.length > 0;
+
+function addEmail() {
+
+  if (!newEmail.trim()) {
+
+    alert("Please enter an email");
+
+    return;
+
+  }
+
+  if (
+    !/\S+@\S+\.\S+/.test(newEmail)
+  ) {
+
+    alert("Invalid email");
+
+    return;
+
+  }
+
+  if (
+    emails.includes(newEmail)
+  ) {
+
+    alert("Email already exists");
+
+    return;
+
+  }
+
+  setEmails([
+    ...emails,
+    newEmail,
+  ]);
+
+  setNewEmail("");
+
+}
+function removeEmail(emailToRemove) {
+
+  setEmails(
+
+    emails.filter(
+
+      email =>
+
+        email !== emailToRemove
+
+    )
+
+  );
+
+}
+
+async function sendEmail(
+  isAutomatic = false
+) {
+
+  if (emails.length === 0) {
+
+  alert(
+    "Please add at least one email"
+  );
+
+  return;
+
+}
+
+  try {
+
+    setSending(true);
+
+    const response = await fetch(
+      "/api/send-alert-email",
+      {
+
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+
+          emails,
+
+          alerts: activeAlerts,
+
+          sensorData: data.sensor_data,
+
+          buzzer: data.buzzer,
+
+          isTest:
+            activeAlerts.length === 0,
+
+        }),
+
+      }
+    );
+
+    const result =
+      await response.json();
+
+    if (response.ok) {
+
+      if (!isAutomatic) {
+
+  alert(
+    activeAlerts.length > 0
+      ? "Alert email sent successfully"
+      : "Test email sent successfully"
+  );
+
+}
+
+    }
+
+    else {
+
+      alert(result.message);
+
+    }
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    alert("Failed to send email");
+
+  }
+
+  finally {
+
+    setSending(false);
+
+  }
+
+}
+
+useEffect(() => {
+
+  if (
+    !autoEmailEnabled ||
+    emails.length === 0
+  ) {
+
+    return;
+
+  }
+
+  const now =
+    Date.now();
+
+  const intervalMs =
+    repeatInterval *
+    60 *
+    1000;
+
+  if (
+    hasCriticalAlert
+  ) {
+
+    if (
+
+      !lastCriticalStateRef.current ||
+
+      now -
+      lastEmailTimeRef.current >=
+      intervalMs
+
+    ) {
+
+      sendEmail(true);
+
+      lastEmailTimeRef.current =
+        now;
+
+      lastCriticalStateRef.current =
+        true;
+
+    }
+
+  }
+
+  else {
+
+    lastCriticalStateRef.current =
+      false;
+
+  }
+
+}, [
+
+  hasCriticalAlert,
+
+  repeatInterval,
+
+  autoEmailEnabled,
+
+  emails,
+
+]);
+  
 
   return (
 
@@ -116,6 +443,373 @@ export default function AlertsPage() {
   )
 }
 
+<div className="bg-white rounded-2xl shadow p-8 mb-8">
+
+  <div className="flex justify-between items-center mb-6">
+
+    <div>
+
+      <h2 className="text-2xl font-bold">
+
+        Email Notifications
+
+      </h2>
+
+      <p className="text-gray-500 mt-1">
+
+        Manage recipients for Neela notifications.
+
+      </p>
+
+    </div>
+
+    <span
+      className="
+        bg-blue-100
+        text-blue-700
+        px-3
+        py-1
+        rounded-full
+        text-sm
+      "
+    >
+
+      {emails.length} Recipients
+
+    </span>
+
+  </div>
+
+  {/* Add Email */}
+
+  <div className="flex flex-col md:flex-row gap-3 mb-6">
+
+    <input
+
+      type="email"
+
+      value={newEmail}
+
+      onChange={(e) =>
+        setNewEmail(
+          e.target.value
+        )
+      }
+
+      placeholder="example@email.com"
+
+      className="
+        flex-1
+        border
+        rounded-xl
+        p-3
+        focus:outline-none
+        focus:ring-2
+        focus:ring-blue-500
+      "
+
+    />
+
+    <button
+
+      onClick={addEmail}
+
+      className="
+        bg-green-600
+        hover:bg-green-700
+        text-white
+        px-6
+        py-3
+        rounded-xl
+      "
+
+    >
+
+      Add Email
+
+    </button>
+
+  </div>
+
+  {/* Email List */}
+
+  <div className="space-y-3 mb-6">
+
+    {
+
+      emails.length === 0 &&
+
+      <div className="text-gray-500">
+
+        No recipients added.
+
+      </div>
+
+    }
+
+    {
+
+      emails.map(
+
+        email => (
+
+          <div
+
+            key={email}
+
+            className="
+              flex
+              justify-between
+              items-center
+              border
+              rounded-xl
+              p-3
+            "
+
+          >
+
+            <span>
+
+              {email}
+
+            </span>
+
+            <button
+
+              onClick={() =>
+                removeEmail(
+                  email
+                )
+              }
+
+              className="
+                bg-red-500
+                hover:bg-red-600
+                text-white
+                px-3
+                py-1
+                rounded-lg
+              "
+
+            >
+
+              Remove
+
+            </button>
+
+          </div>
+
+        )
+
+      )
+
+    }
+
+  </div>
+
+  <div className="
+  bg-gray-50
+  rounded-2xl
+  p-5
+  mb-6
+">
+
+  <h3 className="
+    font-bold
+    text-lg
+    mb-4
+  ">
+
+    Automatic Alert Settings
+
+  </h3>
+
+  <div className="
+    flex
+    flex-col
+    md:flex-row
+    gap-6
+  ">
+
+    <div className="
+      flex
+      items-center
+      gap-3
+    ">
+
+      <input
+
+        type="checkbox"
+
+        checked={
+          autoEmailEnabled
+        }
+
+        onChange={(e) =>
+          setAutoEmailEnabled(
+            e.target.checked
+          )
+        }
+
+        className="
+          w-5
+          h-5
+        "
+
+      />
+
+      <span>
+
+        Enable Auto Email
+        Alerts
+
+      </span>
+
+    </div>
+
+    <div className="
+      flex
+      items-center
+      gap-3
+    ">
+
+      <label>
+
+        Repeat Every
+
+      </label>
+
+      <input
+
+        type="number"
+
+        min="1"
+
+        value={
+          repeatInterval
+        }
+
+        onChange={(e) =>
+          setRepeatInterval(
+            Number(
+              e.target.value
+            )
+          )
+        }
+
+        className="
+          border
+          rounded-lg
+          px-3
+          py-2
+          w-24
+        "
+
+      />
+
+      <span>
+
+        minutes
+
+      </span>
+
+    </div>
+
+  </div>
+
+  <div className="
+    mt-4
+    text-sm
+    text-gray-600
+  ">
+
+    Status:
+
+    {
+
+      autoEmailEnabled
+
+      ? (
+        <span className="
+          text-green-600
+          font-semibold
+        ">
+
+          {" "}
+          Enabled
+
+        </span>
+      )
+
+      : (
+        <span className="
+          text-red-600
+          font-semibold
+        ">
+
+          {" "}
+          Disabled
+
+        </span>
+      )
+
+    }
+
+  </div>
+
+</div>
+
+  {/* Send Button */}
+
+  <button
+
+    onClick={sendEmail}
+
+    disabled={
+      sending ||
+
+      emails.length === 0
+    }
+
+    className={`
+      w-full
+      py-3
+      rounded-xl
+      text-white
+      font-semibold
+
+      ${
+        activeAlerts.length > 0
+
+        ? "bg-red-600 hover:bg-red-700"
+
+        : "bg-blue-600 hover:bg-blue-700"
+
+      }
+
+      disabled:opacity-50
+    `}
+
+  >
+
+    {
+
+      sending
+
+      ? "Sending..."
+
+      : activeAlerts.length > 0
+
+        ? "Send Alert Notification"
+
+        : "Send Notification"
+
+    }
+
+  </button>
+
+</div>
+
         {/* ACTIVE ALERTS */}
 
         <div className="bg-white rounded-2xl shadow p-8 mb-8">
@@ -133,7 +827,7 @@ export default function AlertsPage() {
 
               <div className="bg-green-50 border border-green-200 rounded-xl p-4">
 
-                ✅ No active alerts detected.
+                No active alerts detected.
 
               </div>
             }
@@ -146,87 +840,6 @@ export default function AlertsPage() {
                     key={index}
                     {...alert}
                   />
-
-                )
-              )
-            }
-
-          </div>
-
-        </div>
-
-        {/* SEVERITY */}
-
-        <div className="grid grid-cols-3 gap-5 mb-8">
-
-          <SeverityCard
-            title="Info"
-            color="blue"
-            count={0}
-          />
-
-          <SeverityCard
-            title="Warning"
-            color="yellow"
-            count={
-              activeAlerts.filter(
-                a =>
-                  a.severity ===
-                  "WARNING"
-              ).length
-            }
-          />
-
-          <SeverityCard
-            title="Critical"
-            color="red"
-            count={
-              activeAlerts.filter(
-                a =>
-                  a.severity ===
-                  "CRITICAL"
-              ).length
-            }
-          />
-
-        </div>
-
-        {/* TIMELINE */}
-
-        <div className="bg-white rounded-2xl shadow p-8 mb-8">
-
-          <h2 className="text-2xl font-bold mb-6">
-
-            Alert Timeline
-
-          </h2>
-
-          <div className="space-y-4">
-
-            {
-              activeAlerts.map(
-                (alert,index) => (
-
-                  <div
-                    key={index}
-                    className="border-l-4 border-red-500 pl-4"
-                  >
-
-                    <p className="font-bold">
-
-                      {alert.title}
-
-                    </p>
-
-                    <p className="text-sm text-gray-500">
-
-                      {new Date()
-                        .toLocaleString()
-                      }
-
-                    </p>
-
-                  </div>
 
                 )
               )

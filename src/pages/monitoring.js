@@ -37,12 +37,12 @@ export default function Monitoring() {
       history[history.length - 2][dataKey];
 
     if(last > prev)
-      return "📈 Increasing";
+      return "Increasing";
 
     if(last < prev)
-      return "📉 Decreasing";
+      return "Decreasing";
 
-    return "➡ Stable";
+    return "Stable";
 
   }
 
