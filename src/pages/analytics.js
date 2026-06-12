@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import useAquaAgent from "../hooks/useAquaAgent";
 
@@ -6,12 +7,25 @@ export default function AnalyticsPage() {
   const { history } =
     useAquaAgent();
 
+  const [filterLevel, setFilterLevel] =
+    useState("ALL");
+
+  const filteredData =
+    filterLevel === "ALL"
+      ? history
+      : history.filter(
+          item =>
+            item.risk_level ===
+            filterLevel
+        );
+
   const avgTemperature =
     history.length
       ? (
           history.reduce(
-            (a,b)=>
-              a + Number(
+            (a, b) =>
+              a +
+              Number(
                 b.temperature
               ),
             0
@@ -24,8 +38,9 @@ export default function AnalyticsPage() {
     history.length
       ? (
           history.reduce(
-            (a,b)=>
-              a + Number(
+            (a, b) =>
+              a +
+              Number(
                 b.do
               ),
             0
@@ -38,8 +53,9 @@ export default function AnalyticsPage() {
     history.length
       ? (
           history.reduce(
-            (a,b)=>
-              a + Number(
+            (a, b) =>
+              a +
+              Number(
                 b.ph
               ),
             0
@@ -75,7 +91,7 @@ export default function AnalyticsPage() {
 
       <Sidebar />
 
-      <main className="flex-1 p-4 md:p-10">
+      <main className="flex-1 p-4 md:p-10 bg-slate-50 min-h-screen">
 
         <h1 className="text-4xl font-bold mb-8">
 
@@ -93,7 +109,7 @@ export default function AnalyticsPage() {
 
           </h2>
 
-          <div className="grid grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
 
             <AnalyticsCard
               title="Average Temperature"
@@ -124,7 +140,7 @@ export default function AnalyticsPage() {
 
           </h2>
 
-          <div className="grid grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
 
             <AnalyticsCard
               title="Total Records"
@@ -206,27 +222,282 @@ export default function AnalyticsPage() {
 
         </div>
 
-        {/* ACTUATOR ANALYTICS */}
+        {/* DECISION SUMMARY */}
 
         <div className="bg-white rounded-2xl shadow p-8 mb-8">
 
           <h2 className="text-2xl font-bold mb-6">
 
-            Actuator Usage Analytics
+            Decision Summary
 
           </h2>
 
-          <div className="grid grid-cols-2 gap-5">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
 
             <AnalyticsCard
-              title="Aerator Runtime"
-              value="4.5 Hours"
+              title="Total Decisions"
+              value={history.length}
             />
 
             <AnalyticsCard
-              title="Feeding Activity"
-              value="37 Actions"
+              title="LOW Risk"
+              value={lowRisk}
             />
+
+            <AnalyticsCard
+              title="MEDIUM Risk"
+              value={mediumRisk}
+            />
+
+            <AnalyticsCard
+              title="HIGH Risk"
+              value={highRisk}
+            />
+
+          </div>
+
+        </div>
+
+        {/* DECISION HISTORY */}
+
+        <div className="bg-white rounded-2xl shadow p-8 mb-8">
+
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+
+            <h2 className="text-2xl font-bold">
+
+              AI Decision History
+
+            </h2>
+
+            <div className="flex flex-wrap gap-3">
+
+              {[
+                "ALL",
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+              ].map(level => (
+
+                <button
+                  key={level}
+                  onClick={() =>
+                    setFilterLevel(
+                      level
+                    )
+                  }
+                  className={`
+                    px-4 py-2 rounded-xl font-medium transition
+                    ${
+                      filterLevel ===
+                      level
+                        ? "bg-blue-600 text-white"
+                        : "bg-slate-100 hover:bg-slate-200"
+                    }
+                  `}
+                >
+
+                  {level}
+
+                </button>
+
+              ))}
+
+            </div>
+
+          </div>
+
+          <div className="overflow-x-auto">
+
+            <table className="w-full min-w-[800px]">
+
+              <thead>
+
+                <tr className="border-b bg-slate-50">
+
+                  <th className="p-4 text-left">
+
+                    Timestamp
+
+                  </th>
+
+                  <th className="p-4 text-left">
+
+                    Sensor Snapshot
+
+                  </th>
+
+                  <th className="p-4 text-left">
+
+                    RF Result
+
+                  </th>
+
+                  <th className="p-4 text-left">
+
+                    Alert Level
+
+                  </th>
+
+                  <th className="p-4 text-left">
+
+                    Final Decision
+
+                  </th>
+
+                </tr>
+
+              </thead>
+
+              <tbody>
+
+                {
+
+                  filteredData.length >
+
+                  0 ? (
+
+                    filteredData.map(
+                      item => (
+
+                        <tr
+                          key={
+                            item.id
+                          }
+                          className="border-b hover:bg-slate-50"
+                        >
+
+                          <td className="p-4">
+
+                            {
+                              item.timestamp
+                            }
+
+                          </td>
+
+                          <td className="p-4">
+
+                            <div>
+
+                              <strong>
+
+                                T:
+
+                              </strong>{" "}
+
+                              {
+                                item.temperature
+                              }
+                              °C
+
+                            </div>
+
+                            <div>
+
+                              <strong>
+
+                                DO:
+
+                              </strong>{" "}
+
+                              {
+                                item.do
+                              }
+
+                            </div>
+
+                            <div>
+
+                              <strong>
+
+                                pH:
+
+                              </strong>{" "}
+
+                              {
+                                item.ph
+                              }
+
+                            </div>
+
+                          </td>
+
+                          <td className="p-4">
+
+                            {
+                              item.health_status
+                            }
+
+                          </td>
+
+                          <td className="p-4">
+
+                            <span
+                              className={`
+                                px-3 py-1 rounded-full text-sm font-medium
+                                ${
+                                  item.risk_level ===
+                                  "LOW"
+                                    ? "bg-green-100 text-green-700"
+                                    : item.risk_level ===
+                                      "MEDIUM"
+                                    ? "bg-yellow-100 text-yellow-700"
+                                    : "bg-red-100 text-red-700"
+                                }
+                              `}
+                            >
+
+                              {
+                                item.risk_level
+                              }
+
+                            </span>
+
+                          </td>
+
+                          <td className="p-4">
+
+                            {
+
+                              item.recommendation ||
+
+                              item.ai_decision ||
+
+                              "No action required"
+
+                            }
+
+                          </td>
+
+                        </tr>
+
+                      )
+                    )
+
+                  ) : (
+
+                    <tr>
+
+                      <td
+                        colSpan={
+                          5
+                        }
+                        className="text-center py-10 text-gray-500"
+                      >
+
+                        No decision history found.
+
+                      </td>
+
+                    </tr>
+
+                  )
+
+                }
+
+              </tbody>
+
+            </table>
 
           </div>
 
@@ -242,15 +513,17 @@ export default function AnalyticsPage() {
 
           </h2>
 
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
 
             <button
               className="
-              px-6 py-3
-              bg-red-600
-              text-white
-              rounded-xl
-            "
+                px-6 py-3
+                bg-red-600
+                hover:bg-red-700
+                text-white
+                rounded-xl
+                transition
+              "
             >
 
               Export PDF
@@ -259,11 +532,13 @@ export default function AnalyticsPage() {
 
             <button
               className="
-              px-6 py-3
-              bg-green-600
-              text-white
-              rounded-xl
-            "
+                px-6 py-3
+                bg-green-600
+                hover:bg-green-700
+                text-white
+                rounded-xl
+                transition
+              "
             >
 
               Export CSV
@@ -318,7 +593,10 @@ function ProgressBar({
 
   const percentage =
     total > 0
-      ? (value / total) * 100
+      ? (
+          value /
+          total
+        ) * 100
       : 0;
 
   return (
@@ -335,16 +613,18 @@ function ProgressBar({
 
         <span>
 
-          {percentage.toFixed(1)}%
+          {percentage.toFixed(
+            1
+          )}%
 
         </span>
 
       </div>
 
-      <div className="h-5 bg-slate-200 rounded-full">
+      <div className="h-5 bg-slate-200 rounded-full overflow-hidden">
 
         <div
-          className={`${color} h-5 rounded-full`}
+          className={`${color} h-5 rounded-full transition-all duration-500`}
           style={{
             width:
               `${percentage}%`

@@ -17,6 +17,7 @@ import {
   Menu,
   X,
   Fish,
+  CircleHelp
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -36,11 +37,6 @@ export default function Sidebar() {
       href: "/simulator",
     },
     {
-      icon: Activity,
-      label: "Monitoring",
-      href: "/monitoring",
-    },
-    {
       icon: Cpu,
       label: "Actuator Control",
       href: "/actuator",
@@ -49,11 +45,6 @@ export default function Sidebar() {
       icon: BrainCircuit,
       label: "AI Center",
       href: "/ai-center",
-    },
-    {
-      icon: History,
-      label: "Decision Logs",
-      href: "/decision-history",
     },
     {
       icon: TriangleAlert,
@@ -65,6 +56,11 @@ export default function Sidebar() {
       label: "Analytics",
       href: "/analytics",
     },
+    {
+  icon: CircleHelp,
+  label: "Help Center",
+  href: "/help",
+},
     {
       icon: Settings,
       label: "Settings",

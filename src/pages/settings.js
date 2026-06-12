@@ -70,48 +70,6 @@ export default function SettingsPage() {
 
         </h1>
 
-        {/* SYSTEM MODE */}
-
-        <div className="bg-white rounded-2xl shadow p-8 mb-8">
-
-          <h2 className="text-2xl font-bold mb-6">
-
-            System Configuration
-
-          </h2>
-
-          <div className="flex items-center justify-between">
-
-            <div>
-
-              <h3 className="font-semibold">
-
-                Autonomous Mode
-
-              </h3>
-
-              <p className="text-gray-500">
-
-                Allow AI to control actuators automatically
-
-              </p>
-
-            </div>
-
-            <input
-              type="checkbox"
-              checked={settings.autoMode}
-              onChange={(e)=>
-                updateSetting(
-                  "autoMode",
-                  e.target.checked
-                )
-              }
-            />
-
-          </div>
-
-        </div>
 
         {/* SENSOR THRESHOLD */}
 
