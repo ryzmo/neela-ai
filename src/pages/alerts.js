@@ -1,7 +1,6 @@
 import {
   useState,
   useEffect,
-  useRef
 } from "react";
 import Sidebar from "../components/Sidebar";
 import useAquaAgent from "../hooks/useAquaAgent";
@@ -10,7 +9,7 @@ import useAquaAgent from "../hooks/useAquaAgent";
 
 export default function AlertsPage() {
 
-  const { data, history } =
+  const { data} =
     useAquaAgent();
 
   const [newEmail, setNewEmail] = useState("");
@@ -18,73 +17,27 @@ export default function AlertsPage() {
   const [emails, setEmails] = useState([]);
   const [sending, setSending] = useState(false);
 
-const [autoEmailEnabled, setAutoEmailEnabled] =
-  useState(true);
-
-const [repeatInterval, setRepeatInterval] =
-  useState(30); // menit
-
-const lastEmailTimeRef = useRef(0);
-
-const lastCriticalStateRef =
-  useRef(false);
   const activeAlerts = [
 
   Number(data.sensor_data?.do) < 5 && {
-
-    title:
-      "Low Dissolved Oxygen",
-
-    severity:
-      "CRITICAL",
-
-    message:
-      "DO level below recommended threshold.",
-
+    title: "Low Dissolved Oxygen",
+    severity: "CRITICAL",
+    message: "DO level below recommended threshold.",
   },
 
   Number(data.sensor_data?.temperature) > 30 && {
-
-    title:
-      "High Temperature",
-
-    severity:
-      "WARNING",
-
-    message:
-      "Water temperature exceeds optimal range.",
-
+    title: "High Temperature",
+    severity: "WARNING",
+    message: "Water temperature exceeds optimal range.",
   },
 
   (
     Number(data.sensor_data?.ph) < 6.5 ||
-
     Number(data.sensor_data?.ph) > 8
-
   ) && {
-
-    title:
-      "Unstable pH",
-
-    severity:
-      "WARNING",
-
-    message:
-      "pH outside safe operating range.",
-
-  },
-
-  Number(data.sensor_data?.ammonia) > 0.5 && {
-
-    title:
-      "High Ammonia",
-
-    severity:
-      "CRITICAL",
-
-    message:
-      "Ammonia concentration is dangerous.",
-
+    title: "Unstable pH",
+    severity: "WARNING",
+    message: "pH outside safe operating range.",
   },
 
 ].filter(Boolean);
@@ -97,46 +50,11 @@ useEffect(() => {
       "alertEmails"
     );
 
-  const savedAutoEmail =
-    localStorage.getItem(
-      "autoEmailEnabled"
-    );
-
-  const savedInterval =
-    localStorage.getItem(
-      "repeatInterval"
-    );
-
   if (savedEmails) {
 
     setEmails(
       JSON.parse(
         savedEmails
-      )
-    );
-
-  }
-
-  if (
-    savedAutoEmail !==
-    null
-  ) {
-
-    setAutoEmailEnabled(
-      JSON.parse(
-        savedAutoEmail
-      )
-    );
-
-  }
-
-  if (
-    savedInterval
-  ) {
-
-    setRepeatInterval(
-      Number(
-        savedInterval
       )
     );
 
@@ -157,46 +75,6 @@ useEffect(() => {
   );
 
 }, [emails]);
-
-useEffect(() => {
-
-  localStorage.setItem(
-
-    "autoEmailEnabled",
-
-    JSON.stringify(
-      autoEmailEnabled
-    )
-
-  );
-
-}, [
-  autoEmailEnabled
-]);
-
-useEffect(() => {
-
-  localStorage.setItem(
-
-    "repeatInterval",
-
-    repeatInterval.toString()
-
-  );
-
-}, [
-  repeatInterval
-]);
-
-const criticalAlerts =
-  activeAlerts.filter(
-    alert =>
-      alert.severity ===
-      "CRITICAL"
-  );
-
-const hasCriticalAlert =
-  criticalAlerts.length > 0;
 
 function addEmail() {
 
@@ -252,9 +130,7 @@ function removeEmail(emailToRemove) {
 
 }
 
-async function sendEmail(
-  isAutomatic = false
-) {
+async function sendEmail() {
 
   if (emails.length === 0) {
 
@@ -286,12 +162,8 @@ async function sendEmail(
 
           alerts: activeAlerts,
 
-          sensorData: data.sensor_data,
-
+          sensorData: data?.sensor_data,
           buzzer: data.buzzer,
-
-          isTest:
-            activeAlerts.length === 0,
 
         }),
 
@@ -303,15 +175,11 @@ async function sendEmail(
 
     if (response.ok) {
 
-      if (!isAutomatic) {
-
-  alert(
-    activeAlerts.length > 0
-      ? "Alert email sent successfully"
-      : "Test email sent successfully"
-  );
-
-}
+    alert(
+      activeAlerts.length > 0
+        ? "Alert email sent successfully"
+        : "Test email sent successfully"
+    );
 
     }
 
@@ -338,70 +206,6 @@ async function sendEmail(
   }
 
 }
-
-useEffect(() => {
-
-  if (
-    !autoEmailEnabled ||
-    emails.length === 0
-  ) {
-
-    return;
-
-  }
-
-  const now =
-    Date.now();
-
-  const intervalMs =
-    repeatInterval *
-    60 *
-    1000;
-
-  if (
-    hasCriticalAlert
-  ) {
-
-    if (
-
-      !lastCriticalStateRef.current ||
-
-      now -
-      lastEmailTimeRef.current >=
-      intervalMs
-
-    ) {
-
-      sendEmail(true);
-
-      lastEmailTimeRef.current =
-        now;
-
-      lastCriticalStateRef.current =
-        true;
-
-    }
-
-  }
-
-  else {
-
-    lastCriticalStateRef.current =
-      false;
-
-  }
-
-}, [
-
-  hasCriticalAlert,
-
-  repeatInterval,
-
-  autoEmailEnabled,
-
-  emails,
-
-]);
   
 
   return (
@@ -419,7 +223,7 @@ useEffect(() => {
         </h1>
 
         {
-  data.buzzer === "ON" && (
+  data?.buzzer === "ON" && (
 
     <div className="
       bg-red-600
@@ -607,158 +411,6 @@ useEffect(() => {
 
   </div>
 
-  <div className="
-  bg-gray-50
-  rounded-2xl
-  p-5
-  mb-6
-">
-
-  <h3 className="
-    font-bold
-    text-lg
-    mb-4
-  ">
-
-    Automatic Alert Settings
-
-  </h3>
-
-  <div className="
-    flex
-    flex-col
-    md:flex-row
-    gap-6
-  ">
-
-    <div className="
-      flex
-      items-center
-      gap-3
-    ">
-
-      <input
-
-        type="checkbox"
-
-        checked={
-          autoEmailEnabled
-        }
-
-        onChange={(e) =>
-          setAutoEmailEnabled(
-            e.target.checked
-          )
-        }
-
-        className="
-          w-5
-          h-5
-        "
-
-      />
-
-      <span>
-
-        Enable Auto Email
-        Alerts
-
-      </span>
-
-    </div>
-
-    <div className="
-      flex
-      items-center
-      gap-3
-    ">
-
-      <label>
-
-        Repeat Every
-
-      </label>
-
-      <input
-
-        type="number"
-
-        min="1"
-
-        value={
-          repeatInterval
-        }
-
-        onChange={(e) =>
-          setRepeatInterval(
-            Number(
-              e.target.value
-            )
-          )
-        }
-
-        className="
-          border
-          rounded-lg
-          px-3
-          py-2
-          w-24
-        "
-
-      />
-
-      <span>
-
-        minutes
-
-      </span>
-
-    </div>
-
-  </div>
-
-  <div className="
-    mt-4
-    text-sm
-    text-gray-600
-  ">
-
-    Status:
-
-    {
-
-      autoEmailEnabled
-
-      ? (
-        <span className="
-          text-green-600
-          font-semibold
-        ">
-
-          {" "}
-          Enabled
-
-        </span>
-      )
-
-      : (
-        <span className="
-          text-red-600
-          font-semibold
-        ">
-
-          {" "}
-          Disabled
-
-        </span>
-      )
-
-    }
-
-  </div>
-
-</div>
-
   {/* Send Button */}
 
   <button
@@ -908,49 +560,6 @@ function AlertCard({
         {message}
 
       </p>
-
-    </div>
-
-  );
-
-}
-
-function SeverityCard({
-  title,
-  count,
-  color
-}) {
-
-  const styles = {
-
-    blue:
-      "bg-blue-50 text-blue-700",
-
-    yellow:
-      "bg-yellow-50 text-yellow-700",
-
-    red:
-      "bg-red-50 text-red-700"
-
-  };
-
-  return (
-
-    <div
-      className={`rounded-2xl shadow p-6 ${styles[color]}`}
-    >
-
-      <p>
-
-        {title}
-
-      </p>
-
-      <h3 className="text-4xl font-bold">
-
-        {count}
-
-      </h3>
 
     </div>
 
