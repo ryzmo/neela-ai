@@ -53,22 +53,6 @@ export default function AIDecisionSummary({
 
         </div>
 
-        <div>
-
-          <p className="text-gray-500">
-
-            Risk Level
-
-          </p>
-
-          <p className="font-bold text-lg">
-
-            {data.risk_level}
-
-          </p>
-
-        </div>
-
       </div>
 
       {/* Actuator Status */}

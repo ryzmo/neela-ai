@@ -24,6 +24,12 @@ export default function ActuatorPage() {
   const [history, setHistory] =
     useState([]);
 
+  const [feedingSchedule, setFeedingSchedule] =
+  useState({
+    interval: 6,
+    feedingTime: "08:00"
+  });
+
   function toggleActuator(name) {
 
     if(mode !== "MANUAL") {
@@ -136,6 +142,94 @@ export default function ActuatorPage() {
 
         </div>
 
+        {/* FEEDING SCHEDULE */}
+
+<div className="bg-white rounded-2xl shadow p-6 mb-8">
+
+  <h2 className="text-2xl font-bold mb-4">
+Feeding Schedule
+
+  </h2>
+
+  <div className="grid md:grid-cols-2 gap-6">
+
+<div>
+
+  <label className="block mb-2 font-medium">
+
+    Feed Every (Hours)
+
+  </label>
+
+  <input
+    type="number"
+    min="1"
+    value={feedingSchedule.interval}
+    onChange={(e) =>
+      setFeedingSchedule({
+        ...feedingSchedule,
+        interval: e.target.value
+      })
+    }
+    className="
+      w-full
+      border
+      rounded-xl
+      px-4
+      py-2
+    "
+  />
+
+</div>
+
+<div>
+
+  <label className="block mb-2 font-medium">
+
+    Feeding Time
+
+  </label>
+
+  <input
+    type="time"
+    value={feedingSchedule.feedingTime}
+    onChange={(e) =>
+      setFeedingSchedule({
+        ...feedingSchedule,
+        feedingTime: e.target.value
+      })
+    }
+    className="
+      w-full
+      border
+      rounded-xl
+      px-4
+      py-2
+    "
+  />
+
+</div>
+
+  </div>
+
+<button
+className="
+mt-4
+bg-green-600
+text-white
+px-4
+py-2
+rounded-xl
+"
+
+>
+Save Schedule
+
+  </button>
+
+</div>
+
+
         {/* ACTUATOR STATUS */}
 
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-5">
@@ -153,7 +247,7 @@ export default function ActuatorPage() {
           />
 
           <ActuatorCard
-            title="Feeder"
+            title="Feed Now"
             status={
               actuator.feeder
             }

@@ -178,7 +178,7 @@ async function sendEmail() {
     alert(
       activeAlerts.length > 0
         ? "Alert email sent successfully"
-        : "Test email sent successfully"
+        : "Notif email sent successfully"
     );
 
     }

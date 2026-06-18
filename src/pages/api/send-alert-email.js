@@ -114,38 +114,54 @@ html: `
           <tr>
 
             <td style="
-              background:
-                linear-gradient(
-                  135deg,
-                  #0f172a,
-                  #1e40af
-                );
+  background:
+    linear-gradient(
+      135deg,
+      #0f172a,
+      #1e40af
+    );
 
-              color:white;
+  color:white;
+  padding:32px;
+">
 
-              padding:32px;
-            ">
+  <table cellpadding="0" cellspacing="0">
+    <tr>
 
-              <h1 style="
-                margin:0;
-                font-size:28px;
-              ">
+      <td width="100">
+        <img
+          src="https://res.cloudinary.com/dgkdfu5dm/image/upload/v1781746130/LOGO_gaigmh.png"
+          alt="NEELA AI Logo"
+          width="70"
+          style="
+            background:white;
+            border-radius:50%;
+            padding:6px;
+          "
+        />
+      </td>
 
-                NEELA AI Alert
+      <td>
+        <h1 style="
+          margin:0;
+          font-size:28px;
+        ">
+          NEELA AI Alert
+        </h1>
 
-              </h1>
+        <p style="
+          margin-top:8px;
+          color:#dbeafe;
+          font-size:15px;
+        ">
+          Smart Aquaculture Monitoring System
+        </p>
+      </td>
 
-              <p style="
-                margin-top:8px;
-                color:#dbeafe;
-                font-size:15px;
-              ">
+    </tr>
+  </table>
 
-                Smart Aquaculture Monitoring System
-
-              </p>
-
-            </td>
+</td>
 
           </tr>
 
@@ -185,7 +201,7 @@ html: `
 
             <td style="
               padding:0 32px 20px;
-            ">
+            ">  
 
               ${alerts.map(alert => `
 
