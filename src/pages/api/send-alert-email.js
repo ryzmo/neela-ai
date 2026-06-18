@@ -165,36 +165,6 @@ html: `
 
           </tr>
 
-          <!-- STATUS -->
-
-          <tr>
-
-            <td style="padding:32px;">
-
-              <div style="
-                background:#fff7ed;
-                border-left:
-                  6px solid #ea580c;
-
-                padding:20px;
-                border-radius:12px;
-              ">
-
-                <h2 style="
-                  margin:0;
-                  color:#9a3412;
-                ">
-
-                  Pond Condition Alert Detected
-
-                </h2>
-
-              </div>
-
-            </td>
-
-          </tr>
-
           <!-- ALERTS -->
 
           <tr>

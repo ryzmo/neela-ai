@@ -15,6 +15,15 @@ export default function AlertsPage() {
   const [newEmail, setNewEmail] = useState("");
 
   const [emails, setEmails] = useState([]);
+  useEffect(() => {
+
+  fetch(
+    "http://localhost:8000/emails"
+  )
+    .then(res => res.json())
+    .then(data => setEmails(data));
+
+}, []);
   const [sending, setSending] = useState(false);
 
   const activeAlerts = [
@@ -42,39 +51,6 @@ export default function AlertsPage() {
 
 ].filter(Boolean);
 
-// Load settings from localStorage
-useEffect(() => {
-
-  const savedEmails =
-    localStorage.getItem(
-      "alertEmails"
-    );
-
-  if (savedEmails) {
-
-    setEmails(
-      JSON.parse(
-        savedEmails
-      )
-    );
-
-  }
-
-}, []);
-
-useEffect(() => {
-
-  localStorage.setItem(
-
-    "alertEmails",
-
-    JSON.stringify(
-      emails
-    )
-
-  );
-
-}, [emails]);
 
 function addEmail() {
 
@@ -106,26 +82,66 @@ function addEmail() {
 
   }
 
-  setEmails([
-    ...emails,
-    newEmail,
-  ]);
+  fetch(
+  "http://localhost:8000/emails",
+  {
+    method: "POST",
 
+    headers: {
+      "Content-Type":
+        "application/json"
+    },
+
+    body: JSON.stringify({
+
+      email: newEmail
+
+    })
+  }
+)
+
+.then(() =>
+  fetch(
+    "http://localhost:8000/emails"
+  )
+)
+
+.then(res => res.json())
+
+.then(data => {
+
+  setEmails(data);
+
+  setNewEmail("");
+
+});
   setNewEmail("");
 
 }
 function removeEmail(emailToRemove) {
 
-  setEmails(
+  fetch(
 
-    emails.filter(
+    `http://localhost:8000/emails/${emailToRemove}`,
 
-      email =>
+    {
 
-        email !== emailToRemove
+      method: "DELETE"
 
+    }
+
+  )
+
+  .then(() =>
+    fetch(
+      "http://localhost:8000/emails"
     )
+  )
 
+  .then(res => res.json())
+
+  .then(data =>
+    setEmails(data)
   );
 
 }
