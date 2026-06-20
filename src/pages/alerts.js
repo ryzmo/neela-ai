@@ -18,7 +18,7 @@ export default function AlertsPage() {
   useEffect(() => {
 
   fetch(
-    "http://localhost:8000/emails"
+    "http://127.0.0.1:8000/emails"
   )
     .then(res => res.json())
     .then(data => setEmails(data));
@@ -83,7 +83,7 @@ function addEmail() {
   }
 
   fetch(
-  "http://localhost:8000/emails",
+  "http://127.0.0.1:8000/emails",
   {
     method: "POST",
 
@@ -102,7 +102,7 @@ function addEmail() {
 
 .then(() =>
   fetch(
-    "http://localhost:8000/emails"
+    "http://127.0.0.1:8000/emails"
   )
 )
 
@@ -122,7 +122,7 @@ function removeEmail(emailToRemove) {
 
   fetch(
 
-    `http://localhost:8000/emails/${emailToRemove}`,
+    `http://127.0.0.1:8000/emails/${emailToRemove}`,
 
     {
 
@@ -134,7 +134,7 @@ function removeEmail(emailToRemove) {
 
   .then(() =>
     fetch(
-      "http://localhost:8000/emails"
+      "http://127.0.0.1:8000/emails"
     )
   )
 

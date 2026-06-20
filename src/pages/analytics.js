@@ -11,13 +11,13 @@ export default function AnalyticsPage() {
     useState("ALL");
 
   const filteredData =
-    filterLevel === "ALL"
-      ? history
-      : history.filter(
-          item =>
-            item.risk_level ===
-            filterLevel
-        );
+  filterLevel === "ALL"
+    ? history
+    : history.filter(
+        item =>
+          item.health_status ===
+          filterLevel
+      );
 
   const avgTemperature =
     history.length
@@ -84,6 +84,19 @@ export default function AnalyticsPage() {
         h.risk_level ===
         "HIGH"
     ).length;
+
+  const sortedData =
+  [...filteredData].sort(
+    (a, b) => b.id - a.id
+  );
+
+  const [showAll, setShowAll] =
+  useState(false);
+
+  const displayedData =
+  showAll
+    ? sortedData
+    : sortedData.slice(0, 5);
 
   return (
 
@@ -161,43 +174,6 @@ export default function AnalyticsPage() {
 
         </div>
 
-        {/* DECISION ANALYTICS */}
-
-        <div className="bg-white rounded-2xl shadow p-8 mb-8">
-
-          <h2 className="text-2xl font-bold mb-6">
-
-            Decision Analytics
-
-          </h2>
-
-          <div className="space-y-5">
-
-            <ProgressBar
-              label="LOW Risk Decisions"
-              value={lowRisk}
-              total={history.length}
-              color="bg-green-500"
-            />
-
-            <ProgressBar
-              label="MEDIUM Risk Decisions"
-              value={mediumRisk}
-              total={history.length}
-              color="bg-yellow-500"
-            />
-
-            <ProgressBar
-              label="HIGH Risk Decisions"
-              value={highRisk}
-              total={history.length}
-              color="bg-red-500"
-            />
-
-          </div>
-
-        </div>
-
         {/* AI ACCURACY */}
 
         <div className="bg-white rounded-2xl shadow p-8 mb-8">
@@ -221,43 +197,6 @@ export default function AnalyticsPage() {
           </p>
 
         </div>
-
-        {/* DECISION SUMMARY */}
-
-        <div className="bg-white rounded-2xl shadow p-8 mb-8">
-
-          <h2 className="text-2xl font-bold mb-6">
-
-            Decision Summary
-
-          </h2>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-
-            <AnalyticsCard
-              title="Total Decisions"
-              value={history.length}
-            />
-
-            <AnalyticsCard
-              title="LOW Risk"
-              value={lowRisk}
-            />
-
-            <AnalyticsCard
-              title="MEDIUM Risk"
-              value={mediumRisk}
-            />
-
-            <AnalyticsCard
-              title="HIGH Risk"
-              value={highRisk}
-            />
-
-          </div>
-
-        </div>
-
         {/* DECISION HISTORY */}
 
         <div className="bg-white rounded-2xl shadow p-8 mb-8">
@@ -273,11 +212,10 @@ export default function AnalyticsPage() {
             <div className="flex flex-wrap gap-3">
 
               {[
-                "ALL",
-                "LOW",
-                "MEDIUM",
-                "HIGH"
-              ].map(level => (
+                  "ALL",
+                  "Stable",
+                  "At Risk"
+                ].map(level => (
 
                 <button
                   key={level}
@@ -335,12 +273,6 @@ export default function AnalyticsPage() {
 
                   <th className="p-4 text-left">
 
-                    Alert Level
-
-                  </th>
-
-                  <th className="p-4 text-left">
-
                     Final Decision
 
                   </th>
@@ -357,7 +289,7 @@ export default function AnalyticsPage() {
 
                   0 ? (
 
-                    filteredData.map(
+                   displayedData.map(
                       item => (
 
                         <tr
@@ -424,50 +356,34 @@ export default function AnalyticsPage() {
 
                           <td className="p-4">
 
-                            {
-                              item.health_status
-                            }
+  <span
+    className={`
+      px-3 py-1 rounded-full text-sm font-semibold
+      ${
+        item.health_status ===
+        "Stable"
+          ? "bg-green-100 text-green-700"
+          : "bg-red-100 text-red-700"
+      }
+    `}
+  >
 
-                          </td>
+    {item.health_status}
 
-                          <td className="p-4">
+  </span>
 
-                            <span
-                              className={`
-                                px-3 py-1 rounded-full text-sm font-medium
-                                ${
-                                  item.risk_level ===
-                                  "LOW"
-                                    ? "bg-green-100 text-green-700"
-                                    : item.risk_level ===
-                                      "MEDIUM"
-                                    ? "bg-yellow-100 text-yellow-700"
-                                    : "bg-red-100 text-red-700"
-                                }
-                              `}
-                            >
-
-                              {
-                                item.risk_level
-                              }
-
-                            </span>
-
-                          </td>
+</td>
 
                           <td className="p-4">
 
-                            {
+  {
+    item.health_status ===
+    "At Risk"
+      ? "Corrective Action Required"
+      : "No Action Required"
+  }
 
-                              item.recommendation ||
-
-                              item.ai_decision ||
-
-                              "No action required"
-
-                            }
-
-                          </td>
+</td>
 
                         </tr>
 
@@ -480,7 +396,7 @@ export default function AnalyticsPage() {
 
                       <td
                         colSpan={
-                          5
+                          4
                         }
                         className="text-center py-10 text-gray-500"
                       >
@@ -498,6 +414,35 @@ export default function AnalyticsPage() {
               </tbody>
 
             </table>
+            {
+  sortedData.length > 10 && (
+
+    <div className="mt-5 text-center">
+
+      <button
+        onClick={() =>
+          setShowAll(!showAll)
+        }
+        className="
+          px-5 py-2
+          bg-blue-600
+          text-white
+          rounded-xl
+        "
+      >
+
+        {
+          showAll
+            ? "Show Less"
+            : "View More"
+        }
+
+      </button>
+
+    </div>
+
+  )
+}
 
           </div>
 

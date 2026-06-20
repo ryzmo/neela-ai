@@ -140,7 +140,7 @@ export default function AICenter() {
 
           <h2 className="text-2xl font-bold mb-6">
 
-            Final AI Decision
+            Rule-Based Decision Engine Output
 
           </h2>
 
@@ -149,11 +149,6 @@ export default function AICenter() {
             <DecisionCard
               title="Aerator"
               value={data.aerator}
-            />
-
-            <DecisionCard
-              title="Feeding"
-              value={data.feeder}
             />
 
             <DecisionCard
@@ -175,80 +170,43 @@ export default function AICenter() {
 
         </div>
 
-        {/* CONFIDENCE */}
-
-        <div className="bg-white rounded-2xl shadow p-8 mb-8">
-
-          <h2 className="text-2xl font-bold mb-6">
-
-            Decision Confidence Level
-
-          </h2>
-
-          <div className="w-full bg-slate-200 rounded-full h-6">
-
-            <div
-              className="bg-green-500 h-6 rounded-full"
-              style={{
-                width: `${
-                  data.rf_confidence
-                    ? data.rf_confidence * 100
-                    : 0
-                }%`
-              }}
-            />
-          </div>
-
-          <p className="mt-3 font-semibold">
-
-            {data.rf_confidence
-              ? `${(
-                  data.rf_confidence * 100
-                ).toFixed(1)}%`
-              : "-"
-            }
-
-          </p>
-
-        </div>
-
         {/* AI FLOW */}
 
         <div className="bg-white rounded-2xl shadow p-8">
 
-          <h2 className="text-2xl font-bold mb-6">
+  <h2 className="text-2xl font-bold mb-6">
 
-            AI Decision Flow Visualization
+    AI Decision Flow Visualization
 
-          </h2>
+  </h2>
 
-          <div className="flex justify-between items-center">
+  <div className="flex justify-between items-center">
 
-            <FlowBox
-              title="Sensor Data"
-            />
+    <FlowBox
+      title="Sensor Data"
+    />
 
-            <Arrow />
+    <Arrow />
 
-            <FlowBox
-              title="Random Forest"
-            />
+    <FlowBox
+      title="Random Forest"
+    />
 
-            <Arrow />
+    <Arrow />
 
-            <FlowBox
-              title="AI Reasoning"
-            />
+    <FlowBox
+      title="Rule-Based Engine"
+    />
 
-            <Arrow />
+    <Arrow />
 
-            <FlowBox
-              title="Final Action"
-            />
+    <FlowBox
+      title="Control Actions"
+    />
 
-          </div>
+  </div>
 
-        </div>
+</div>
 
       </main>
 

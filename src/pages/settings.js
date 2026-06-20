@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import Sidebar from "../components/Sidebar";
 
 export default function SettingsPage() {
@@ -23,6 +24,31 @@ export default function SettingsPage() {
 
   });
 
+  useEffect(() => {
+  loadSettings();
+}, []);
+
+async function loadSettings() {
+
+  try {
+
+    const res = await axios.get(
+      "http://localhost:8000/settings"
+    );
+
+    setSettings(prev => ({
+  ...prev,
+  ...res.data
+}));
+
+  } catch (err) {
+
+    console.log(err);
+
+  }
+
+}
+
   function updateSetting(
     key,
     value
@@ -38,23 +64,28 @@ export default function SettingsPage() {
 
   }
 
-  function saveSettings() {
+  async function saveSettings() {
 
-    localStorage.setItem(
+  try {
 
-      "aquaagent_settings",
-
-      JSON.stringify(
-        settings
-      )
-
+    await axios.post(
+      "http://localhost:8000/settings",
+      settings
     );
 
     alert(
       "Settings saved successfully"
     );
 
+  } catch (err) {
+
+    alert(
+      "Failed to save settings"
+    );
+
   }
+
+}
 
   return (
 
