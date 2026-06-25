@@ -1,6 +1,9 @@
 import { useState } from "react";
+import SensorChart from "../components/SensorChart";
 import Sidebar from "../components/Sidebar";
 import useAquaAgent from "../hooks/useAquaAgent";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 export default function AnalyticsPage() {
 
@@ -98,6 +101,126 @@ export default function AnalyticsPage() {
     ? sortedData
     : sortedData.slice(0, 5);
 
+
+  function exportCSV() {
+  const headers = [
+    "Timestamp",
+    "Temperature",
+    "DO",
+    "pH",
+    "Turbidity",
+    "Health Status",
+    "Risk Level",
+  ];
+
+  const rows = history.map((item) => [
+    item.timestamp,
+    item.temperature,
+    item.do,
+    item.ph,
+    item.turbidity,
+    item.health_status,
+    item.risk_level,
+  ]);
+
+  const csvContent = [
+    headers,
+    ...rows,
+  ]
+    .map((row) => row.join(","))
+    .join("\n");
+
+  const blob = new Blob(
+    [csvContent],
+    {
+      type: "text/csv;charset=utf-8;",
+    }
+  );
+
+  const url =
+    window.URL.createObjectURL(blob);
+
+  const link =
+    document.createElement("a");
+
+  link.href = url;
+  link.download =
+    `water_quality_report_${Date.now()}.csv`;
+
+  link.click();
+
+  window.URL.revokeObjectURL(url);
+}
+
+function exportPDF() {
+  const doc = new jsPDF();
+
+  doc.setFontSize(18);
+  doc.text(
+    "Water Quality Analytics Report",
+    14,
+    20
+  );
+
+  doc.setFontSize(11);
+  doc.text(
+    `Generated: ${new Date().toLocaleString()}`,
+    14,
+    30
+  );
+
+  doc.text(
+    `Average Temperature: ${avgTemperature} °C`,
+    14,
+    45
+  );
+
+  doc.text(
+    `Average DO: ${avgDO} mg/L`,
+    14,
+    53
+  );
+
+  doc.text(
+    `Average pH: ${avgPH}`,
+    14,
+    61
+  );
+
+  autoTable(doc, {
+    startY: 75,
+    head: [
+      [
+        "Timestamp",
+        "Temp",
+        "DO",
+        "pH",
+        "Turbidity",
+        "Status",
+        "Risk",
+      ],
+    ],
+    body: history.map((item) => [
+      item.timestamp,
+      item.temperature,
+      item.do,
+      item.ph,
+      item.turbidity,
+      item.health_status,
+      item.risk_level,
+    ]),
+    styles: {
+      fontSize: 9,
+    },
+    headStyles: {
+      fillColor: [14, 159, 214],
+    },
+  });
+
+  doc.save(
+    `water_quality_report_${Date.now()}.pdf`
+  );
+}
   return (
 
     <div className="md:flex">
@@ -143,36 +266,9 @@ export default function AnalyticsPage() {
 
         </div>
 
-        {/* WEEKLY PERFORMANCE */}
-
-        <div className="bg-white rounded-2xl shadow p-8 mb-8">
-
-          <h2 className="text-2xl font-bold mb-6">
-
-            Weekly Performance
-
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-
-            <AnalyticsCard
-              title="Total Records"
-              value={history.length}
-            />
-
-            <AnalyticsCard
-              title="Healthy Conditions"
-              value={lowRisk}
-            />
-
-            <AnalyticsCard
-              title="Critical Events"
-              value={highRisk}
-            />
-
-          </div>
-
-        </div>
+        <SensorChart
+                  history={history}
+                />
 
         {/* AI ACCURACY */}
 
@@ -461,34 +557,32 @@ export default function AnalyticsPage() {
           <div className="flex flex-wrap gap-4">
 
             <button
-              className="
-                px-6 py-3
-                bg-red-600
-                hover:bg-red-700
-                text-white
-                rounded-xl
-                transition
-              "
-            >
+  onClick={exportPDF}
+  className="
+    px-6 py-3
+    bg-red-600
+    hover:bg-red-700
+    text-white
+    rounded-xl
+    transition
+  "
+>
+  Export PDF
+</button>
 
-              Export PDF
-
-            </button>
-
-            <button
-              className="
-                px-6 py-3
-                bg-green-600
-                hover:bg-green-700
-                text-white
-                rounded-xl
-                transition
-              "
-            >
-
-              Export CSV
-
-            </button>
+<button
+  onClick={exportCSV}
+  className="
+    px-6 py-3
+    bg-green-600
+    hover:bg-green-700
+    text-white
+    rounded-xl
+    transition
+  "
+>
+  Export CSV
+</button>
 
           </div>
 
