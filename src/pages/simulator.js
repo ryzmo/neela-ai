@@ -9,78 +9,47 @@ export default function Simulator() {
 // ==========================================
 
 function normalMorning() {
-
   setSensor({
-
     temperature: 27.18,
     do: 6.18,
     ph: 7.91,
     turbidity: 3.25,
-    water_level: 40,
-    hour: 6
-
+    water_level: 20, // 100%
+    hour: 6,
   });
-
 }
 
 function normalAfternoon() {
-
   setSensor({
-
     temperature: 27.85,
     do: 6.68,
     ph: 7.88,
     turbidity: 3.48,
-    water_level: 39,
-    hour: 14
-
+    water_level: 19, // 95%
+    hour: 14,
   });
-
 }
 
 function thermalStress() {
-
   setSensor({
-
     temperature: 28.35,
     do: 7.89,
     ph: 8.00,
     turbidity: 2.79,
-    water_level: 37,
-    hour: 15
-
+    water_level: 18, // 90%
+    hour: 15,
   });
-
 }
 
 function lowOxygen() {
-
   setSensor({
-
     temperature: 28.00,
     do: 4.50,
     ph: 7.90,
     turbidity: 3.20,
-    water_level: 36,
-    hour: 5
-
+    water_level: 18, // 90%
+    hour: 5,
   });
-
-}
-
-function combinedRisk() {
-
-  setSensor({
-
-    temperature: 30.50,
-    do: 4.20,
-    ph: 8.20,
-    turbidity: 5.00,
-    water_level: 18,
-    hour: 16
-
-  });
-
 }
 
 function lowWaterLevel() {
@@ -89,24 +58,31 @@ function lowWaterLevel() {
     do: 6.8,
     ph: 7.3,
     turbidity: 3,
-    water_level: 15,
-    hour: 14
+    water_level: 5, // 25%
+    hour: 14,
+  });
+}
+
+function combinedRisk() {
+  setSensor({
+    temperature: 30.50,
+    do: 4.20,
+    ph: 8.20,
+    turbidity: 5.00,
+    water_level: 4, // 20%
+    hour: 16,
   });
 }
 
 function criticalCondition() {
-
   setSensor({
-
     temperature: 33.00,
     do: 2.00,
     ph: 5.80,
     turbidity: 30.00,
-    water_level: 10,
-    hour: 14
-
+    water_level: 2, // 10%
+    hour: 14,
   });
-
 }
 
   const [sensor, setSensor] = useState({
@@ -115,7 +91,7 @@ function criticalCondition() {
     do: 7,
     ph: 7.2,
     turbidity: 8,
-    water_level: 35,
+    water_level: 20,
     hour: 14
 
   });

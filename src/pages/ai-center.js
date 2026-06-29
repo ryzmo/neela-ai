@@ -5,6 +5,7 @@ import {
   Droplets,
   FlaskConical,
   Waves,
+  Gauge,
   Wind,
   RefreshCw,
   Beaker,
@@ -19,6 +20,12 @@ const SENSOR_RANGES = {
   do: { min: 0, max: 10, icon: Droplets, color: "cyan" },
   ph: { min: 0, max: 14, icon: FlaskConical, color: "teal" },
   turbidity: { min: 0, max: 50, icon: Waves, color: "blue" },
+  water_level: {
+    min: 0,
+    max: 20, // 20 cm = 100%
+    icon: Gauge,
+    color: "blue",
+  },
 };
 
 const COLOR_MAP = {
@@ -54,7 +61,7 @@ export default function AICenter() {
 
           {/* SENSOR DATA */}
           <Panel title="Input sensor data">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               {Object.entries(SENSOR_RANGES).map(([key, cfg]) => (
                 <SensorBox
                   key={key}
@@ -145,11 +152,11 @@ export default function AICenter() {
 /* ---------- helpers ---------- */
 
 function labelFor(key) {
-  return { temperature: "Temperature", do: "Dissolved O₂", ph: "pH", turbidity: "Turbidity" }[key];
+  return { temperature: "Temperature", do: "Dissolved O₂", ph: "pH", turbidity: "Turbidity", water_level: "Water Level",}[key];
 }
 
 function unitFor(key) {
-  return { temperature: "°C", do: "mg/L", ph: "", turbidity: "NTU" }[key];
+  return { temperature: "°C", do: "mg/L", ph: "", turbidity: "NTU", water_level: "cm", }[key];
 }
 
 function statusColor(status) {
@@ -199,7 +206,16 @@ function SensorBox({ label, value, unit, min, max, icon: Icon, color }) {
 
       <h3 className="text-2xl font-bold text-slate-900 mb-3">
         {value ?? "-"}
-        <span className="text-sm text-slate-400 font-medium ml-1">{unit}</span>
+
+        <span className="text-sm text-slate-400 font-medium ml-1">
+          {unit}
+        </span>
+
+        {label === "Water Level" && (
+          <span className="ml-2 text-base font-semibold text-blue-600">
+            ({Math.round((value / 20) * 100)}%)
+          </span>
+        )}
       </h3>
 
       <div className="h-1.5 rounded-full bg-slate-200 overflow-hidden">

@@ -6,12 +6,54 @@ import {
   Gauge,
 } from "lucide-react";
 
-const ICONS = {
-  Temperature: Thermometer,
-  DO: Droplets,
-  pH: FlaskConical,
-  Turbidity: Waves,
-  "Water Level": Gauge,
+const CONFIG = {
+  Temperature: {
+    icon: Thermometer,
+    min: 20,
+    max: 34,
+    bar: "bg-amber-400",
+    text: "text-amber-600",
+  },
+
+  DO: {
+    icon: Droplets,
+    min: 0,
+    max: 10,
+    bar: "bg-cyan-400",
+    text: "text-cyan-600",
+  },
+
+  "Dissolved O₂": {
+    icon: Droplets,
+    min: 0,
+    max: 10,
+    bar: "bg-cyan-400",
+    text: "text-cyan-600",
+  },
+
+  pH: {
+    icon: FlaskConical,
+    min: 0,
+    max: 14,
+    bar: "bg-teal-400",
+    text: "text-teal-600",
+  },
+
+  Turbidity: {
+    icon: Waves,
+    min: 0,
+    max: 50,
+    bar: "bg-blue-400",
+    text: "text-blue-600",
+  },
+
+  "Water Level": {
+    icon: Gauge,
+    min: 0,
+    max: 20,
+    bar: "bg-blue-400",
+    text: "text-blue-600",
+  },
 };
 
 export default function SensorCard({
@@ -19,86 +61,97 @@ export default function SensorCard({
   value,
   unit,
 }) {
-  const Icon = ICONS[title];
+  const cfg = CONFIG[title];
 
-  const isWaterLevel =
-    title === "Water Level";
+  if (!cfg) {
+    console.error(
+      "Unknown sensor title:",
+      title
+    );
 
-  const percentage =
-    isWaterLevel && value != null
+    return null;
+  }
+
+  const Icon = cfg.icon;
+
+  const numeric =
+    typeof value === "number"
+      ? value
+      : parseFloat(value);
+
+  const percentage = isNaN(numeric)
+    ? 0
+    : Math.min(
+        100,
+        Math.max(
+          0,
+          ((numeric - cfg.min) /
+            (cfg.max - cfg.min)) *
+            100
+        )
+      );
+
+  const waterPercentage =
+    title === "Water Level"
       ? Math.min(
           Math.max(
-            (value / 20) * 100,
+            (numeric / 20) * 100,
             0
           ),
           100
         )
       : 0;
 
-  const isLow =
-    percentage <= 20;
-
   return (
-    <div className="bg-white border border-slate-100 shadow-sm rounded-2xl p-6">
-
+    <div
+      className="
+        rounded-3xl
+        p-4
+        bg-slate-50
+        border
+        border-slate-200
+      "
+    >
       <div className="flex items-center gap-2 mb-3">
-        {Icon && (
-          <Icon
-            size={16}
-            className="text-cyan-600"
-          />
-        )}
+        <Icon size={16} className={cfg.text} />
 
-        <h3 className="text-slate-500 text-sm">
+        <p className="text-sm text-slate-500">
           {title}
-        </h3>
+        </p>
       </div>
 
-      <div className="flex items-end gap-2">
-        <h1 className="text-3xl font-bold text-slate-900">
+      <div className="flex items-baseline gap-1.5 mb-4">
+        <h2 className="text-[28px] font-bold text-slate-900 leading-none">
           {value ?? "-"}
-        </h1>
+        </h2>
 
-        <p className="text-slate-400 text-sm mb-1">
+        <span className="text-base font-normal text-slate-400">
           {unit}
-        </p>
+        </span>
 
-        {isWaterLevel && (
-          <span
-            className={`text-sm font-semibold mb-1 ${
-              isLow
-                ? "text-red-600"
-                : "text-blue-600"
-            }`}
-          >
-            ({percentage.toFixed(0)}%)
+        {title === "Water Level" && (
+          <span className="text-base font-semibold text-blue-600">
+            ({Math.round(waterPercentage)}%)
           </span>
         )}
       </div>
 
-      {isWaterLevel && (
-        <div className="mt-4">
+      <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden">
+        <div
+          className={`h-full rounded-full ${cfg.bar}`}
+          style={{
+            width:
+              title === "Water Level"
+                ? `${waterPercentage}%`
+                : `${percentage}%`,
+          }}
+        />
+      </div>
 
-          <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
-
-            <div
-              className={`h-full rounded-full transition-all duration-700 ${
-                isLow
-                  ? "bg-red-500"
-                  : "bg-blue-500"
-              }`}
-              style={{
-                width: `${percentage}%`,
-              }}
-            />
-
-          </div>
-
-          <div className="flex justify-between mt-2 text-xs text-slate-400">
-            <span>0 cm</span>
-            <span>20 cm</span>
-          </div>
-
+      {title === "Water Level" && (
+        <div className="flex justify-between mt-1 text-[11px] text-slate-400">
+          <span>0 cm</span>
+          <span>20 cm</span>
         </div>
       )}
     </div>

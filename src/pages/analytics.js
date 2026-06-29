@@ -67,26 +67,35 @@ export default function AnalyticsPage() {
         ).toFixed(2)
       : "-";
 
-  const lowRisk =
-    history.filter(
-      h =>
-        h.risk_level ===
-        "LOW"
-    ).length;
-
-  const mediumRisk =
-    history.filter(
-      h =>
-        h.risk_level ===
-        "MEDIUM"
-    ).length;
-
-  const highRisk =
-    history.filter(
-      h =>
-        h.risk_level ===
-        "HIGH"
-    ).length;
+  const avgTurbidity =
+  history.length
+    ? (
+        history.reduce(
+          (a, b) =>
+            a +
+            Number(
+              b.turbidity
+            ),
+          0
+        ) /
+        history.length
+      ).toFixed(2)
+    : "-";
+  
+  const avgWaterLevel =
+  history.length
+    ? (
+        history.reduce(
+          (a, b) =>
+            a +
+            Number(
+              b.water_level ?? 0
+            ),
+          0
+        ) /
+        history.length
+      ).toFixed(1)
+    : "-";
 
   const sortedData =
   [...filteredData].sort(
@@ -109,8 +118,8 @@ export default function AnalyticsPage() {
     "DO",
     "pH",
     "Turbidity",
+    "Water Level",
     "Health Status",
-    "Risk Level",
   ];
 
   const rows = history.map((item) => [
@@ -119,8 +128,8 @@ export default function AnalyticsPage() {
     item.do,
     item.ph,
     item.turbidity,
+    item.water_level,
     item.health_status,
-    item.risk_level,
   ]);
 
   const csvContent = [
@@ -196,8 +205,8 @@ function exportPDF() {
         "DO",
         "pH",
         "Turbidity",
+        "Water Level",
         "Status",
-        "Risk",
       ],
     ],
     body: history.map((item) => [
@@ -206,8 +215,8 @@ function exportPDF() {
       item.do,
       item.ph,
       item.turbidity,
+      item.water_level,
       item.health_status,
-      item.risk_level,
     ]),
     styles: {
       fontSize: 9,
@@ -245,7 +254,7 @@ function exportPDF() {
 
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-5">
 
             <AnalyticsCard
               title="Average Temperature"
@@ -260,6 +269,16 @@ function exportPDF() {
             <AnalyticsCard
               title="Average pH"
               value={avgPH}
+            />
+
+            <AnalyticsCard
+              title="Average Turbidity"
+              value={`${avgTurbidity} NTU`}
+            />
+
+            <AnalyticsCard
+              title="Average Water Level"
+              value={`${avgWaterLevel} cm`}
             />
 
           </div>
@@ -447,6 +466,16 @@ function exportPDF() {
                               }
 
                             </div>
+
+                            <div>
+  <strong>Turbidity:</strong>{" "}
+  {item.turbidity}
+</div>
+
+<div>
+  <strong>Water:</strong>{" "}
+  {item.water_level} cm
+</div>
 
                           </td>
 
