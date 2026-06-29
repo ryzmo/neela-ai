@@ -16,6 +16,7 @@ function normalMorning() {
     do: 6.18,
     ph: 7.91,
     turbidity: 3.25,
+    water_level: 40,
     hour: 6
 
   });
@@ -30,6 +31,7 @@ function normalAfternoon() {
     do: 6.68,
     ph: 7.88,
     turbidity: 3.48,
+    water_level: 39,
     hour: 14
 
   });
@@ -44,6 +46,7 @@ function thermalStress() {
     do: 7.89,
     ph: 8.00,
     turbidity: 2.79,
+    water_level: 37,
     hour: 15
 
   });
@@ -58,6 +61,7 @@ function lowOxygen() {
     do: 4.50,
     ph: 7.90,
     turbidity: 3.20,
+    water_level: 36,
     hour: 5
 
   });
@@ -72,10 +76,22 @@ function combinedRisk() {
     do: 4.20,
     ph: 8.20,
     turbidity: 5.00,
+    water_level: 18,
     hour: 16
 
   });
 
+}
+
+function lowWaterLevel() {
+  setSensor({
+    temperature: 28,
+    do: 6.8,
+    ph: 7.3,
+    turbidity: 3,
+    water_level: 15,
+    hour: 14
+  });
 }
 
 function criticalCondition() {
@@ -86,6 +102,7 @@ function criticalCondition() {
     do: 2.00,
     ph: 5.80,
     turbidity: 30.00,
+    water_level: 10,
     hour: 14
 
   });
@@ -98,6 +115,7 @@ function criticalCondition() {
     do: 7,
     ph: 7.2,
     turbidity: 8,
+    water_level: 35,
     hour: 14
 
   });
@@ -160,7 +178,7 @@ function criticalCondition() {
             Sensor Configuration
           </h2>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-3 gap-6">
             {[
               {
                 label: "Temperature (°C)",
@@ -181,6 +199,11 @@ function criticalCondition() {
                 label: "Turbidity (NTU)",
                 value: sensor.turbidity,
                 key: "turbidity",
+              },
+              {
+                label: "Water Level (cm)",
+                value: sensor.water_level,
+                key: "water_level",
               },
               {
                 label: "Hour",
@@ -298,6 +321,22 @@ function criticalCondition() {
               "
             >
               Low Oxygen
+            </button>
+
+            <button
+              onClick={lowWaterLevel}
+              className="
+                bg-cyan-600
+                hover:bg-cyan-700
+                text-white
+                font-semibold
+                p-4
+                rounded-2xl
+                transition-all
+                hover:-translate-y-1
+              "
+            >
+              Low Water Level
             </button>
 
             <button

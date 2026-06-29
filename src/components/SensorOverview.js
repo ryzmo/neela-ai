@@ -7,6 +7,11 @@ export default function SensorOverview({ sensor }) {
       <SensorCard title="DO" value={sensor.do} unit="mg/L" />
       <SensorCard title="pH" value={sensor.ph} unit="pH" />
       <SensorCard title="Turbidity" value={sensor.turbidity} unit="NTU" />
+      <SensorCard
+        title="Water Level"
+        value={sensor.water_level}
+        unit="cm"
+      />
     </div>
   );
 }

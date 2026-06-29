@@ -14,6 +14,11 @@ const LINES = [
   { key: "do", label: "DO", color: "#16A34A" },
   { key: "ph", label: "pH", color: "#D97706" },
   { key: "turbidity", label: "Turbidity", color: "#9333EA" },
+  {
+    key: "water_level",
+    label: "Water Level",
+    color: "#2563EB",
+  },
 ];
 
 export default function SensorHistoryChart({ history }) {

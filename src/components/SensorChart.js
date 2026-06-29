@@ -33,6 +33,12 @@ const CHARTS = [
     color: "#9333EA",
     unit: "NTU",
   },
+  {
+    key: "water_level",
+    title: "Water Level History",
+    color: "#2563EB",
+    unit: "cm",
+  },
 ];
 
 export default function SensorCharts({
