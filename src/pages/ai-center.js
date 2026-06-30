@@ -46,9 +46,6 @@ export default function AICenter() {
         <div>
           {/* HEADER */}
           <div className="flex items-center gap-3 mb-8">
-            <div className="p-3 rounded-2xl bg-cyan-50 border border-cyan-100">
-              <Sparkles className="text-cyan-600" size={26} />
-            </div>
             <div>
               <h1 className="text-3xl md:text-4xl font-black text-slate-900">
                 AI Decision Center

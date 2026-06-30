@@ -11,7 +11,6 @@ export default function Simulator() {
 function normalMorning() {
   setSensor({
     temperature: 27.18,
-    do: 6.18,
     ph: 7.91,
     turbidity: 3.25,
     water_level: 20, // 100%
@@ -22,7 +21,6 @@ function normalMorning() {
 function normalAfternoon() {
   setSensor({
     temperature: 27.85,
-    do: 6.68,
     ph: 7.88,
     turbidity: 3.48,
     water_level: 19, // 95%
@@ -33,7 +31,6 @@ function normalAfternoon() {
 function thermalStress() {
   setSensor({
     temperature: 28.35,
-    do: 7.89,
     ph: 8.00,
     turbidity: 2.79,
     water_level: 18, // 90%
@@ -41,21 +38,9 @@ function thermalStress() {
   });
 }
 
-function lowOxygen() {
-  setSensor({
-    temperature: 28.00,
-    do: 4.50,
-    ph: 7.90,
-    turbidity: 3.20,
-    water_level: 18, // 90%
-    hour: 5,
-  });
-}
-
 function lowWaterLevel() {
   setSensor({
     temperature: 28,
-    do: 6.8,
     ph: 7.3,
     turbidity: 3,
     water_level: 5, // 25%
@@ -66,7 +51,6 @@ function lowWaterLevel() {
 function combinedRisk() {
   setSensor({
     temperature: 30.50,
-    do: 4.20,
     ph: 8.20,
     turbidity: 5.00,
     water_level: 4, // 20%
@@ -77,7 +61,6 @@ function combinedRisk() {
 function criticalCondition() {
   setSensor({
     temperature: 33.00,
-    do: 2.00,
     ph: 5.80,
     turbidity: 30.00,
     water_level: 2, // 10%
@@ -88,10 +71,9 @@ function criticalCondition() {
   const [sensor, setSensor] = useState({
 
     temperature: 28,
-    do: 7,
     ph: 7.2,
     turbidity: 8,
-    water_level: 20,
+    water_level: 17,
     hour: 14
 
   });
@@ -134,9 +116,6 @@ function criticalCondition() {
       <main className="flex-1 p-4 md:p-10 ">
         {/* Header */}
         <div className="mb-8">
-          <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 rounded-full px-4 py-1 text-sm font-semibold mb-4">
-            🌊 Smart Aquaculture Platform
-          </div>
 
           <h1 className="text-4xl font-black text-slate-800">
             IoT Device Simulator
@@ -160,11 +139,6 @@ function criticalCondition() {
                 label: "Temperature (°C)",
                 value: sensor.temperature,
                 key: "temperature",
-              },
-              {
-                label: "Dissolved Oxygen (mg/L)",
-                value: sensor.do,
-                key: "do",
               },
               {
                 label: "pH Level",
@@ -281,22 +255,6 @@ function criticalCondition() {
               "
             >
               Normal Afternoon
-            </button>
-
-            <button
-              onClick={lowOxygen}
-              className="
-                bg-yellow-500
-                hover:bg-yellow-600
-                text-white
-                font-semibold
-                p-4
-                rounded-2xl
-                transition-all
-                hover:-translate-y-1
-              "
-            >
-              Low Oxygen
             </button>
 
             <button

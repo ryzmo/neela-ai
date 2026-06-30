@@ -85,19 +85,6 @@ export default function HelpPage() {
 
           <div className="flex items-center gap-4 mb-4">
 
-            <div
-              className="
-                p-4
-                rounded-2xl
-                bg-cyan-100
-              "
-            >
-              <CircleHelp
-                className="text-cyan-700"
-                size={36}
-              />
-            </div>
-
             <div>
               <h1 className="text-4xl font-bold">
 

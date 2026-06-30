@@ -247,62 +247,6 @@ async function loadSettings() {
 
         </div>
 
-        {/* DEVICE SETTINGS */}
-
-        <div className="bg-white rounded-2xl shadow p-8 mb-8">
-
-          <h2 className="text-2xl font-bold mb-6">
-
-            IoT Device Configuration
-
-          </h2>
-
-          <div className="space-y-4">
-
-            <div>
-
-              <label className="block mb-2">
-
-                Device ID
-
-              </label>
-
-              <input
-                defaultValue="AQA-001"
-                className="
-                  border
-                  rounded-xl
-                  p-3
-                  w-full
-                "
-              />
-
-            </div>
-
-            <div>
-
-              <label className="block mb-2">
-
-                MQTT Broker
-
-              </label>
-
-              <input
-                defaultValue="mqtt://localhost"
-                className="
-                  border
-                  rounded-xl
-                  p-3
-                  w-full
-                "
-              />
-
-            </div>
-
-          </div>
-
-        </div>
-
         {/* SAVE */}
 
         <button
