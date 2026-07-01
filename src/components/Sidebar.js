@@ -17,13 +17,21 @@ import {
   Menu,
   X,
   Fish,
-  CircleHelp
+  CircleHelp,
+  LogOut,
+  MessageSquare
 } from "lucide-react";
 
 export default function Sidebar() {
   const [open, setOpen] = useState(false);
 
   const router = useRouter();
+
+  const handleLogout = () => {
+    localStorage.removeItem("neela_logged_in");
+    localStorage.removeItem("neela_operator_email");
+    router.push("/");
+  };
 
   const menuItems = [
     {
@@ -45,6 +53,11 @@ export default function Sidebar() {
       icon: BrainCircuit,
       label: "AI Center",
       href: "/ai-center",
+    },
+    {
+      icon: MessageSquare,
+      label: "Neela AI Chat",
+      href: "/chat",
     },
     {
       icon: TriangleAlert,
@@ -310,6 +323,37 @@ export default function Sidebar() {
               Pond Monitoring Running
             </p>
           </div>
+
+          {/* Sign Out Button */}
+          <button
+            onClick={handleLogout}
+            className="
+              mt-4
+              w-full
+              flex
+              items-center
+              justify-center
+              gap-3
+              px-4
+              py-3.5
+              rounded-2xl
+              bg-red-500/10
+              hover:bg-red-500/20
+              text-red-100
+              border border-red-500/20
+              hover:border-red-500/40
+              transition-all
+              duration-200
+              font-bold
+              text-xs
+              tracking-wider
+              uppercase
+              cursor-pointer
+            "
+          >
+            <LogOut size={16} className="text-red-300 animate-pulse" />
+            <span>Sign Out</span>
+          </button>
         </div>
       </aside>
     </>

@@ -1,51 +1,124 @@
 @import "tailwindcss";
 
+@theme {
+  --color-bg-dark: #f0f7ff;
+  --color-text-cream: #0f172a;
+  --color-accent-blue: #1a6fc4;
+  --color-accent-sky: #1e9bd4;
+  --color-accent-cyan: #0284c7;
+  --color-accent-emerald: #059669;
+  
+  --font-serif: "Plus Jakarta Sans", sans-serif;
+  --font-sans: "Plus Jakarta Sans", sans-serif;
+  --font-display: "Plus Jakarta Sans", sans-serif;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #f0f7ff;
+  --foreground: #0f172a;
 }
 
 body {
-  background: var(--background);
+  background: linear-gradient(180deg, #f0f7ff 0%, #e0f2fe 50%, #ccf5ff 100%);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
+/* Custom Utilities for Text Strokes (Outlined text for light bg) */
+.text-outline-white {
+  color: transparent !important;
+  -webkit-text-stroke: 1.5px rgba(26, 111, 196, 0.7);
+}
 
-@keyframes floatBubble {
+.text-outline-blue-gray {
+  color: transparent !important;
+  -webkit-text-stroke: 1.5px rgba(30, 155, 212, 0.7);
+}
+
+.text-outline-cyan {
+  color: transparent !important;
+  -webkit-text-stroke: 1.5px rgba(2, 132, 199, 0.8);
+}
+
+.text-outline-thick {
+  color: transparent !important;
+  -webkit-text-stroke: 3px rgba(26, 111, 196, 0.8);
+}
+
+@media (max-width: 768px) {
+  .text-outline-thick {
+    -webkit-text-stroke: 2px rgba(26, 111, 196, 0.8);
+  }
+}
+
+/* Lenis Custom Smooth Scrolling Configuration */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overflow: clip;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* Keyframes for micro-animations */
+@keyframes floatSlow {
   0%, 100% {
-    transform: translateY(0px);
+    transform: translateY(0) rotate(0deg);
   }
-
   50% {
-    transform: translateY(-20px);
+    transform: translateY(-15px) rotate(3deg);
   }
 }
 
-@keyframes swim {
-  0% {
-    transform: translateX(-30px);
+@keyframes floatReverse {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
   }
-
   50% {
-    transform: translateX(30px) translateY(-10px);
+    transform: translateY(12px) rotate(-4deg);
   }
+}
 
-  100% {
-    transform: translateX(-30px);
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
   }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-float-slow {
+  animation: floatSlow 8s ease-in-out infinite;
+}
+
+.animate-float-reverse {
+  animation: floatReverse 9s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spinSlow 25s linear infinite;
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

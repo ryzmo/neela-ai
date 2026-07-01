@@ -23,22 +23,7 @@ export default function useAquaAgent() {
   const [serverConnected, setServerConnected] = useState(false);
   const [lastSync, setLastSync] = useState("-");
 
-  useEffect(() => {
 
-    loadCache();
-
-    runCycle();
-
-    const interval =
-      setInterval(
-        runCycle,
-        5000
-      );
-
-    return () =>
-      clearInterval(interval);
-
-  }, []);
 
   function loadCache() {
 
@@ -216,6 +201,25 @@ export default function useAquaAgent() {
     }
 
   }
+
+  useEffect(() => {
+
+    setTimeout(() => {
+      loadCache();
+      runCycle();
+    }, 0);
+
+    const interval =
+      setInterval(
+        runCycle,
+        5000
+      );
+
+    return () =>
+      clearInterval(interval);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return {
 

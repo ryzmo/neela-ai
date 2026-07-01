@@ -39,16 +39,18 @@ export default function Home() {
           />
         }
 
-        <SensorOverview
-          sensor={data.sensor_data}
+        <AIDecisionSummary
+          data={data}
         />
+
+        <div className="mt-8">
+          <SensorOverview
+            sensor={data.sensor_data}
+          />
+        </div>
 
         <SensorHistoryChart
           history={history}
-        />
-
-        <AIDecisionSummary
-          data={data}
         />
 
       </main>
