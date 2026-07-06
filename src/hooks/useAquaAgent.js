@@ -22,6 +22,7 @@ export default function useAquaAgent() {
   const [history, setHistory] = useState([]);
   const [serverConnected, setServerConnected] = useState(false);
   const [lastSync, setLastSync] = useState("-");
+  const [refreshInterval, setRefreshInterval] = useState(5000);
 
 
 
@@ -76,6 +77,8 @@ export default function useAquaAgent() {
         await checkServer();
 
       if (!online) return;
+
+      await fetchSettings();
 
       await fetchLatest();
 
@@ -202,31 +205,57 @@ export default function useAquaAgent() {
 
   }
 
-  useEffect(() => {
+  async function fetchSettings() {
 
-    setTimeout(() => {
-      loadCache();
-      runCycle();
-    }, 0);
+  try {
 
-    const interval =
-      setInterval(
-        runCycle,
-        5000
+    const response =
+      await API.get(
+        "/settings"
       );
 
-    return () =>
-      clearInterval(interval);
+    setRefreshInterval(
+      response.data.refreshInterval * 1000
+    );
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }
+
+  catch (err) {
+
+    console.log(
+      "Settings Error:",
+      err
+    );
+
+  }
+
+}
+
+  useEffect(() => {
+
+  loadCache();
+
+  runCycle();
+
+  const interval =
+    setInterval(
+      runCycle,
+      refreshInterval
+    );
+
+  return () =>
+    clearInterval(interval);
+
+// eslint-disable-next-line react-hooks/exhaustive-deps
+}, [refreshInterval]);
 
   return {
 
     data,
     history,
     serverConnected,
-    lastSync
+    lastSync,
+    refreshInterval
 
   };
 

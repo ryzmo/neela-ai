@@ -24,6 +24,7 @@ export default function SettingsPage() {
     tempMax: 30,
     turbidityMax: 15,
     aiEnabled: true,
+    iotEnabled: true,
     refreshInterval: 5
   });
 
@@ -193,33 +194,43 @@ export default function SettingsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               
-              {/* iOS Switch Selector */}
-              <div className="p-5 rounded-2xl bg-[#f8fafc] border border-slate-150 flex items-center justify-between shadow-sm">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-blue-50 border border-blue-100 text-[#1a6fc4] flex-shrink-0">
-                    <Cpu className="w-6 h-6 animate-pulse" />
-                  </div>
-                  <div>
-                    <h3 className="font-black text-xs uppercase tracking-wide text-slate-800">
-                      AI Decision Engine
-                    </h3>
-                    <p className="text-[10px] font-medium text-slate-500 leading-relaxed mt-0.5">
-                      Enable Random Forest classification + LLM reasoning models.
-                    </p>
-                  </div>
-                </div>
+              {/* IoT Receiver */}
+<div className="p-5 rounded-2xl bg-[#f8fafc] border border-slate-150 flex items-center justify-between shadow-sm">
 
-                <button
-                  onClick={() => updateSetting("aiEnabled", !settings.aiEnabled)}
-                  className={`w-12 h-6 rounded-full transition-all duration-300 relative flex items-center cursor-pointer ${
-                    settings.aiEnabled ? "bg-emerald-500 shadow-lg shadow-emerald-500/20" : "bg-slate-300"
-                  }`}
-                >
-                  <span className={`absolute bg-white w-4.5 h-4.5 rounded-full transition-all duration-300 shadow ${
-                    settings.aiEnabled ? "left-6.5" : "left-1"
-                  }`} />
-                </button>
-              </div>
+    <div className="flex items-center gap-4">
+        <div className="p-3 rounded-xl bg-blue-50 border border-blue-100 text-[#1a6fc4] flex-shrink-0">
+            <Activity className="w-6 h-6 animate-pulse" />
+        </div>
+
+        <div>
+            <h3 className="font-black text-xs uppercase tracking-wide text-slate-800">
+                IoT Data Receiver
+            </h3>
+
+            <p className="text-[10px] font-medium text-slate-500 leading-relaxed mt-0.5">
+                Enable or disable incoming telemetry from ESP32 devices.
+            </p>
+        </div>
+    </div>
+
+    <button
+        onClick={() => updateSetting("iotEnabled", !settings.iotEnabled)}
+        className={`w-12 h-6 rounded-full transition-all duration-300 relative flex items-center cursor-pointer ${
+            settings.iotEnabled
+                ? "bg-emerald-500 shadow-lg shadow-emerald-500/20"
+                : "bg-slate-300"
+        }`}
+    >
+        <span
+            className={`absolute bg-white w-4.5 h-4.5 rounded-full transition-all duration-300 shadow ${
+                settings.iotEnabled
+                    ? "left-6.5"
+                    : "left-1"
+            }`}
+        />
+    </button>
+
+</div>
 
               {/* Refresh Interval Input */}
               <div className="p-5 rounded-2xl bg-[#f8fafc] border border-slate-150 shadow-sm flex flex-col justify-between">

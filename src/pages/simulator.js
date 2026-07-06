@@ -22,7 +22,8 @@ export default function Simulator() {
     ph: 7.2,
     turbidity: 8,
     water_level: 17,
-    hour: 14
+    hour: 14,
+    source: "simulator"
   });
 
   const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
@@ -308,7 +309,10 @@ export default function Simulator() {
                   {SCENARIOS.map((sc, index) => (
                     <button
                       key={index}
-                      onClick={() => setSensor(sc.values)}
+                      onClick={() => setSensor({
+                          ...sc.values,
+                          source: "simulator"
+                      })}
                       className={`w-full text-left rounded-2xl border p-4 transition-all duration-300 flex flex-col justify-between hover:scale-[1.01] hover:shadow-md cursor-pointer ${sc.theme.border}`}
                     >
                       <div className="flex items-start justify-between gap-2 mb-2 w-full">

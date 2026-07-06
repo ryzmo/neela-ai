@@ -1,112 +1,23 @@
-import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 import Sidebar from "../components/Sidebar";
 import useAquaAgent from "../hooks/useAquaAgent";
 import {
   BrainCircuit,
   Sparkles,
-  Send,
   Cpu,
   Thermometer,
   Droplets,
   FlaskConical,
   Waves,
   Activity,
-  Bot,
-  User
+  MessageSquare,
+  Lock,
+  LayoutDashboard,
+  ArrowRight
 } from "lucide-react";
 
 export default function ChatPage() {
   const { data } = useAquaAgent();
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const messagesEndRef = useRef(null);
-
-  // Initialize welcome message when telemetry is loaded
-  useEffect(() => {
-    if (data && data.sensor_data && messages.length === 0) {
-      const temp = data.sensor_data.temperature || "-";
-      const do_val = data.sensor_data.do || "-";
-      const ph = data.sensor_data.ph || "-";
-      const health = data.health_status || "Stable";
-
-      setTimeout(() => {
-        setMessages([
-          {
-            id: "welcome",
-            sender: "ai",
-            content: `Halo! Saya adalah **NEELA AI**, asisten keputusan tambak Anda.
-          
-Saya telah menganalisis kondisi kolam Anda saat ini:
-- **Status Kesehatan**: ${health}
-- **Suhu**: ${temp}°C
-- **Kadar Oksigen (DO)**: ${do_val} mg/L
-- **Tingkat pH**: ${ph}
-
-Silakan ajukan pertanyaan atau konsultasikan langkah mitigasi yang optimal untuk kualitas air kolam ikan Anda hari ini.`,
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-          }
-        ]);
-      }, 0);
-    }
-  }, [data, messages.length]);
-
-  // Scroll to bottom on new messages
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, loading]);
-
-  const handleSend = async (e) => {
-    e.preventDefault();
-    if (!input.trim() || loading) return;
-
-    const userMessage = {
-      id: Date.now().toString(),
-      sender: "user",
-      content: input,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
-    setInput("");
-    setLoading(true);
-
-    try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: [...messages, userMessage],
-          context: data
-        })
-      });
-
-      const payload = await res.json();
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: (Date.now() + 1).toString(),
-          sender: "ai",
-          content: payload.reply || "Maaf, terjadi kesalahan koneksi.",
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        }
-      ]);
-    } catch (err) {
-      console.error(err);
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: (Date.now() + 1).toString(),
-          sender: "ai",
-          content: "Maaf, sistem tidak dapat memproses pertanyaan Anda saat ini.",
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        }
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const getStatusColor = (status) => {
     if (!status) return "text-slate-450";
@@ -119,147 +30,134 @@ Silakan ajukan pertanyaan atau konsultasikan langkah mitigasi yang optimal untuk
   };
 
   return (
-    <div className="md:flex min-h-screen bg-slate-50">
-      <Sidebar />
+    <div className="min-h-screen bg-slate-50 relative">
+      <div className="md:flex">
+        <Sidebar />
 
-      <main className="flex-1 flex flex-col h-screen overflow-hidden bg-slate-50/50">
-        
-        {/* Chat Header */}
-        <header className="bg-white border-b border-slate-100 p-6 shadow-sm flex-shrink-0">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-xl bg-blue-50">
-                  <BrainCircuit className="w-6 h-6 text-[#1a6fc4] animate-pulse" />
-                </div>
-                <div>
-                  <h1 className="text-xl font-black text-slate-900 tracking-wide uppercase flex items-center gap-1.5">
-                    <span>Neela AI Chat Assistant</span>
-                    <Sparkles className="w-4 h-4 text-emerald-500 animate-bounce" />
-                  </h1>
-                  <p className="text-[10px] font-bold text-slate-450 uppercase tracking-widest">Decision Support & Explainability Agent</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Context Status pill */}
-            <div className="flex items-center gap-2.5">
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pond Health:</span>
-              <div className={`px-3 py-1 rounded-full border text-[10px] font-black uppercase tracking-wider ${getStatusColor(data.health_status)}`}>
-                {data.health_status && data.health_status !== "-" ? data.health_status : "STABLE"}
-              </div>
-            </div>
-          </div>
-
-          {/* Real-time Telemetry Context Bar */}
-          <div className="mt-4 p-3 rounded-2xl bg-[#f8fafc] border border-slate-100 flex items-center justify-between flex-wrap gap-4 text-[10px] font-bold text-slate-500 tracking-wide uppercase">
-            <div className="flex items-center gap-1.5">
-              <Activity className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
-              <span className="text-slate-400">Telemetry Context Loaded:</span>
-            </div>
-            <div className="flex items-center gap-4 flex-wrap">
-              <div className="flex items-center gap-1">
-                <Thermometer className="w-3.5 h-3.5 text-amber-500" />
-                <span>Suhu: {data.sensor_data?.temperature}°C</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Droplets className="w-3.5 h-3.5 text-cyan-500" />
-                <span>DO: {data.sensor_data?.do} mg/L</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <FlaskConical className="w-3.5 h-3.5 text-teal-500" />
-                <span>pH: {data.sensor_data?.ph}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Waves className="w-3.5 h-3.5 text-blue-500" />
-                <span>Kekeruhan: {data.sensor_data?.turbidity} NTU</span>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Message Thread */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
-          <div className="max-w-4xl mx-auto space-y-6">
-            {messages.map((m) => {
-              const isAI = m.sender === "ai";
-              return (
-                <div 
-                  key={m.id} 
-                  className={`flex gap-3.5 ${isAI ? "justify-start" : "justify-end"}`}
-                >
-                  {isAI && (
-                    <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-[#1a6fc4] to-[#1e9bd4] text-white flex items-center justify-center flex-shrink-0 shadow-md">
-                      <Bot className="w-5 h-5" />
-                    </div>
-                  )}
-
-                  <div className={`max-w-[75%] rounded-3xl p-5 shadow-sm border relative ${
-                    isAI 
-                      ? "bg-white border-slate-100 text-slate-800 rounded-tl-none" 
-                      : "bg-[#1a6fc4] border-[#1a6fc4]/20 text-white rounded-tr-none shadow-blue-500/5"
-                  }`}>
-                    {/* Render text content */}
-                    <div className="text-[13.5px] leading-relaxed whitespace-pre-wrap font-medium">
-                      {m.content}
-                    </div>
-                    
-                    <span className={`text-[9px] font-bold block text-right mt-2 ${
-                      isAI ? "text-slate-400" : "text-white/60"
-                    }`}>
-                      {m.timestamp}
-                    </span>
+        <main className="flex-1 flex flex-col min-h-screen bg-slate-50/50">
+          
+          {/* Chat Header */}
+          <header className="bg-white border-b border-slate-100 p-6 shadow-sm flex-shrink-0">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded-xl bg-blue-50">
+                    <BrainCircuit className="w-6 h-6 text-[#1a6fc4] animate-pulse" />
                   </div>
-
-                  {!isAI && (
-                    <div className="w-9 h-9 rounded-2xl bg-slate-200 text-slate-600 flex items-center justify-center flex-shrink-0">
-                      <User className="w-5 h-5" />
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-
-            {/* Typing Indicator */}
-            {loading && (
-              <div className="flex gap-3.5 justify-start">
-                <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-[#1a6fc4] to-[#1e9bd4] text-white flex items-center justify-center flex-shrink-0 shadow-md">
-                  <Bot className="w-5 h-5" />
-                </div>
-                <div className="bg-white border border-slate-100 rounded-3xl rounded-tl-none p-5 shadow-sm flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-slate-350 animate-bounce" style={{ animationDelay: "0ms" }} />
-                  <span className="w-2 h-2 rounded-full bg-slate-350 animate-bounce" style={{ animationDelay: "150ms" }} />
-                  <span className="w-2 h-2 rounded-full bg-slate-350 animate-bounce" style={{ animationDelay: "300ms" }} />
+                  <div>
+                    <h1 className="text-xl font-black text-slate-900 tracking-wide uppercase flex items-center gap-1.5">
+                      <span>Neela AI Chat Assistant</span>
+                      <Sparkles className="w-4 h-4 text-emerald-500 animate-bounce" />
+                    </h1>
+                    <p className="text-[10px] font-bold text-slate-450 uppercase tracking-widest">Decision Support & Explainability Agent</p>
+                  </div>
                 </div>
               </div>
-            )}
 
-            <div ref={messagesEndRef} />
+              {/* Context Status pill */}
+              <div className="flex items-center gap-2.5">
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pond Health:</span>
+                <div className={`px-3 py-1 rounded-full border text-[10px] font-black uppercase tracking-wider ${getStatusColor(data.health_status)}`}>
+                  {data.health_status && data.health_status !== "-" ? data.health_status : "STABLE"}
+                </div>
+              </div>
+            </div>
+
+            {/* Real-time Telemetry Context Bar */}
+            <div className="mt-4 p-3 rounded-2xl bg-[#f8fafc] border border-slate-100 flex items-center justify-between flex-wrap gap-4 text-[10px] font-bold text-slate-500 tracking-wide uppercase">
+              <div className="flex items-center gap-1.5">
+                <Activity className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
+                <span className="text-slate-400">Telemetry Context Loaded:</span>
+              </div>
+              <div className="flex items-center gap-4 flex-wrap">
+                <div className="flex items-center gap-1">
+                  <Thermometer className="w-3.5 h-3.5 text-amber-500" />
+                  <span>Suhu: {data.sensor_data?.temperature}°C</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Droplets className="w-3.5 h-3.5 text-cyan-500" />
+                  <span>DO: {data.sensor_data?.do} mg/L</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <FlaskConical className="w-3.5 h-3.5 text-teal-500" />
+                  <span>pH: {data.sensor_data?.ph}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Waves className="w-3.5 h-3.5 text-blue-500" />
+                  <span>Kekeruhan: {data.sensor_data?.turbidity} NTU</span>
+                </div>
+              </div>
+            </div>
+          </header>
+
+          {/* Feature Not Available Body */}
+          <div className="flex-1 p-6 py-12 md:py-16 flex flex-col items-center justify-center bg-gradient-to-b from-slate-50/50 via-blue-50/20 to-sky-50/30">
+            <div className="max-w-2xl w-full text-center space-y-8 p-8 md:p-10 rounded-3xl bg-white border border-slate-100 shadow-2xl relative overflow-hidden">
+              {/* Ambient Background Glow */}
+              <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-blue-400/10 blur-3xl pointer-events-none" />
+              <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-cyan-400/10 blur-3xl pointer-events-none" />
+
+              {/* Glowing Icon Container */}
+              <div className="relative mx-auto w-24 h-24 flex items-center justify-center">
+                <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#1a6fc4] to-[#1e9bd4] opacity-20 blur-lg animate-pulse" />
+                <div className="relative w-20 h-20 rounded-3xl bg-gradient-to-br from-[#1a6fc4]/10 to-[#1e9bd4]/10 border border-blue-200/50 flex items-center justify-center text-[#1a6fc4]">
+                  <MessageSquare className="w-10 h-10" />
+                  <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-xl bg-amber-500 border-2 border-white text-white flex items-center justify-center shadow-md">
+                    <Lock className="w-3.5 h-3.5" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Content Text */}
+              <div className="space-y-4 relative z-10">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-100 text-amber-800 text-[10px] font-black uppercase tracking-wider">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping" />
+                  <span>Fokus Pengembangan MVP</span>
+                </div>
+                <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight leading-none uppercase">
+                  Fitur Belum Tersedia
+                </h2>
+                <p className="text-slate-500 font-medium text-sm md:text-base max-w-lg mx-auto leading-relaxed">
+                  Asisten Neela AI Chat saat ini ditutup sementara. Kami sedang memfokuskan pengembangan pada modul utama (MVP) untuk memastikan kestabilan pemantauan tambak dan otomatisasi kontrol perangkat.
+                </p>
+              </div>
+
+              {/* MVP Core Features List */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg mx-auto relative z-10 text-left">
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-start gap-3 hover:border-blue-100 transition-all hover:bg-blue-50/10">
+                  <div className="p-2 rounded-xl bg-blue-50 text-[#1a6fc4]">
+                    <Activity className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-xs text-slate-800 uppercase tracking-wide">Monitoring Telemetri</h3>
+                    <p className="text-[11px] text-slate-500 font-medium mt-0.5">Pemantauan kualitas air kolam secara real-time melalui dashboard.</p>
+                  </div>
+                </div>
+                
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-start gap-3 hover:border-blue-100 transition-all hover:bg-blue-50/10">
+                  <div className="p-2 rounded-xl bg-cyan-50 text-[#1e9bd4]">
+                    <Cpu className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-xs text-slate-800 uppercase tracking-wide">Otomasi Kontrol</h3>
+                    <p className="text-[11px] text-slate-500 font-medium mt-0.5">Kontrol aerator, auto-feeder, dan sirkulasi air kolam.</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Back Button */}
+              <div className="relative z-10 pt-2">
+                <Link href="/dashboard" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-[#1a6fc4] to-[#1e9bd4] text-white hover:brightness-110 shadow-lg shadow-blue-500/20 font-bold text-xs uppercase tracking-wider transition-all duration-200 hover:-translate-y-0.5 cursor-pointer">
+                  <LayoutDashboard className="w-4 h-4" />
+                  <span>Kembali ke Dashboard</span>
+                  <ArrowRight className="w-4 h-4 ml-1" />
+                </Link>
+              </div>
+            </div>
           </div>
-        </div>
 
-        {/* Input Panel */}
-        <footer className="bg-white border-t border-slate-100 p-6 flex-shrink-0">
-          <form onSubmit={handleSend} className="max-w-4xl mx-auto flex items-center gap-3">
-            <input
-              type="text"
-              placeholder="Tanyakan rekomendasi, status pH kolam, atau kondisi aerator..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              disabled={loading}
-              className="flex-1 bg-[#f8fafc] border border-slate-250 rounded-2xl py-4 px-6 text-sm font-semibold placeholder-slate-400 focus:outline-none focus:border-[#1a6fc4] focus:bg-white focus:ring-4 focus:ring-blue-500/5 transition-all text-slate-800"
-            />
-            <button
-              type="submit"
-              disabled={!input.trim() || loading}
-              className="p-4 rounded-2xl bg-gradient-to-r from-[#1a6fc4] to-[#1e9bd4] text-white hover:brightness-110 shadow-lg shadow-blue-500/10 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
-            >
-              <Send className="w-5 h-5" />
-            </button>
-          </form>
-        </footer>
-
-      </main>
+        </main>
+      </div>
     </div>
   );
 }

@@ -65,9 +65,40 @@ export default function ActuatorPage() {
     }
   }
 
+  async function loadFeedingSchedule() {
+
+  try {
+
+    const response =
+      await fetch(
+        "http://localhost:8000/feeding-schedule"
+      );
+
+    const data =
+      await response.json();
+
+    setFeedingSchedule({
+      interval: data.interval,
+      feedingTime: data.feedingTime
+    });
+
+  }
+
+  catch (err) {
+
+    console.log(
+      "Schedule Error:",
+      err
+    );
+
+  }
+
+}
+
   useEffect(() => {
     setTimeout(() => {
       loadActuator();
+      loadFeedingSchedule();
     }, 0);
   }, []);
 
@@ -152,10 +183,44 @@ export default function ActuatorPage() {
     }
   }
 
-  const handleSaveSchedule = (e) => {
-    e.preventDefault();
-    showToast("Jadwal pemberian pakan otomatis berhasil disimpan ke memori EEPROM!", "success");
-  };
+  const handleSaveSchedule = async (e) => {
+
+  e.preventDefault();
+
+  try {
+
+    await fetch(
+      "http://localhost:8000/feeding-schedule",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          feedingTime: feedingSchedule.feedingTime,
+          interval: feedingSchedule.interval,
+          enabled: true
+        })
+      }
+    );
+
+    showToast(
+      "Feeding schedule saved successfully!",
+      "success"
+    );
+
+  }
+
+  catch {
+
+    showToast(
+      "Failed to save feeding schedule.",
+      "warning"
+    );
+
+  }
+
+};
 
   const actuatorList = [
     { key: "aerator", label: "Pond Aerator", description: "Pumps oxygen into water.", icon: Wind, iconColor: "text-blue-600 bg-blue-50 border-blue-100" },
