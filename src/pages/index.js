@@ -725,7 +725,7 @@ export default function LandingPage() {
 
             <p className="text-slate-655 text-sm md:text-base max-w-xl leading-relaxed mb-8">
               NEELA AI is an intelligent agent architecture combining machine learning
-              <strong> Random Forest (99.88% accuracy)</strong> and <strong>Large Language Models (LLM)</strong>
+              <strong> Random Forest</strong> and <strong>Large Language Models (LLM)</strong>
               to monitor water parameters, predict risk status, and actuate pond control (aerator, water pump, pH correction) automatically.
             </p>
 

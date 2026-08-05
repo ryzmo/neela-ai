@@ -57,10 +57,10 @@ export default function Simulator() {
       unit: "°C",
       icon: Thermometer,
       iconColor: "text-amber-600 bg-amber-50 border-amber-100",
-      min: 20,
+      min: 15,
       max: 40,
       step: 0.01,
-      description: "Optimal: 25-30°C. Temperature stress reduces oxygen solubility."
+      description: "Optimal: 25.0–32.0°C (El-Sayed 1999, FAO 2023). Heat stress (>32°C) reduces oxygen solubility."
     },
     {
       key: "ph",
@@ -71,7 +71,7 @@ export default function Simulator() {
       min: 4,
       max: 10,
       step: 0.01,
-      description: "Optimal: 6.5-8.0. Extremes degrade mucus coats and cause stress."
+      description: "Optimal: 7.0–8.0 (Lemos 2018, Mengistu 2020). Extremes (<7.0 or >8.0) impair tilapia growth & immunity."
     },
     {
       key: "turbidity",
@@ -80,9 +80,9 @@ export default function Simulator() {
       icon: Waves,
       iconColor: "text-blue-600 bg-blue-50 border-blue-100",
       min: 0,
-      max: 50,
+      max: 60,
       step: 0.1,
-      description: "Optimal: <15 NTU. Organic loads clog tilapia gills."
+      description: "Optimal: ≤25.0 NTU. High suspended solids clog tilapia gills and cause respiratory distress."
     },
     {
       key: "water_level",
@@ -93,7 +93,7 @@ export default function Simulator() {
       min: 0,
       max: 25,
       step: 1,
-      description: "Optimal: 20 cm height. Critical limits trigger water relays."
+      description: "Optimal: 15–20 cm. Severe water drops (<5 cm) trigger automatic filling & circulation relays."
     },
     {
       key: "hour",
@@ -104,14 +104,14 @@ export default function Simulator() {
       min: 0,
       max: 23,
       step: 1,
-      description: "Diurnal cycles dictate biological oxygen consumption rates."
+      description: "Diurnal cycles dictate photosynthetic oxygen production and metabolic rates."
     }
   ];
 
   const SCENARIOS = [
     {
       title: "Normal Morning",
-      description: "Typical stable parameters in early morning hours. Water conditions are clean.",
+      description: "Typical stable parameters in early morning hours. Clean water with optimal temperature and pH.",
       values: { temperature: 27.18, ph: 7.91, turbidity: 3.25, water_level: 20, hour: 6 },
       theme: {
         border: "border-emerald-200 hover:border-emerald-400 bg-emerald-50/20",
@@ -121,8 +121,8 @@ export default function Simulator() {
     },
     {
       title: "Low Water Level",
-      description: "Simulates dry seasons and high evaporation. Increased risk of thermal stress.",
-      values: { temperature: 28, ph: 7.3, turbidity: 3, water_level: 5, hour: 14 },
+      description: "Simulates dry season evaporation. Severe water level drop with elevated pond temperature.",
+      values: { temperature: 28.5, ph: 7.45, turbidity: 4.5, water_level: 5, hour: 14 },
       theme: {
         border: "border-cyan-200 hover:border-cyan-400 bg-cyan-50/20",
         badge: "bg-cyan-100 text-cyan-800 border-cyan-200/50",
@@ -131,8 +131,8 @@ export default function Simulator() {
     },
     {
       title: "Thermal Stress",
-      description: "Peak solar radiation raising pond temperature above the critical 30°C limit.",
-      values: { temperature: 28.35, ph: 8.00, turbidity: 2.79, water_level: 18, hour: 15 },
+      description: "Peak solar radiation raising water temperature above the critical 32°C optimal threshold.",
+      values: { temperature: 34.50, ph: 8.35, turbidity: 14.2, water_level: 16, hour: 15 },
       theme: {
         border: "border-orange-200 hover:border-orange-400 bg-orange-50/20",
         badge: "bg-orange-100 text-orange-850 border-orange-200/50",
@@ -141,7 +141,7 @@ export default function Simulator() {
     },
     {
       title: "Critical Emergency",
-      description: "Acidic runoff, severe water level drop, and high solids contamination.",
+      description: "Acidic runoff, severe water level drop, thermal stress, and heavy solids contamination.",
       values: { temperature: 33.00, ph: 5.80, turbidity: 30.00, water_level: 2, hour: 14 },
       theme: {
         border: "border-rose-200 hover:border-rose-450 bg-rose-50/20",
@@ -334,7 +334,7 @@ export default function Simulator() {
                           T: {sc.values.temperature}°C
                         </span>
                         <span>pH: {sc.values.ph}</span>
-                        <span>DO: {sc.values.turbidity} NTU</span>
+                        <span>TURB: {sc.values.turbidity} NTU</span>
                         <span>Level: {sc.values.water_level}cm</span>
                       </div>
                     </button>

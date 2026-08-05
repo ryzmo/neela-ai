@@ -79,9 +79,7 @@ export default function AIDecisionSummary({ data }) {
                 <Cpu className="w-4 h-4 text-slate-500 animate-pulse" />
                 <span className="text-[10px] font-bold text-slate-500 tracking-widest uppercase">RF Classifier Engine</span>
               </div>
-              <div className="px-2.5 py-0.5 rounded-full bg-blue-100 border border-blue-200/50 text-[9px] font-black text-[#1a6fc4] tracking-wider uppercase">
-                99.88% Accuracy
-              </div>
+
             </div>
 
             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Pond Status</span>

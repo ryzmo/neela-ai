@@ -96,11 +96,20 @@ export default function ActuatorPage() {
 }
 
   useEffect(() => {
-    setTimeout(() => {
-      loadActuator();
-      loadFeedingSchedule();
-    }, 0);
-  }, []);
+
+  loadActuator();
+
+  loadFeedingSchedule();
+
+  const interval = setInterval(() => {
+
+    loadActuator();
+
+  }, 1000);
+
+  return () => clearInterval(interval);
+
+}, []);
 
   // ============================
   // KIRIM KE FASTAPI
@@ -165,22 +174,22 @@ export default function ActuatorPage() {
     });
 
     // khusus feeder
-    if (name === "feeder" && newValue) {
-      setTimeout(async () => {
-        const reset = {
-          ...updated,
-          feeder: false
-        };
+    // if (name === "feeder" && newValue) {
+    //   setTimeout(async () => {
+    //     const reset = {
+    //       ...updated,
+    //       feeder: false
+    //     };
 
-        setActuator(reset);
-        showToast("Proses pemberian pakan selesai, katup auto-feeder ditutup kembali.", "success");
+    //     setActuator(reset);
+    //     showToast("Proses pemberian pakan selesai, katup auto-feeder ditutup kembali.", "success");
 
-        await sendActuator({
-          mode,
-          ...reset
-        });
-      }, 4000);
-    }
+    //     await sendActuator({
+    //       mode,
+    //       ...reset
+    //     });
+    //   }, 4000);
+    // }
   }
 
   const handleSaveSchedule = async (e) => {
@@ -520,3 +529,4 @@ export default function ActuatorPage() {
     </div>
   );
 }
+
