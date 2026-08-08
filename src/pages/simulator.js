@@ -18,10 +18,11 @@ import {
 
 export default function Simulator() {
   const [sensor, setSensor] = useState({
-    temperature: 28,
-    ph: 7.2,
-    turbidity: 8,
-    water_level: 17,
+    temperature: 27.5,
+    do: 6.2,
+    ph: 7.6,
+    turbidity: 8.5,
+    water_level: 18,
     hour: 14,
     source: "simulator"
   });
@@ -40,10 +41,10 @@ export default function Simulator() {
     setSending(true);
     try {
       const response = await API.post("/analyze", sensor);
-      showToast("Data sensor kolam nila berhasil dikirim ke AI Engine!", "success");
+      showToast("Data sensor kolam nila berhasil dikirim ke AI Engine v4_v3!", "success");
       console.log(response.data);
     } catch (err) {
-      showToast("Gagal terhubung ke Server AI. Pastikan backend Anda aktif.", "error");
+      showToast("Gagal terhubung ke Server AI. Pastikan backend v4_v3 Anda aktif.", "error");
       console.error(err);
     } finally {
       setSending(false);
@@ -63,11 +64,22 @@ export default function Simulator() {
       description: "Optimal: 25.0–32.0°C (El-Sayed 1999, FAO 2023). Heat stress (>32°C) reduces oxygen solubility."
     },
     {
+      key: "do",
+      label: "Dissolved Oxygen (DO)",
+      unit: "mg/L",
+      icon: Droplets,
+      iconColor: "text-sky-600 bg-sky-50 border-sky-100",
+      min: 0,
+      max: 12,
+      step: 0.1,
+      description: "Optimal: ≥5.0 mg/L (Pedrazzani 2020). Oxygen drops (<5.0 mg/L) induce respiratory distress."
+    },
+    {
       key: "ph",
-      label: "pH level",
+      label: "pH Level",
       unit: "",
       icon: FlaskConical,
-      iconColor: "text-teal-650 bg-teal-50 border-teal-100",
+      iconColor: "text-teal-600 bg-teal-50 border-teal-100",
       min: 4,
       max: 10,
       step: 0.01,
@@ -97,10 +109,10 @@ export default function Simulator() {
     },
     {
       key: "hour",
-      label: "Simulation hour",
+      label: "Simulation Hour",
       unit: "h",
       icon: Clock,
-      iconColor: "text-indigo-650 bg-indigo-50 border-indigo-100",
+      iconColor: "text-indigo-600 bg-indigo-50 border-indigo-100",
       min: 0,
       max: 23,
       step: 1,
@@ -111,8 +123,8 @@ export default function Simulator() {
   const SCENARIOS = [
     {
       title: "Normal Morning",
-      description: "Typical stable parameters in early morning hours. Clean water with optimal temperature and pH.",
-      values: { temperature: 27.18, ph: 7.91, turbidity: 3.25, water_level: 20, hour: 6 },
+      description: "Typical stable parameters in early morning hours. Clean water with optimal temperature, DO, and pH.",
+      values: { temperature: 27.18, do: 6.5, ph: 7.91, turbidity: 3.25, water_level: 20, hour: 6 },
       theme: {
         border: "border-emerald-200 hover:border-emerald-400 bg-emerald-50/20",
         badge: "bg-emerald-100 text-emerald-800 border-emerald-200/50",
@@ -120,19 +132,19 @@ export default function Simulator() {
       }
     },
     {
-      title: "Low Water Level",
-      description: "Simulates dry season evaporation. Severe water level drop with elevated pond temperature.",
-      values: { temperature: 28.5, ph: 7.45, turbidity: 4.5, water_level: 5, hour: 14 },
+      title: "Normal Afternoon",
+      description: "Stable mid-day telemetry. Optimal temperature and DO levels under moderate sunlight.",
+      values: { temperature: 29.50, do: 5.80, ph: 7.60, turbidity: 8.20, water_level: 18, hour: 13 },
       theme: {
-        border: "border-cyan-200 hover:border-cyan-400 bg-cyan-50/20",
-        badge: "bg-cyan-100 text-cyan-800 border-cyan-200/50",
-        label: "Water Warning"
+        border: "border-blue-200 hover:border-blue-400 bg-blue-50/20",
+        badge: "bg-blue-100 text-blue-800 border-blue-200/50",
+        label: "Stable Afternoon"
       }
     },
     {
-      title: "Thermal Stress",
+      title: "Thermal Stress (>32°C)",
       description: "Peak solar radiation raising water temperature above the critical 32°C optimal threshold.",
-      values: { temperature: 34.50, ph: 8.35, turbidity: 14.2, water_level: 16, hour: 15 },
+      values: { temperature: 34.80, do: 4.50, ph: 8.35, turbidity: 18.0, water_level: 16, hour: 14 },
       theme: {
         border: "border-orange-200 hover:border-orange-400 bg-orange-50/20",
         badge: "bg-orange-100 text-orange-850 border-orange-200/50",
@@ -140,9 +152,29 @@ export default function Simulator() {
       }
     },
     {
+      title: "Hypoxia / DO Drop",
+      description: "Critical oxygen depletion below 5.0 mg/L during early dawn due to respiration.",
+      values: { temperature: 28.50, do: 2.80, ph: 7.30, turbidity: 10.0, water_level: 18, hour: 4 },
+      theme: {
+        border: "border-amber-200 hover:border-amber-400 bg-amber-50/20",
+        badge: "bg-amber-100 text-amber-800 border-amber-200/50",
+        label: "Low Oxygen"
+      }
+    },
+    {
+      title: "High Turbidity / Bloom",
+      description: "Algal bloom or sediment suspension elevating turbidity beyond standard 25.0 NTU limit.",
+      values: { temperature: 29.00, do: 4.20, ph: 8.50, turbidity: 38.5, water_level: 17, hour: 16 },
+      theme: {
+        border: "border-purple-200 hover:border-purple-400 bg-purple-50/20",
+        badge: "bg-purple-100 text-purple-800 border-purple-200/50",
+        label: "High Turbidity"
+      }
+    },
+    {
       title: "Critical Emergency",
-      description: "Acidic runoff, severe water level drop, thermal stress, and heavy solids contamination.",
-      values: { temperature: 33.00, ph: 5.80, turbidity: 30.00, water_level: 2, hour: 14 },
+      description: "Acidic runoff, severe water level drop, thermal stress, DO drop, and heavy turbidity.",
+      values: { temperature: 33.00, do: 3.40, ph: 5.80, turbidity: 45.0, water_level: 3, hour: 15 },
       theme: {
         border: "border-rose-200 hover:border-rose-450 bg-rose-50/20",
         badge: "bg-rose-100 text-rose-800 border-rose-200/50",
@@ -172,15 +204,12 @@ export default function Simulator() {
       <div className="md:flex">
         <Sidebar />
 
-        <main className="flex-1 p-6 md:p-10 max-w-7xl mx-auto w-full">
+        <main className="flex-1 min-w-0 p-6 md:p-10 max-w-7xl mx-auto w-full">
           
           {/* Header */}
           <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <div className="p-2 rounded-xl bg-blue-50 border border-blue-100 shadow-sm">
-                  <Radio className="w-6 h-6 text-[#1a6fc4] animate-pulse" />
-                </div>
                 <div>
                   <h1 className="text-3xl font-black text-slate-900 tracking-wide uppercase">
                     IoT Device Simulator
@@ -333,6 +362,7 @@ export default function Simulator() {
                           <Zap className="w-3 h-3 text-slate-350" />
                           T: {sc.values.temperature}°C
                         </span>
+                        <span>DO: {sc.values.do}mg/L</span>
                         <span>pH: {sc.values.ph}</span>
                         <span>TURB: {sc.values.turbidity} NTU</span>
                         <span>Level: {sc.values.water_level}cm</span>

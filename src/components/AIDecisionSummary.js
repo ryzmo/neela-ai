@@ -66,10 +66,10 @@ export default function AIDecisionSummary({ data }) {
   return (
     <div className="space-y-6">
       
-      {/* Visual Header Grid: RF Output (Left) & LLM Reasoning (Right) */}
+      {/* Visual Header Grid: ET Output (Left) & LLM Reasoning (Right) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        {/* Left Side: Random Forest Classifier Output Card */}
+        {/* Left Side: Extra Trees Classifier Output Card */}
         <div className={`lg:col-span-5 rounded-3xl border ${theme.bg} p-6 md:p-8 flex flex-col justify-between shadow-xl ${theme.glow} relative overflow-hidden transition-all duration-300 hover:scale-[1.01]`}>
           <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-white/20 blur-xl pointer-events-none" />
           
@@ -77,7 +77,7 @@ export default function AIDecisionSummary({ data }) {
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
                 <Cpu className="w-4 h-4 text-slate-500 animate-pulse" />
-                <span className="text-[10px] font-bold text-slate-500 tracking-widest uppercase">RF Classifier Engine</span>
+                <span className="text-[10px] font-bold text-slate-500 tracking-widest uppercase">ET Classifier Engine</span>
               </div>
 
             </div>

@@ -34,7 +34,7 @@ app.add_middleware(
 
 # Load model v4 (Hasil train_rf_fix_v4.ipynb - Data_Model_IoTMLCQ_2024.xlsx + Figure 1)
 
-rf = joblib.load("aquaagent_rf_v4.pkl")
+rf = joblib.load("aquaagent_rf_v4_v3.pkl")
 latest_result = None
 
 # ==========================================
@@ -368,10 +368,20 @@ def analyze(sensor: SensorInput):
     # ----------------------------------
     # BUILD RF INPUT
     # ----------------------------------
-    estimated_do = sensor.do if (sensor.do is not None) else calculate_do(sensor.temperature)
+    estimated_do = getattr(sensor, "do", None)
+    if estimated_do is None:
+        estimated_do = calculate_do(sensor.temperature)
 
     expected_cols = list(rf.feature_names_in_) if hasattr(rf, "feature_names_in_") else []
     if "TEMP" in expected_cols:
+        is_opt = (25.0 <= sensor.temperature <= 32.0) and (7.0 <= sensor.ph <= 8.0) and (estimated_do >= 5.0) and (sensor.turbidity <= 25.0)
+        risk_flag = 0.0 if is_opt else 1.0
+
+        ph_dev = abs(sensor.ph - 7.5)
+        temp_dev = max(0.0, sensor.temperature - 32.0) + max(0.0, 25.0 - sensor.temperature)
+        turb_dev = max(0.0, sensor.turbidity - 25.0)
+        do_dev = max(0.0, 5.0 - estimated_do)
+
         ph_dist_7 = abs(sensor.ph - 7.0)
         temp_do_ratio = estimated_do / (sensor.temperature + 1.0)
         turb_do_ratio = sensor.turbidity / (estimated_do + 0.1)
@@ -385,6 +395,11 @@ def analyze(sensor: SensorInput):
             'PH': sensor.ph,
             'TURBIDITY': sensor.turbidity,
             'hour': sensor.hour,
+            'risk_flag': risk_flag,
+            'PH_dev': ph_dev,
+            'TEMP_dev': temp_dev,
+            'TURB_dev': turb_dev,
+            'DO_dev': do_dev,
             'PH_dist_7': ph_dist_7,
             'TEMP_DO_ratio': temp_do_ratio,
             'TURB_DO_ratio': turb_do_ratio,

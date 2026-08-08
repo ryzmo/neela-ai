@@ -34,20 +34,16 @@ export default function ChatPage() {
       <div className="md:flex">
         <Sidebar />
 
-        <main className="flex-1 flex flex-col min-h-screen bg-slate-50/50">
+        <main className="flex-1 min-w-0 flex flex-col min-h-screen bg-slate-50/50">
           
           {/* Chat Header */}
           <header className="bg-white border-b border-slate-100 p-6 shadow-sm flex-shrink-0">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-xl bg-blue-50">
-                    <BrainCircuit className="w-6 h-6 text-[#1a6fc4] animate-pulse" />
-                  </div>
                   <div>
                     <h1 className="text-xl font-black text-slate-900 tracking-wide uppercase flex items-center gap-1.5">
                       <span>Neela AI Chat Assistant</span>
-                      <Sparkles className="w-4 h-4 text-emerald-500 animate-bounce" />
                     </h1>
                     <p className="text-[10px] font-bold text-slate-450 uppercase tracking-widest">Decision Support & Explainability Agent</p>
                   </div>

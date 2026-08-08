@@ -25,18 +25,19 @@ import {
 
 // Sensor display ranges, used only to drive the little progress fills.
 const SENSOR_RANGES = {
-  temperature: { min: 20, max: 34, icon: Thermometer, color: "amber", label: "Water Temperature", unit: "°C" },
-  do: { min: 0, max: 10, icon: Droplets, color: "cyan", label: "Dissolved O₂", unit: "mg/L" },
-  ph: { min: 0, max: 14, icon: FlaskConical, color: "teal", label: "pH Level", unit: "" },
-  turbidity: { min: 0, max: 50, icon: Waves, color: "blue", label: "Water Turbidity", unit: "NTU" },
-  water_level: { min: 0, max: 20, icon: Gauge, color: "blue", label: "Water Height", unit: "cm" },
+  temperature: { min: 20, max: 34, color: "amber", label: "Water Temperature", unit: "°C" },
+  do: { min: 0, max: 10, color: "cyan", label: "Dissolved O₂", unit: "mg/L" },
+  ph: { min: 0, max: 14, color: "teal", label: "pH Level", unit: "" },
+  turbidity: { min: 0, max: 50, color: "blue", label: "Water Turbidity", unit: "NTU" },
+  water_level: { min: 0, max: 20, color: "indigo", label: "Water Height", unit: "cm" },
 };
 
 const COLOR_MAP = {
-  amber: { bar: "bg-amber-500", text: "text-amber-600 bg-amber-50 border-amber-100", glow: "shadow-amber-500/20" },
-  cyan: { bar: "bg-cyan-500", text: "text-cyan-600 bg-cyan-50 border-cyan-100", glow: "shadow-cyan-500/20" },
-  teal: { bar: "bg-teal-500", text: "text-teal-600 bg-teal-50 border-teal-100", glow: "shadow-teal-500/20" },
-  blue: { bar: "bg-blue-500", text: "text-blue-600 bg-blue-50 border-blue-100", glow: "shadow-blue-500/20" },
+  amber: { bar: "bg-amber-500" },
+  cyan: { bar: "bg-cyan-500" },
+  teal: { bar: "bg-teal-500" },
+  blue: { bar: "bg-blue-500" },
+  indigo: { bar: "bg-indigo-500" },
 };
 
 export default function AICenter() {
@@ -48,15 +49,12 @@ export default function AICenter() {
     <div className="md:flex min-h-screen bg-slate-50">
       <Sidebar />
 
-      <main className="flex-1 p-6 md:p-10 max-w-7xl mx-auto w-full">
+      <main className="flex-1 min-w-0 p-6 md:p-10 max-w-7xl mx-auto w-full">
         <div>
           {/* HEADER */}
           <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <div className="p-2 rounded-xl bg-blue-50 border border-blue-100 shadow-sm">
-                  <BrainCircuit className="w-6 h-6 text-[#1a6fc4] animate-pulse" />
-                </div>
                 <div>
                   <h1 className="text-3xl font-black text-slate-900 tracking-wide uppercase">
                     AI Decision Center
@@ -67,7 +65,7 @@ export default function AICenter() {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-2.5 self-start sm:self-center">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
@@ -78,8 +76,8 @@ export default function AICenter() {
           </div>
 
           {/* SENSOR DATA INPUT */}
-          <Panel title="Real-Time Telemetry Inputs" subtitle="Active telemetry values routed directly into Random Forest models.">
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <Panel title="Real-Time Telemetry Inputs" subtitle="Active telemetry values routed directly into Extra Trees models.">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4.5">
               {Object.entries(SENSOR_RANGES).map(([key, cfg]) => (
                 <SensorBox
                   key={key}
@@ -88,28 +86,24 @@ export default function AICenter() {
                   unit={cfg.unit}
                   min={cfg.min}
                   max={cfg.max}
-                  icon={cfg.icon}
                   color={cfg.color}
                 />
               ))}
             </div>
           </Panel>
 
-          {/* RANDOM FOREST + LLM, side by side */}
+          {/* EXTRA TREES + LLM, side by side */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
-            
-            {/* Random Forest Prediction (5 columns) */}
+
+            {/* Extra Trees Prediction (5 columns) */}
             <div className="lg:col-span-5 bg-white rounded-3xl border border-slate-100 shadow-xl p-6 md:p-8 flex flex-col justify-between hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50/40 rounded-full blur-xl pointer-events-none" />
-              
+
               <div>
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-2">
                     <Cpu className="w-4 h-4 text-slate-500" />
-                    <span className="text-[10px] font-bold text-slate-500 tracking-widest uppercase">RF Classifier Output</span>
-                  </div>
-                  <div className="px-2.5 py-0.5 rounded-full bg-blue-100 border border-blue-200/50 text-[9px] font-black text-[#1a6fc4] tracking-wider uppercase">
-                    99.88% Acc
+                    <span className="text-[10px] font-bold text-slate-500 tracking-widest uppercase">ET Classifier Output</span>
                   </div>
                 </div>
 
@@ -134,7 +128,7 @@ export default function AICenter() {
             {/* Explainable AI Explainers (7 columns) */}
             <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-100 shadow-xl p-6 md:p-8 flex flex-col justify-between hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50/30 rounded-full blur-2xl pointer-events-none" />
-              
+
               <div>
                 <div className="flex items-center justify-between mb-5">
                   <div className="flex items-center gap-2">
@@ -197,7 +191,7 @@ export default function AICenter() {
             <div className="flex items-center justify-between flex-wrap gap-4 py-4 px-2 rounded-2xl bg-white border border-slate-100 shadow-sm relative overflow-hidden">
               <FlowBox title="Sensor Telemetry" active icon={Activity} badge="Raw Inputs" />
               <FlowArrow />
-              <FlowBox title="Random Forest Classifier" active icon={Cpu} badge="99.88% Acc" />
+              <FlowBox title="Extra Trees Classifier" active icon={Cpu} />
               <FlowArrow />
               <FlowBox title="Rule-Based Guardrails" active icon={Sliders} badge="Automation" />
               <FlowArrow />
@@ -208,15 +202,15 @@ export default function AICenter() {
           {/* PIPELINE LOGIC VISUALIZER */}
           <Panel title="Pipeline Logic Visualizer" subtitle="Step-by-step diagnostic breakdown of how calculations are processed.">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              
-              {/* Random Forest Voting Ensemble */}
+
+              {/* Extra Trees Voting Ensemble */}
               <div className="bg-[#f8fafc] border border-slate-150 rounded-2xl p-5 shadow-sm">
                 <div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-200">
                   <div className="p-2 rounded-lg bg-blue-50 border border-blue-100 text-[#1a6fc4]">
                     <GitFork size={16} />
                   </div>
                   <div>
-                    <h3 className="text-xs font-black text-slate-800 uppercase tracking-wide">1. Random Forest Logic</h3>
+                    <h3 className="text-xs font-black text-slate-800 uppercase tracking-wide">1. Extra Trees Logic</h3>
                     <span className="text-[8.5px] font-bold text-slate-450 uppercase tracking-wider block">Decision Tree Ensemble</span>
                   </div>
                 </div>
@@ -225,14 +219,14 @@ export default function AICenter() {
                   <p className="text-slate-500 font-medium leading-relaxed">
                     Evaluates telemetry attributes simultaneously across a collection of independent decision trees.
                   </p>
-                  
+
                   {/* Tree Visual Schema */}
                   <div className="rounded-xl border border-slate-200 bg-white p-3 space-y-3 font-mono text-[9px] text-slate-650 max-h-[220px] overflow-y-auto">
                     <div className="flex items-center gap-1.5 font-bold text-[#1a6fc4]">
                       <Cpu size={12} />
-                      <span>Random Forest Feature Splits</span>
+                      <span>Extra Trees Feature Splits</span>
                     </div>
-                    
+
                     <div className="pl-2 border-l border-slate-200 space-y-2.5">
                       {/* DO Split */}
                       <div className="space-y-1">
@@ -300,24 +294,24 @@ export default function AICenter() {
                   </p>
 
                   <div className="space-y-2">
-                    <RuleItem 
-                      label="Oxygen Rule: DO < 5.0" 
-                      triggered={Number(data.sensor_data?.do) < 5} 
+                    <RuleItem
+                      label="Oxygen Rule: DO < 5.0"
+                      triggered={Number(data.sensor_data?.do) < 5}
                       action="Aerator ON"
                     />
-                    <RuleItem 
-                      label="Temp/Turbid Rule: Temp > 30 | Turb > 15" 
-                      triggered={Number(data.sensor_data?.temperature) > 30 || Number(data.sensor_data?.turbidity) > 15} 
+                    <RuleItem
+                      label="Temp/Turbid Rule: Temp > 30 | Turb > 15"
+                      triggered={Number(data.sensor_data?.temperature) > 30 || Number(data.sensor_data?.turbidity) > 15}
                       action="Pump ON"
                     />
-                    <RuleItem 
-                      label="pH Bounds Rule: pH < 6.5 | pH > 8.0" 
-                      triggered={Number(data.sensor_data?.ph) < 6.5 || Number(data.sensor_data?.ph) > 8} 
+                    <RuleItem
+                      label="pH Bounds Rule: pH < 6.5 | pH > 8.0"
+                      triggered={Number(data.sensor_data?.ph) < 6.5 || Number(data.sensor_data?.ph) > 8}
                       action="Buffer Neutralizer ON"
                     />
-                    <RuleItem 
-                      label="Multi-Stress Alert" 
-                      triggered={data.buzzer === "ON"} 
+                    <RuleItem
+                      label="Multi-Stress Alert"
+                      triggered={data.buzzer === "ON"}
                       action="Buzzer ON"
                     />
                   </div>
@@ -390,17 +384,15 @@ export default function AICenter() {
 
 function RuleItem({ label, triggered, action }) {
   return (
-    <div className={`p-2.5 rounded-xl border flex items-center justify-between transition-colors ${
-      triggered 
-        ? "bg-rose-500/5 border-rose-500/20 text-rose-800" 
+    <div className={`p-2.5 rounded-xl border flex items-center justify-between transition-colors ${triggered
+        ? "bg-rose-500/5 border-rose-500/20 text-rose-800"
         : "bg-white border-slate-200 text-slate-700"
-    }`}>
-      <span className="font-semibold">{label}</span>
-      <span className={`px-2 py-0.5 rounded-full text-[8.5px] font-black uppercase border ${
-        triggered 
-          ? "bg-rose-100 text-rose-800 border-rose-200 animate-pulse" 
-          : "bg-slate-100 text-slate-500 border-slate-200"
       }`}>
+      <span className="font-semibold">{label}</span>
+      <span className={`px-2 py-0.5 rounded-full text-[8.5px] font-black uppercase border ${triggered
+          ? "bg-rose-100 text-rose-800 border-rose-200 animate-pulse"
+          : "bg-slate-100 text-slate-500 border-slate-200"
+        }`}>
         {triggered ? `⚠️ Trigger: ${action}` : "✓ Passed"}
       </span>
     </div>
@@ -419,45 +411,55 @@ function Panel({ title, subtitle, children }) {
   );
 }
 
-function SensorBox({ label, value, unit, min, max, icon: Icon, color }) {
+function SensorBox({ label, value, unit, min, max, color }) {
   const numeric = typeof value === "number" ? value : parseFloat(value);
   const pct = isNaN(numeric)
     ? 0
     : Math.min(100, Math.max(0, ((numeric - min) / (max - min)) * 100));
-  const c = COLOR_MAP[color];
+  const c = COLOR_MAP[color] || COLOR_MAP.blue;
 
   return (
-    <div className="rounded-2xl p-5 bg-white border border-slate-150 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between">
+    <div className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between relative overflow-hidden group">
+      {/* Top Accent Line */}
+      <div className={`absolute top-0 left-0 right-0 h-1 ${c.bar}`} />
+
       <div>
-        <div className="flex items-center gap-2 mb-3">
-          <div className={`p-2 rounded-lg border ${c.text}`}>
-            <Icon size={16} />
-          </div>
-          <p className="text-slate-500 text-[10px] font-black uppercase tracking-wider">{label}</p>
+        {/* Header: Title */}
+        <div className="mb-3">
+          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider leading-tight">
+            {label}
+          </span>
         </div>
 
-        <h3 className="text-2xl font-black text-slate-900 mb-4">
-          {value ?? "-"}
-          {unit && <span className="text-xs text-slate-400 font-bold ml-1 uppercase">{unit}</span>}
-          
-          {label === "Water Height" && typeof value === "number" && (
-            <span className="ml-1.5 text-[10px] font-black text-[#1a6fc4] bg-blue-50 border border-blue-100 rounded-full px-1.5 py-0.5">
-              {Math.round((value / 20) * 100)}%
+        {/* Value + Unit Row */}
+        <div className="flex items-baseline flex-wrap gap-1.5 my-1">
+          <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-none">
+            {value ?? "-"}
+          </span>
+          {unit && (
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">
+              {unit}
             </span>
           )}
-        </h3>
+          {label === "Water Height" && !isNaN(numeric) && numeric !== null && (
+            <span className="text-[10px] font-black text-[#1a6fc4] bg-blue-50 border border-blue-100 rounded-full px-2 py-0.5">
+              {Math.round((numeric / 20) * 100)}%
+            </span>
+          )}
+        </div>
       </div>
 
-      <div>
+      {/* Progress Bar & Range Footer */}
+      <div className="mt-4 pt-2">
         <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden shadow-inner">
           <div
-            className={`h-full rounded-full ${c.bar} ${c.glow} shadow-lg transition-all duration-700`}
+            className={`h-full rounded-full ${c.bar} transition-all duration-700`}
             style={{ width: `${pct}%` }}
           />
         </div>
-        <div className="flex justify-between text-[8px] font-bold text-slate-400 mt-1 uppercase tracking-wider">
-          <span>{min}{unit}</span>
-          <span>{max}{unit}</span>
+        <div className="flex justify-between text-[9px] font-extrabold text-slate-400 mt-1.5 uppercase tracking-wider">
+          <span>{min} {unit}</span>
+          <span>{max} {unit}</span>
         </div>
       </div>
     </div>
@@ -508,18 +510,17 @@ function DecisionCard({ title, value, icon: Icon, description }) {
 
   return (
     <div
-      className={`rounded-2xl p-5 border flex flex-col justify-between transition-all duration-300 hover:shadow-md ${
-        isOn
+      className={`rounded-2xl p-5 border flex flex-col justify-between transition-all duration-300 hover:shadow-md ${isOn
           ? "bg-green-500/5 border-green-500/25 shadow-lg shadow-green-500/5"
           : "bg-white border-slate-150 shadow-sm"
-      }`}
+        }`}
     >
       <div>
         <div className="flex items-center justify-between mb-4">
           <div className={`p-2.5 rounded-xl border ${isOn ? "bg-green-100 border-green-200 text-green-700" : "bg-slate-100 border-slate-200 text-slate-400"}`}>
             <Icon size={18} className={isOn ? "animate-spin-slow" : ""} />
           </div>
-          
+
           <div className="flex items-center gap-1">
             <span className={`w-2 h-2 rounded-full ${isOn ? "bg-green-500 animate-ping" : "bg-slate-300"}`} />
             <span className={`text-[10px] font-black uppercase ${isOn ? "text-green-750" : "text-slate-400"}`}>
@@ -542,11 +543,10 @@ function DecisionCard({ title, value, icon: Icon, description }) {
 function FlowBox({ title, active, icon: Icon, badge }) {
   return (
     <div
-      className={`rounded-2xl p-4 border transition-all duration-300 flex-1 min-w-[150px] max-w-[220px] flex items-center gap-3 shadow-sm ${
-        active
+      className={`rounded-2xl p-4 border transition-all duration-300 flex-1 min-w-[150px] max-w-[220px] flex items-center gap-3 shadow-sm ${active
           ? "bg-white border-blue-200/80 shadow-blue-500/5"
           : "bg-slate-50 border-slate-100"
-      }`}
+        }`}
     >
       <div className={`p-2 rounded-xl border ${active ? "bg-blue-50 border-blue-100 text-[#1a6fc4]" : "bg-white border-slate-200 text-slate-400"}`}>
         <Icon size={18} className={active && title.includes("Relay") ? "animate-pulse" : ""} />

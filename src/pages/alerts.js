@@ -31,10 +31,31 @@ export default function AlertsPage() {
   }
 
   useEffect(() => {
+    const saved = localStorage.getItem("aquaagent_alert_emails");
+    let initial = [];
+    if (saved) {
+      try {
+        initial = JSON.parse(saved);
+        if (Array.isArray(initial)) setEmails(initial);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
     fetch("http://127.0.0.1:8000/emails")
-      .then((res) => res.json())
-      .then((resData) => setEmails(resData))
-      .catch((err) => console.error("Error loading email subscribers:", err));
+      .then((res) => {
+        if (res.ok) return res.json();
+        throw new Error("Backend offline");
+      })
+      .then((resData) => {
+        if (Array.isArray(resData)) {
+          setEmails(resData);
+          localStorage.setItem("aquaagent_alert_emails", JSON.stringify(resData));
+        }
+      })
+      .catch((err) => {
+        console.log("Using local subscriber list:", err.message);
+      });
   }, []);
 
   const activeAlerts = [
@@ -55,58 +76,57 @@ export default function AlertsPage() {
     },
   ].filter(Boolean);
 
-  function addEmail() {
-    if (!newEmail.trim()) {
+  async function addEmail() {
+    const trimmed = newEmail.trim();
+    if (!trimmed) {
       showToast("Harap masukkan alamat email terlebih dahulu!", "warning");
       return;
     }
 
-    if (!/\S+@\S+\.\S+/.test(newEmail)) {
+    if (!/\S+@\S+\.\S+/.test(trimmed)) {
       showToast("Format email tidak valid!", "warning");
       return;
     }
 
-    if (emails.includes(newEmail)) {
+    if (emails.includes(trimmed)) {
       showToast("Email tersebut sudah terdaftar di sistem!", "warning");
       return;
     }
 
-    fetch("http://127.0.0.1:8000/emails", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        email: newEmail
-      })
-    })
-      .then(() => fetch("http://127.0.0.1:8000/emails"))
-      .then((res) => res.json())
-      .then((resData) => {
-        setEmails(resData);
-        setNewEmail("");
-        showToast("Email penerima notifikasi berhasil didaftarkan!", "success");
-      })
-      .catch((err) => {
-        showToast("Gagal menambahkan email ke database.", "error");
-        console.error(err);
+    const updated = [...emails, trimmed];
+    setEmails(updated);
+    localStorage.setItem("aquaagent_alert_emails", JSON.stringify(updated));
+    setNewEmail("");
+    showToast("Email penerima notifikasi berhasil didaftarkan!", "success");
+
+    try {
+      await fetch("http://127.0.0.1:8000/emails", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email: trimmed
+        })
       });
+    } catch (err) {
+      console.log("Saved locally, backend sync failed:", err);
+    }
   }
 
-  function removeEmail(emailToRemove) {
-    fetch(`http://127.0.0.1:8000/emails/${emailToRemove}`, {
-      method: "DELETE"
-    })
-      .then(() => fetch("http://127.0.0.1:8000/emails"))
-      .then((res) => res.json())
-      .then((resData) => {
-        setEmails(resData);
-        showToast("Email penerima notifikasi berhasil dihapus.", "success");
-      })
-      .catch((err) => {
-        showToast("Gagal menghapus email dari database.", "error");
-        console.error(err);
+  async function removeEmail(emailToRemove) {
+    const updated = emails.filter((e) => e !== emailToRemove);
+    setEmails(updated);
+    localStorage.setItem("aquaagent_alert_emails", JSON.stringify(updated));
+    showToast("Email penerima notifikasi berhasil dihapus.", "success");
+
+    try {
+      await fetch(`http://127.0.0.1:8000/emails/${encodeURIComponent(emailToRemove)}`, {
+        method: "DELETE"
       });
+    } catch (err) {
+      console.log("Removed locally, backend sync failed:", err);
+    }
   }
 
   async function sendEmail() {
@@ -176,15 +196,12 @@ export default function AlertsPage() {
       <div className="md:flex">
         <Sidebar />
 
-        <main className="flex-1 p-6 md:p-10 max-w-7xl mx-auto w-full">
+        <main className="flex-1 min-w-0 p-6 md:p-10 max-w-7xl mx-auto w-full">
           
           {/* Header */}
           <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <div className="p-2 rounded-xl bg-blue-50 border border-blue-100 shadow-sm">
-                  <Bell className="w-6 h-6 text-[#1a6fc4] animate-pulse" />
-                </div>
                 <div>
                   <h1 className="text-3xl font-black text-slate-900 tracking-wide uppercase">
                     Alerts & Notifications
@@ -254,6 +271,12 @@ export default function AlertsPage() {
                       type="email"
                       value={newEmail}
                       onChange={(e) => setNewEmail(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          addEmail();
+                        }
+                      }}
                       placeholder="Enter recipient email (e.g. operator@neela.ai)"
                       className="w-full bg-[#f8fafc] border border-slate-250 rounded-2xl py-4 pl-12 pr-6 text-sm font-semibold placeholder-slate-400 focus:outline-none focus:border-[#1a6fc4] focus:bg-white transition-all text-slate-800"
                     />

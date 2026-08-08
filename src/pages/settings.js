@@ -97,15 +97,12 @@ export default function SettingsPage() {
       <div className="md:flex">
         <Sidebar />
 
-        <main className="flex-1 p-6 md:p-10 max-w-7xl mx-auto w-full space-y-8">
+        <main className="flex-1 min-w-0 p-6 md:p-10 max-w-7xl mx-auto w-full space-y-8">
           
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <div className="p-2 rounded-xl bg-blue-50 border border-blue-100 shadow-sm">
-                  <Sliders className="w-6 h-6 text-[#1a6fc4] animate-pulse" />
-                </div>
                 <div>
                   <h1 className="text-3xl font-black text-slate-900 tracking-wide uppercase">
                     System Settings

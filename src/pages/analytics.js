@@ -257,15 +257,12 @@ export default function AnalyticsPage() {
       <div className="md:flex">
         <Sidebar />
 
-        <main className="flex-1 p-6 md:p-10 max-w-7xl mx-auto w-full space-y-8">
+        <main className="flex-1 min-w-0 p-6 md:p-10 max-w-7xl mx-auto w-full space-y-8">
           
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <div className="p-2 rounded-xl bg-blue-50 border border-blue-100 shadow-sm">
-                  <BarChart3 className="w-6 h-6 text-[#1a6fc4] animate-pulse" />
-                </div>
                 <div>
                   <h1 className="text-3xl font-black text-slate-900 tracking-wide uppercase">
                     Analytics & Reports
@@ -292,36 +289,36 @@ export default function AnalyticsPage() {
               Water Quality Statistics (Averages)
             </h2>
 
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4.5">
               <AnalyticsCard
-                title="Avg Temperature"
-                value={`${avgTemperature} °C`}
-                icon={Thermometer}
-                iconColor="text-amber-600 bg-amber-50 border-amber-100"
+                title="Temperature"
+                value={avgTemperature}
+                unit="°C"
+                theme="amber"
               />
               <AnalyticsCard
-                title="Avg Oxygen (DO)"
-                value={`${avgDO} mg/L`}
-                icon={Droplets}
-                iconColor="text-cyan-600 bg-cyan-50 border-cyan-100"
+                title="Oxygen (DO)"
+                value={avgDO}
+                unit="mg/L"
+                theme="cyan"
               />
               <AnalyticsCard
-                title="Avg pH Balance"
+                title="pH Balance"
                 value={avgPH}
-                icon={FlaskConical}
-                iconColor="text-teal-650 bg-teal-50 border-teal-100"
+                unit=""
+                theme="teal"
               />
               <AnalyticsCard
-                title="Avg Turbidity"
-                value={`${avgTurbidity} NTU`}
-                icon={Waves}
-                iconColor="text-blue-600 bg-blue-50 border-blue-100"
+                title="Turbidity"
+                value={avgTurbidity}
+                unit="NTU"
+                theme="blue"
               />
               <AnalyticsCard
-                title="Avg Water Level"
-                value={`${avgWaterLevel} cm`}
-                icon={Gauge}
-                iconColor="text-[#1a6fc4] bg-blue-50 border-blue-100"
+                title="Water Level"
+                value={avgWaterLevel}
+                unit="cm"
+                theme="indigo"
               />
             </div>
           </div>
@@ -342,7 +339,7 @@ export default function AnalyticsPage() {
                 Estimated Decision Accuracy
               </h2>
               <p className="text-[11px] text-slate-500 mt-1 max-w-lg leading-relaxed">
-                Calculated validation rates matching Random Forest outputs against expert manual telemetry classification.
+                Calculated validation rates matching Extra Trees outputs against expert manual telemetry classification.
               </p>
             </div>
             
@@ -389,7 +386,7 @@ export default function AnalyticsPage() {
                   <tr className="border-b bg-[#f8fafc] text-[10px] font-black text-slate-500 uppercase tracking-wider">
                     <th className="p-4 text-left">Timestamp</th>
                     <th className="p-4 text-left">Sensor Readings snapshot</th>
-                    <th className="p-4 text-left">RF Status Output</th>
+                    <th className="p-4 text-left">ET Status Output</th>
                     <th className="p-4 text-left">Final System Decision</th>
                   </tr>
                 </thead>
@@ -524,20 +521,52 @@ export default function AnalyticsPage() {
   );
 }
 
-function AnalyticsCard({ title, value, icon: Icon, iconColor }) {
+function AnalyticsCard({ title, value, unit, theme }) {
+  const themeStyles = {
+    amber: {
+      bar: "bg-amber-500"
+    },
+    cyan: {
+      bar: "bg-cyan-500"
+    },
+    teal: {
+      bar: "bg-teal-500"
+    },
+    blue: {
+      bar: "bg-blue-500"
+    },
+    indigo: {
+      bar: "bg-indigo-500"
+    }
+  };
+
+  const currentTheme = themeStyles[theme] || themeStyles.blue;
+
   return (
-    <div className="bg-white border border-slate-150 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between">
-      <div className="flex items-center justify-between gap-3 mb-3">
-        <span className="text-slate-550 text-[10px] font-black uppercase tracking-wider leading-snug">
-          {title}
-        </span>
-        <div className={`p-2 rounded-lg border ${iconColor} flex-shrink-0`}>
-          <Icon size={14} />
+    <div className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between relative overflow-hidden group">
+      {/* Top Accent Line */}
+      <div className={`absolute top-0 left-0 right-0 h-1 ${currentTheme.bar}`} />
+
+      <div>
+        {/* Header: Title */}
+        <div className="mb-3">
+          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider leading-tight">
+            {title}
+          </span>
+        </div>
+
+        {/* Value + Unit Row */}
+        <div className="flex items-baseline flex-wrap gap-1.5 my-1">
+          <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-none">
+            {value}
+          </span>
+          {unit && (
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">
+              {unit}
+            </span>
+          )}
         </div>
       </div>
-      <h3 className="text-2xl font-black text-slate-800 tracking-wide">
-        {value}
-      </h3>
     </div>
   );
 }

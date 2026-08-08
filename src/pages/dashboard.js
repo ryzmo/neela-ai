@@ -25,7 +25,7 @@ export default function Home() {
 
       <Sidebar />
 
-      <main className="flex-1 p-4 md:p-10">
+      <main className="flex-1 min-w-0 p-4 md:p-10">
 
         <DashboardHeader
           serverConnected={serverConnected}

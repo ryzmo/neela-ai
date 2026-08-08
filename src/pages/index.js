@@ -38,8 +38,8 @@ const TECH_LAYERS = [
   },
   {
     id: 2,
-    title: "02. RANDOM FOREST CLASSIFIER",
-    subtitle: "99.88% CLASSIFICATION MODEL",
+    title: "02. EXTRA TREES CLASSIFIER",
+    subtitle: "96% CLASSIFICATION MODEL",
     body: "Trained on 4,383 hourly observations using 200 estimators. Evaluates Temperature, pH, DO, Turbidity, and Hour of the day to instantly classify pond health status into 'Stable' or 'At Risk' with validation accuracy of 99.88%.",
     accent: "text-[#1a6fc4]"
   },
@@ -61,7 +61,7 @@ const TECH_LAYERS = [
     id: 5,
     title: "05. EMERGENCY ALERT SYSTEM",
     subtitle: "NODE MAILER NOTIFICATION ENGINE",
-    body: "Monitors system status 24/7. When sensor thresholds are breached or the Random Forest model flags an 'At Risk' pond health status, it automatically dispatches emergency email alerts to operators.",
+    body: "Monitors system status 24/7. When sensor thresholds are breached or the Extra Trees model flags an 'At Risk' pond health status, it automatically dispatches emergency email alerts to operators.",
     accent: "text-[#1a6fc4]"
   }
 ];
@@ -129,7 +129,7 @@ function IoTNodeCartoon({ className = "w-24 h-24" }) {
   );
 }
 
-function RandomForestCartoon({ className = "w-24 h-24" }) {
+function ExtraTreesCartoon({ className = "w-24 h-24" }) {
   return (
     <svg viewBox="0 0 120 120" className={className}>
       <ellipse cx="60" cy="95" rx="45" ry="12" fill="#d1fae5" opacity="0.7" />
@@ -311,7 +311,7 @@ function GlowSensorCartoon({ className = "w-24 h-24" }) {
 
 const FLOATING_PLAYGROUND = [
   { id: 1, component: IoTNodeCartoon, label: "IoT Controller Node", left: "6%", top: "15%", speed: 120, scale: 1.1 },
-  { id: 2, component: RandomForestCartoon, label: "Random Forest AI", right: "8%", top: "20%", speed: 190, scale: 1.15 },
+  { id: 2, component: ExtraTreesCartoon, label: "Extra Trees AI", right: "8%", top: "20%", speed: 190, scale: 1.15 },
   { id: 3, component: RuleBasedActuatorCartoon, label: "Rule Actuation", left: "10%", top: "52%", speed: 140, scale: 1.1 },
   { id: 4, component: LlmExplainerCartoon, label: "LLM Explainer", right: "7%", top: "62%", speed: 170, scale: 1.25 },
   { id: 5, component: AlertSystemCartoon, label: "Emergency Alert", left: "42%", top: "78%", speed: 210, scale: 1.2 },
@@ -321,7 +321,7 @@ const FLOATING_PLAYGROUND = [
   { id: 9, component: BubbleCartoon, label: "DO Telemetry", left: "5%", top: "82%", speed: 250, scale: 0.8 },
   { id: 10, component: WaterDropCartoon, label: "Oxygen Stream", right: "3%", top: "38%", speed: 110, scale: 0.9 },
   { id: 11, component: GlowSensorCartoon, label: "Turbidity Light", left: "46%", top: "8%", speed: 90, scale: 0.95 },
-  { id: 12, component: RandomForestCartoon, label: "Decision Trees", left: "54%", top: "34%", speed: 160, scale: 0.85 },
+  { id: 12, component: ExtraTreesCartoon, label: "Extra Trees Splits", left: "54%", top: "34%", speed: 160, scale: 0.85 },
   { id: 13, component: RuleBasedActuatorCartoon, label: "Relay Control", right: "18%", top: "82%", speed: 130, scale: 0.9 },
   { id: 14, component: IoTNodeCartoon, label: "ESP32 Board", left: "20%", top: "38%", speed: 180, scale: 0.8 },
   { id: 15, component: AlertSystemCartoon, label: "Alert Node", right: "28%", top: "10%", speed: 190, scale: 0.85 }
@@ -712,10 +712,6 @@ export default function LandingPage() {
 
           {/* Left Column: Welcoming info */}
           <div className="lg:col-span-7 text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 border border-blue-200 text-xs font-bold text-[#1a6fc4] mb-6">
-              <Award className="w-4 h-4" />
-              <span>AI Fish Farm Decision Support System</span>
-            </div>
 
             <h1 className="font-black text-4xl md:text-5xl lg:text-6xl leading-[1.08] tracking-tight uppercase text-[#0f172a] mb-6">
               AUTOMATED <br />
@@ -725,14 +721,14 @@ export default function LandingPage() {
 
             <p className="text-slate-655 text-sm md:text-base max-w-xl leading-relaxed mb-8">
               NEELA AI is an intelligent agent architecture combining machine learning
-              <strong> Random Forest</strong> and <strong>Large Language Models (LLM)</strong>
+              <strong> Extra Trees</strong> and <strong>Large Language Models (LLM)</strong>
               to monitor water parameters, predict risk status, and actuate pond control (aerator, water pump, pH correction) automatically.
             </p>
 
             {/* Quick Metrics Widgets */}
             <div className="grid grid-cols-3 gap-4 max-w-lg mb-8">
               <div className="bg-white/70 border border-blue-100 rounded-2xl p-4 hover:border-[#1a6fc4]/30 transition-all cursor-default shadow-sm">
-                <div className="text-2xl font-black text-[#1a6fc4]">99.88%</div>
+                <div className="text-2xl font-black text-[#1a6fc4]">96%</div>
                 <div className="text-[10px] font-bold text-slate-500 tracking-wider uppercase mt-1">Classifier Accuracy</div>
               </div>
               <div className="bg-white/70 border border-blue-100 rounded-2xl p-4 hover:border-[#1a6fc4]/30 transition-all cursor-default shadow-sm">
@@ -789,16 +785,6 @@ export default function LandingPage() {
                     </div>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-blue-50/50 border border-blue-100/70 flex items-center justify-between">
-                    <div className="text-left">
-                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Classifier</span>
-                      <span className="text-xs font-extrabold text-[#1a6fc4] uppercase">Random Forest</span>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Accuracy Rate</span>
-                      <span className="text-xs font-extrabold text-emerald-600">99.88%</span>
-                    </div>
-                  </div>
                 </div>
 
                 <div className="space-y-3">
@@ -818,7 +804,7 @@ export default function LandingPage() {
                   </button>
                 </div>
 
-                <div className="mt-8 pt-6 border-t border-blue-50 text-center">
+                <div className="mt-2 pt-2 border-t border-blue-50 text-center">
                   <span className="text-[10px] font-bold text-slate-450 uppercase tracking-widest">
                     Telemetry Sync Running 24/7
                   </span>
@@ -915,7 +901,7 @@ export default function LandingPage() {
       <section ref={introRef} className="py-28 px-6 flex flex-col items-center justify-center text-center relative border-y border-blue-100 bg-white/40">
         <div className="max-w-4xl mx-auto">
           <p className="reveal-text text-3xl md:text-[40px] leading-relaxed text-slate-300 select-none font-medium text-center">
-            Our intelligent agent NEELA AI integrates Internet of Things (IoT) sensors, Random Forest decision models, and Large Language Model (LLM) reasoning to protect Oreochromis niloticus (tilapia) ponds, optimize water quality, and automate actuator responses in real-time.
+            Our intelligent agent NEELA AI integrates Internet of Things (IoT) sensors, Extra Trees decision models, and Large Language Model (LLM) reasoning to protect Oreochromis niloticus (tilapia) ponds, optimize water quality, and automate actuator responses in real-time.
           </p>
         </div>
       </section>
@@ -1032,10 +1018,10 @@ export default function LandingPage() {
               </div>
               <div>
                 <span className="text-[10px] font-bold text-[#1a6fc4] uppercase tracking-wider">Step 03</span>
-                <h4 className="font-black text-sm uppercase text-[#0f172a] mt-1 mb-2">Random Forest</h4>
+                <h4 className="font-black text-sm uppercase text-[#0f172a] mt-1 mb-2">Extra Trees</h4>
                 <p className="text-[11px] text-slate-600 leading-relaxed">200 decision trees evaluate multi-sensor parameters to predict health classification.</p>
               </div>
-              <div className="text-[10px] font-bold text-emerald-600 mt-4 uppercase">99.88% Accuracy</div>
+              <div className="text-[10px] font-bold text-emerald-600 mt-4 uppercase">96% Accuracy</div>
             </div>
 
             {/* Step 4 */}
@@ -1130,7 +1116,7 @@ export default function LandingPage() {
                 </div>
               </div>
               <p className="text-[11px] font-medium leading-relaxed text-slate-500 max-w-[200px]">
-                Hybrid decision system merging Internet of Things, Random Forest, and LLM explainability.
+                Hybrid decision system merging Internet of Things, Extra Trees, and LLM explainability.
               </p>
             </div>
 

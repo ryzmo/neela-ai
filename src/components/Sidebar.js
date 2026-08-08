@@ -151,6 +151,7 @@ export default function Sidebar() {
           top-0 left-0
           min-h-screen
           w-72
+          flex-shrink-0
           z-50
 
           backdrop-blur-2xl
