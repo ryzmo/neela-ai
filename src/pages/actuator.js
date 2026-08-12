@@ -318,7 +318,7 @@ export default function ActuatorPage() {
                     )}
                   </div>
                   <p className="text-[11px] font-medium leading-relaxed text-slate-500 mt-2">
-                    The Extra Trees classifier automatically determines and triggers relays based on real-time sensor streams.
+                    The ExtraTrees classifier automatically determines and triggers relays based on real-time sensor streams.
                   </p>
                 </div>
               </button>

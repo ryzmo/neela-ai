@@ -76,7 +76,7 @@ export default function AICenter() {
           </div>
 
           {/* SENSOR DATA INPUT */}
-          <Panel title="Real-Time Telemetry Inputs" subtitle="Active telemetry values routed directly into Extra Trees models.">
+          <Panel title="Real-Time Telemetry Inputs" subtitle="Active telemetry values routed directly into ExtraTrees models.">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4.5">
               {Object.entries(SENSOR_RANGES).map(([key, cfg]) => (
                 <SensorBox
@@ -92,23 +92,26 @@ export default function AICenter() {
             </div>
           </Panel>
 
-          {/* EXTRA TREES + LLM, side by side */}
+          {/* EXTRATREES + LLM, side by side */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
 
-            {/* Extra Trees Prediction (5 columns) */}
+            {/* ExtraTrees Prediction (5 columns) */}
             <div className="lg:col-span-5 bg-white rounded-3xl border border-slate-100 shadow-xl p-6 md:p-8 flex flex-col justify-between hover:scale-[1.01] transition-all duration-300 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50/40 rounded-full blur-xl pointer-events-none" />
 
               <div>
-                <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center justify-between mb-5">
                   <div className="flex items-center gap-2">
-                    <Cpu className="w-4 h-4 text-slate-500" />
-                    <span className="text-[10px] font-bold text-slate-500 tracking-widest uppercase">ET Classifier Output</span>
+                    <Cpu className="w-4 h-4 text-[#1a6fc4] animate-pulse" />
+                    <span className="text-[10px] font-bold text-slate-500 tracking-widest uppercase">ExtraTrees Classifier Engine</span>
                   </div>
+                  <span className="text-[9px] font-extrabold text-emerald-600 bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    Model Active
+                  </span>
                 </div>
 
                 <p className="text-slate-400 text-[10px] uppercase font-black tracking-widest mb-1">Pond Status Evaluation</p>
-                <div className="flex items-center gap-2.5 mb-6">
+                <div className="flex items-center gap-2.5 mb-4">
                   <h3 className={`text-3xl font-black uppercase tracking-wide flex items-center gap-2 ${isStable ? "text-emerald-700" : "text-rose-700"}`}>
                     {isStable ? <ShieldCheck className="w-7 h-7 text-emerald-600" /> : <ShieldAlert className="w-7 h-7 text-rose-600" />}
                     <span>{data.health_status && data.health_status !== "-" ? data.health_status : "STABLE"}</span>
@@ -116,12 +119,22 @@ export default function AICenter() {
                 </div>
               </div>
 
-              <div className="border-t border-slate-100 pt-6 flex items-center justify-between gap-4">
-                <div>
-                  <span className="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider block">Prediction Confidence</span>
-                  <p className="text-[10px] font-medium text-slate-500 mt-1">Evaluated across 200 model trees.</p>
+              {/* Bottom Metadata & Risk Assessment Section */}
+              <div className="mt-6 pt-5 border-t border-slate-100 space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-3 rounded-2xl bg-[#f8fafc] border border-slate-100">
+                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Risk Assessment</span>
+                    <span className={`text-xs font-black uppercase mt-0.5 block ${isStable ? "text-emerald-600" : "text-rose-600"}`}>
+                      {isStable ? "LOW (NORMAL)" : "HIGH (CRITICAL)"}
+                    </span>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-[#f8fafc] border border-slate-100">
+                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Decision Mode</span>
+                    <span className="text-xs font-black text-slate-700 uppercase mt-0.5 block">
+                      AUTONOMOUS
+                    </span>
+                  </div>
                 </div>
-                <ConfidenceRing value={data.rf_confidence} />
               </div>
             </div>
 
@@ -191,7 +204,7 @@ export default function AICenter() {
             <div className="flex items-center justify-between flex-wrap gap-4 py-4 px-2 rounded-2xl bg-white border border-slate-100 shadow-sm relative overflow-hidden">
               <FlowBox title="Sensor Telemetry" active icon={Activity} badge="Raw Inputs" />
               <FlowArrow />
-              <FlowBox title="Extra Trees Classifier" active icon={Cpu} />
+              <FlowBox title="ExtraTrees Classifier" active icon={Cpu} />
               <FlowArrow />
               <FlowBox title="Rule-Based Guardrails" active icon={Sliders} badge="Automation" />
               <FlowArrow />
@@ -203,28 +216,28 @@ export default function AICenter() {
           <Panel title="Pipeline Logic Visualizer" subtitle="Step-by-step diagnostic breakdown of how calculations are processed.">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-              {/* Extra Trees Voting Ensemble */}
+              {/* ExtraTrees Ensemble */}
               <div className="bg-[#f8fafc] border border-slate-150 rounded-2xl p-5 shadow-sm">
                 <div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-200">
                   <div className="p-2 rounded-lg bg-blue-50 border border-blue-100 text-[#1a6fc4]">
                     <GitFork size={16} />
                   </div>
                   <div>
-                    <h3 className="text-xs font-black text-slate-800 uppercase tracking-wide">1. Extra Trees Logic</h3>
-                    <span className="text-[8.5px] font-bold text-slate-450 uppercase tracking-wider block">Decision Tree Ensemble</span>
+                    <h3 className="text-xs font-black text-slate-800 uppercase tracking-wide">1. ExtraTrees Logic</h3>
+                    <span className="text-[8.5px] font-bold text-slate-450 uppercase tracking-wider block">Extremely Randomized Trees Ensemble</span>
                   </div>
                 </div>
 
                 <div className="space-y-4 text-[10.5px]">
                   <p className="text-slate-500 font-medium leading-relaxed">
-                    Evaluates telemetry attributes simultaneously across a collection of independent decision trees.
+                    Evaluates telemetry attributes using randomized decision tree ensembles for robust health status classification.
                   </p>
 
                   {/* Tree Visual Schema */}
                   <div className="rounded-xl border border-slate-200 bg-white p-3 space-y-3 font-mono text-[9px] text-slate-650 max-h-[220px] overflow-y-auto">
                     <div className="flex items-center gap-1.5 font-bold text-[#1a6fc4]">
                       <Cpu size={12} />
-                      <span>Extra Trees Feature Splits</span>
+                      <span>ExtraTrees Feature Splits</span>
                     </div>
 
                     <div className="pl-2 border-l border-slate-200 space-y-2.5">
@@ -385,13 +398,13 @@ export default function AICenter() {
 function RuleItem({ label, triggered, action }) {
   return (
     <div className={`p-2.5 rounded-xl border flex items-center justify-between transition-colors ${triggered
-        ? "bg-rose-500/5 border-rose-500/20 text-rose-800"
-        : "bg-white border-slate-200 text-slate-700"
+      ? "bg-rose-500/5 border-rose-500/20 text-rose-800"
+      : "bg-white border-slate-200 text-slate-700"
       }`}>
       <span className="font-semibold">{label}</span>
       <span className={`px-2 py-0.5 rounded-full text-[8.5px] font-black uppercase border ${triggered
-          ? "bg-rose-100 text-rose-800 border-rose-200 animate-pulse"
-          : "bg-slate-100 text-slate-500 border-slate-200"
+        ? "bg-rose-100 text-rose-800 border-rose-200 animate-pulse"
+        : "bg-slate-100 text-slate-500 border-slate-200"
         }`}>
         {triggered ? `⚠️ Trigger: ${action}` : "✓ Passed"}
       </span>
@@ -511,8 +524,8 @@ function DecisionCard({ title, value, icon: Icon, description }) {
   return (
     <div
       className={`rounded-2xl p-5 border flex flex-col justify-between transition-all duration-300 hover:shadow-md ${isOn
-          ? "bg-green-500/5 border-green-500/25 shadow-lg shadow-green-500/5"
-          : "bg-white border-slate-150 shadow-sm"
+        ? "bg-green-500/5 border-green-500/25 shadow-lg shadow-green-500/5"
+        : "bg-white border-slate-150 shadow-sm"
         }`}
     >
       <div>
@@ -544,8 +557,8 @@ function FlowBox({ title, active, icon: Icon, badge }) {
   return (
     <div
       className={`rounded-2xl p-4 border transition-all duration-300 flex-1 min-w-[150px] max-w-[220px] flex items-center gap-3 shadow-sm ${active
-          ? "bg-white border-blue-200/80 shadow-blue-500/5"
-          : "bg-slate-50 border-slate-100"
+        ? "bg-white border-blue-200/80 shadow-blue-500/5"
+        : "bg-slate-50 border-slate-100"
         }`}
     >
       <div className={`p-2 rounded-xl border ${active ? "bg-blue-50 border-blue-100 text-[#1a6fc4]" : "bg-white border-slate-200 text-slate-400"}`}>

@@ -1,0 +1,873 @@
+{
+  "data_info": {
+    "total_rows": 4383,
+    "initial_distribution": {
+      "Stable": "3678",
+      "At Risk": "705"
+    },
+    "after_physical_label": {
+      "0": "3830",
+      "1": "553"
+    },
+    "train_size": 3506,
+    "test_size": 877,
+    "train_label_dist": {
+      "0": 3064,
+      "1": 442
+    },
+    "test_label_dist": {
+      "1": 111,
+      "0": 766
+    }
+  },
+  "comparison_table": [
+    {
+      "Kondisi SMOTE": "Tanpa SMOTE",
+      "Model Terbaik": "ExtraTrees",
+      "Accuracy (%)": 96.47,
+      "Precision": 0.782,
+      "Recall": 1.0,
+      "F1-Score": 0.877,
+      "AUC-ROC": 0.98
+    },
+    {
+      "Kondisi SMOTE": "SMOTE 10%",
+      "Model Terbaik": "ExtraTrees",
+      "Accuracy (%)": 96.47,
+      "Precision": 0.782,
+      "Recall": 1.0,
+      "F1-Score": 0.877,
+      "AUC-ROC": 0.979
+    },
+    {
+      "Kondisi SMOTE": "SMOTE 20%",
+      "Model Terbaik": "ExtraTrees",
+      "Accuracy (%)": 96.47,
+      "Precision": 0.782,
+      "Recall": 1.0,
+      "F1-Score": 0.877,
+      "AUC-ROC": 0.979
+    },
+    {
+      "Kondisi SMOTE": "SMOTE 30%",
+      "Model Terbaik": "ExtraTrees",
+      "Accuracy (%)": 96.47,
+      "Precision": 0.782,
+      "Recall": 1.0,
+      "F1-Score": 0.877,
+      "AUC-ROC": 0.979
+    },
+    {
+      "Kondisi SMOTE": "SMOTE 40%",
+      "Model Terbaik": "ExtraTrees",
+      "Accuracy (%)": 96.47,
+      "Precision": 0.782,
+      "Recall": 1.0,
+      "F1-Score": 0.877,
+      "AUC-ROC": 0.979
+    },
+    {
+      "Kondisi SMOTE": "SMOTE 50%",
+      "Model Terbaik": "ExtraTrees",
+      "Accuracy (%)": 96.47,
+      "Precision": 0.782,
+      "Recall": 1.0,
+      "F1-Score": 0.877,
+      "AUC-ROC": 0.978
+    },
+    {
+      "Kondisi SMOTE": "SMOTE 60%",
+      "Model Terbaik": "ExtraTrees",
+      "Accuracy (%)": 96.47,
+      "Precision": 0.782,
+      "Recall": 1.0,
+      "F1-Score": 0.877,
+      "AUC-ROC": 0.979
+    },
+    {
+      "Kondisi SMOTE": "SMOTE 70%",
+      "Model Terbaik": "ExtraTrees",
+      "Accuracy (%)": 96.47,
+      "Precision": 0.782,
+      "Recall": 1.0,
+      "F1-Score": 0.877,
+      "AUC-ROC": 0.979
+    },
+    {
+      "Kondisi SMOTE": "SMOTE 80%",
+      "Model Terbaik": "ExtraTrees",
+      "Accuracy (%)": 96.47,
+      "Precision": 0.782,
+      "Recall": 1.0,
+      "F1-Score": 0.877,
+      "AUC-ROC": 0.979
+    },
+    {
+      "Kondisi SMOTE": "SMOTE 90%",
+      "Model Terbaik": "ExtraTrees",
+      "Accuracy (%)": 96.47,
+      "Precision": 0.782,
+      "Recall": 1.0,
+      "F1-Score": 0.877,
+      "AUC-ROC": 0.977
+    },
+    {
+      "Kondisi SMOTE": "SMOTE 100%",
+      "Model Terbaik": "ExtraTrees",
+      "Accuracy (%)": 96.47,
+      "Precision": 0.782,
+      "Recall": 1.0,
+      "F1-Score": 0.877,
+      "AUC-ROC": 0.98
+    }
+  ],
+  "data_per_condition": {
+    "Tanpa SMOTE": {
+      "total_train": 3506,
+      "class_0": 3064,
+      "class_1": 442,
+      "target_ratio": 0.1443
+    },
+    "SMOTE 10%": {
+      "total_train": 3768,
+      "class_0": 3064,
+      "class_1": 704,
+      "current_ratio": 0.1443,
+      "target_ratio": 0.2298,
+      "applied": 1
+    },
+    "SMOTE 20%": {
+      "total_train": 4030,
+      "class_0": 3064,
+      "class_1": 966,
+      "current_ratio": 0.1443,
+      "target_ratio": 0.3154,
+      "applied": 1
+    },
+    "SMOTE 30%": {
+      "total_train": 4292,
+      "class_0": 3064,
+      "class_1": 1228,
+      "current_ratio": 0.1443,
+      "target_ratio": 0.401,
+      "applied": 1
+    },
+    "SMOTE 40%": {
+      "total_train": 4554,
+      "class_0": 3064,
+      "class_1": 1490,
+      "current_ratio": 0.1443,
+      "target_ratio": 0.4866,
+      "applied": 1
+    },
+    "SMOTE 50%": {
+      "total_train": 4816,
+      "class_0": 3064,
+      "class_1": 1752,
+      "current_ratio": 0.1443,
+      "target_ratio": 0.5721,
+      "applied": 1
+    },
+    "SMOTE 60%": {
+      "total_train": 5079,
+      "class_0": 3064,
+      "class_1": 2015,
+      "current_ratio": 0.1443,
+      "target_ratio": 0.6577,
+      "applied": 1
+    },
+    "SMOTE 70%": {
+      "total_train": 5341,
+      "class_0": 3064,
+      "class_1": 2277,
+      "current_ratio": 0.1443,
+      "target_ratio": 0.7433,
+      "applied": 1
+    },
+    "SMOTE 80%": {
+      "total_train": 5603,
+      "class_0": 3064,
+      "class_1": 2539,
+      "current_ratio": 0.1443,
+      "target_ratio": 0.8289,
+      "applied": 1
+    },
+    "SMOTE 90%": {
+      "total_train": 5865,
+      "class_0": 3064,
+      "class_1": 2801,
+      "current_ratio": 0.1443,
+      "target_ratio": 0.9144,
+      "applied": 1
+    },
+    "SMOTE 100%": {
+      "total_train": 6128,
+      "class_0": 3064,
+      "class_1": 3064,
+      "current_ratio": 0.1443,
+      "target_ratio": 1.0,
+      "applied": 1
+    }
+  },
+  "per_condition_models": {
+    "Tanpa SMOTE": [
+      {
+        "Model": "ExtraTrees",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.98
+      },
+      {
+        "Model": "Logistic Regression",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.98
+      },
+      {
+        "Model": "Random Forest",
+        "Accuracy (%)": 96.35,
+        "Precision": 0.78,
+        "Recall": 0.991,
+        "F1-Score": 0.873,
+        "AUC-ROC": 0.978
+      },
+      {
+        "Model": "AdaBoost",
+        "Accuracy (%)": 96.35,
+        "Precision": 0.78,
+        "Recall": 0.991,
+        "F1-Score": 0.873,
+        "AUC-ROC": 0.98
+      },
+      {
+        "Model": "HistGradientBoosting",
+        "Accuracy (%)": 96.24,
+        "Precision": 0.787,
+        "Recall": 0.964,
+        "F1-Score": 0.866,
+        "AUC-ROC": 0.981
+      },
+      {
+        "Model": "Gradient Boosting",
+        "Accuracy (%)": 95.9,
+        "Precision": 0.774,
+        "Recall": 0.955,
+        "F1-Score": 0.855,
+        "AUC-ROC": 0.979
+      },
+      {
+        "Model": "Decision Tree",
+        "Accuracy (%)": 95.55,
+        "Precision": 0.773,
+        "Recall": 0.919,
+        "F1-Score": 0.84,
+        "AUC-ROC": 0.98
+      }
+    ],
+    "SMOTE 10%": [
+      {
+        "Model": "ExtraTrees",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.979
+      },
+      {
+        "Model": "Logistic Regression",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.98
+      },
+      {
+        "Model": "Random Forest",
+        "Accuracy (%)": 96.35,
+        "Precision": 0.78,
+        "Recall": 0.991,
+        "F1-Score": 0.873,
+        "AUC-ROC": 0.978
+      },
+      {
+        "Model": "AdaBoost",
+        "Accuracy (%)": 96.35,
+        "Precision": 0.78,
+        "Recall": 0.991,
+        "F1-Score": 0.873,
+        "AUC-ROC": 0.981
+      },
+      {
+        "Model": "Gradient Boosting",
+        "Accuracy (%)": 96.24,
+        "Precision": 0.779,
+        "Recall": 0.982,
+        "F1-Score": 0.869,
+        "AUC-ROC": 0.978
+      },
+      {
+        "Model": "HistGradientBoosting",
+        "Accuracy (%)": 96.12,
+        "Precision": 0.777,
+        "Recall": 0.973,
+        "F1-Score": 0.864,
+        "AUC-ROC": 0.98
+      },
+      {
+        "Model": "Decision Tree",
+        "Accuracy (%)": 95.67,
+        "Precision": 0.779,
+        "Recall": 0.919,
+        "F1-Score": 0.843,
+        "AUC-ROC": 0.979
+      }
+    ],
+    "SMOTE 20%": [
+      {
+        "Model": "ExtraTrees",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.979
+      },
+      {
+        "Model": "Logistic Regression",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.98
+      },
+      {
+        "Model": "Random Forest",
+        "Accuracy (%)": 96.35,
+        "Precision": 0.78,
+        "Recall": 0.991,
+        "F1-Score": 0.873,
+        "AUC-ROC": 0.976
+      },
+      {
+        "Model": "AdaBoost",
+        "Accuracy (%)": 96.35,
+        "Precision": 0.78,
+        "Recall": 0.991,
+        "F1-Score": 0.873,
+        "AUC-ROC": 0.978
+      },
+      {
+        "Model": "HistGradientBoosting",
+        "Accuracy (%)": 96.35,
+        "Precision": 0.784,
+        "Recall": 0.982,
+        "F1-Score": 0.872,
+        "AUC-ROC": 0.981
+      },
+      {
+        "Model": "Gradient Boosting",
+        "Accuracy (%)": 95.78,
+        "Precision": 0.772,
+        "Recall": 0.946,
+        "F1-Score": 0.85,
+        "AUC-ROC": 0.976
+      },
+      {
+        "Model": "Decision Tree",
+        "Accuracy (%)": 95.78,
+        "Precision": 0.776,
+        "Recall": 0.937,
+        "F1-Score": 0.849,
+        "AUC-ROC": 0.979
+      }
+    ],
+    "SMOTE 30%": [
+      {
+        "Model": "ExtraTrees",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.979
+      },
+      {
+        "Model": "Logistic Regression",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.98
+      },
+      {
+        "Model": "Random Forest",
+        "Accuracy (%)": 96.35,
+        "Precision": 0.78,
+        "Recall": 0.991,
+        "F1-Score": 0.873,
+        "AUC-ROC": 0.977
+      },
+      {
+        "Model": "AdaBoost",
+        "Accuracy (%)": 96.35,
+        "Precision": 0.78,
+        "Recall": 0.991,
+        "F1-Score": 0.873,
+        "AUC-ROC": 0.98
+      },
+      {
+        "Model": "HistGradientBoosting",
+        "Accuracy (%)": 96.35,
+        "Precision": 0.78,
+        "Recall": 0.991,
+        "F1-Score": 0.873,
+        "AUC-ROC": 0.98
+      },
+      {
+        "Model": "Gradient Boosting",
+        "Accuracy (%)": 95.9,
+        "Precision": 0.774,
+        "Recall": 0.955,
+        "F1-Score": 0.855,
+        "AUC-ROC": 0.977
+      },
+      {
+        "Model": "Decision Tree",
+        "Accuracy (%)": 95.55,
+        "Precision": 0.773,
+        "Recall": 0.919,
+        "F1-Score": 0.84,
+        "AUC-ROC": 0.976
+      }
+    ],
+    "SMOTE 40%": [
+      {
+        "Model": "ExtraTrees",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.979
+      },
+      {
+        "Model": "Random Forest",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.977
+      },
+      {
+        "Model": "HistGradientBoosting",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.981
+      },
+      {
+        "Model": "Logistic Regression",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.98
+      },
+      {
+        "Model": "AdaBoost",
+        "Accuracy (%)": 96.35,
+        "Precision": 0.78,
+        "Recall": 0.991,
+        "F1-Score": 0.873,
+        "AUC-ROC": 0.98
+      },
+      {
+        "Model": "Gradient Boosting",
+        "Accuracy (%)": 95.9,
+        "Precision": 0.774,
+        "Recall": 0.955,
+        "F1-Score": 0.855,
+        "AUC-ROC": 0.977
+      },
+      {
+        "Model": "Decision Tree",
+        "Accuracy (%)": 95.78,
+        "Precision": 0.772,
+        "Recall": 0.946,
+        "F1-Score": 0.85,
+        "AUC-ROC": 0.979
+      }
+    ],
+    "SMOTE 50%": [
+      {
+        "Model": "ExtraTrees",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.978
+      },
+      {
+        "Model": "Random Forest",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.978
+      },
+      {
+        "Model": "Logistic Regression",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.98
+      },
+      {
+        "Model": "AdaBoost",
+        "Accuracy (%)": 96.35,
+        "Precision": 0.78,
+        "Recall": 0.991,
+        "F1-Score": 0.873,
+        "AUC-ROC": 0.98
+      },
+      {
+        "Model": "HistGradientBoosting",
+        "Accuracy (%)": 96.35,
+        "Precision": 0.78,
+        "Recall": 0.991,
+        "F1-Score": 0.873,
+        "AUC-ROC": 0.98
+      },
+      {
+        "Model": "Gradient Boosting",
+        "Accuracy (%)": 96.24,
+        "Precision": 0.779,
+        "Recall": 0.982,
+        "F1-Score": 0.869,
+        "AUC-ROC": 0.975
+      },
+      {
+        "Model": "Decision Tree",
+        "Accuracy (%)": 96.12,
+        "Precision": 0.777,
+        "Recall": 0.973,
+        "F1-Score": 0.864,
+        "AUC-ROC": 0.979
+      }
+    ],
+    "SMOTE 60%": [
+      {
+        "Model": "ExtraTrees",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.979
+      },
+      {
+        "Model": "Random Forest",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.978
+      },
+      {
+        "Model": "Logistic Regression",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.98
+      },
+      {
+        "Model": "AdaBoost",
+        "Accuracy (%)": 96.35,
+        "Precision": 0.78,
+        "Recall": 0.991,
+        "F1-Score": 0.873,
+        "AUC-ROC": 0.98
+      },
+      {
+        "Model": "HistGradientBoosting",
+        "Accuracy (%)": 96.35,
+        "Precision": 0.78,
+        "Recall": 0.991,
+        "F1-Score": 0.873,
+        "AUC-ROC": 0.981
+      },
+      {
+        "Model": "Decision Tree",
+        "Accuracy (%)": 96.24,
+        "Precision": 0.787,
+        "Recall": 0.964,
+        "F1-Score": 0.866,
+        "AUC-ROC": 0.978
+      },
+      {
+        "Model": "Gradient Boosting",
+        "Accuracy (%)": 96.12,
+        "Precision": 0.777,
+        "Recall": 0.973,
+        "F1-Score": 0.864,
+        "AUC-ROC": 0.977
+      }
+    ],
+    "SMOTE 70%": [
+      {
+        "Model": "ExtraTrees",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.979
+      },
+      {
+        "Model": "Random Forest",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.977
+      },
+      {
+        "Model": "Logistic Regression",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.98
+      },
+      {
+        "Model": "AdaBoost",
+        "Accuracy (%)": 96.35,
+        "Precision": 0.78,
+        "Recall": 0.991,
+        "F1-Score": 0.873,
+        "AUC-ROC": 0.98
+      },
+      {
+        "Model": "HistGradientBoosting",
+        "Accuracy (%)": 96.35,
+        "Precision": 0.78,
+        "Recall": 0.991,
+        "F1-Score": 0.873,
+        "AUC-ROC": 0.982
+      },
+      {
+        "Model": "Gradient Boosting",
+        "Accuracy (%)": 96.24,
+        "Precision": 0.779,
+        "Recall": 0.982,
+        "F1-Score": 0.869,
+        "AUC-ROC": 0.977
+      },
+      {
+        "Model": "Decision Tree",
+        "Accuracy (%)": 96.24,
+        "Precision": 0.783,
+        "Recall": 0.973,
+        "F1-Score": 0.867,
+        "AUC-ROC": 0.978
+      }
+    ],
+    "SMOTE 80%": [
+      {
+        "Model": "ExtraTrees",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.979
+      },
+      {
+        "Model": "Random Forest",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.977
+      },
+      {
+        "Model": "Logistic Regression",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.98
+      },
+      {
+        "Model": "AdaBoost",
+        "Accuracy (%)": 96.35,
+        "Precision": 0.78,
+        "Recall": 0.991,
+        "F1-Score": 0.873,
+        "AUC-ROC": 0.98
+      },
+      {
+        "Model": "HistGradientBoosting",
+        "Accuracy (%)": 96.35,
+        "Precision": 0.78,
+        "Recall": 0.991,
+        "F1-Score": 0.873,
+        "AUC-ROC": 0.983
+      },
+      {
+        "Model": "Gradient Boosting",
+        "Accuracy (%)": 96.24,
+        "Precision": 0.779,
+        "Recall": 0.982,
+        "F1-Score": 0.869,
+        "AUC-ROC": 0.978
+      },
+      {
+        "Model": "Decision Tree",
+        "Accuracy (%)": 96.24,
+        "Precision": 0.779,
+        "Recall": 0.982,
+        "F1-Score": 0.869,
+        "AUC-ROC": 0.977
+      }
+    ],
+    "SMOTE 90%": [
+      {
+        "Model": "ExtraTrees",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.977
+      },
+      {
+        "Model": "Random Forest",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.978
+      },
+      {
+        "Model": "Logistic Regression",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.98
+      },
+      {
+        "Model": "AdaBoost",
+        "Accuracy (%)": 96.35,
+        "Precision": 0.78,
+        "Recall": 0.991,
+        "F1-Score": 0.873,
+        "AUC-ROC": 0.98
+      },
+      {
+        "Model": "HistGradientBoosting",
+        "Accuracy (%)": 96.35,
+        "Precision": 0.78,
+        "Recall": 0.991,
+        "F1-Score": 0.873,
+        "AUC-ROC": 0.98
+      },
+      {
+        "Model": "Gradient Boosting",
+        "Accuracy (%)": 96.12,
+        "Precision": 0.777,
+        "Recall": 0.973,
+        "F1-Score": 0.864,
+        "AUC-ROC": 0.977
+      },
+      {
+        "Model": "Decision Tree",
+        "Accuracy (%)": 96.12,
+        "Precision": 0.777,
+        "Recall": 0.973,
+        "F1-Score": 0.864,
+        "AUC-ROC": 0.977
+      }
+    ],
+    "SMOTE 100%": [
+      {
+        "Model": "ExtraTrees",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.98
+      },
+      {
+        "Model": "Random Forest",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.977
+      },
+      {
+        "Model": "Logistic Regression",
+        "Accuracy (%)": 96.47,
+        "Precision": 0.782,
+        "Recall": 1.0,
+        "F1-Score": 0.877,
+        "AUC-ROC": 0.98
+      },
+      {
+        "Model": "AdaBoost",
+        "Accuracy (%)": 96.35,
+        "Precision": 0.78,
+        "Recall": 0.991,
+        "F1-Score": 0.873,
+        "AUC-ROC": 0.98
+      },
+      {
+        "Model": "HistGradientBoosting",
+        "Accuracy (%)": 96.35,
+        "Precision": 0.78,
+        "Recall": 0.991,
+        "F1-Score": 0.873,
+        "AUC-ROC": 0.981
+      },
+      {
+        "Model": "Decision Tree",
+        "Accuracy (%)": 96.35,
+        "Precision": 0.784,
+        "Recall": 0.982,
+        "F1-Score": 0.872,
+        "AUC-ROC": 0.981
+      },
+      {
+        "Model": "Gradient Boosting",
+        "Accuracy (%)": 96.24,
+        "Precision": 0.779,
+        "Recall": 0.982,
+        "F1-Score": 0.869,
+        "AUC-ROC": 0.976
+      }
+    ]
+  },
+  "best_accuracy": {
+    "condition": "Tanpa SMOTE",
+    "model": "ExtraTrees",
+    "accuracy": 96.47,
+    "precision": 0.782,
+    "recall": 1.0,
+    "f1": 0.877,
+    "auc_roc": 0.98
+  },
+  "best_f1": {
+    "condition": "Tanpa SMOTE",
+    "model": "ExtraTrees",
+    "f1": 0.877,
+    "accuracy": 96.47
+  },
+  "best_recall": {
+    "condition": "Tanpa SMOTE",
+    "model": "ExtraTrees",
+    "recall": 1.0,
+    "accuracy": 96.47
+  }
+}

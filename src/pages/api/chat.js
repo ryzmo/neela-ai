@@ -259,15 +259,15 @@ ${warnings.length > 0 ? `- **Alerts Triggered**: ${warnings.join(", ")}.` : "- *
 3. **Feeding Schedule**: Tilapia feed optimally at 26-29°C. Since it is currently ${t_val}°C, ${tempNum > 30 ? "reduce feed portions to prevent organic decomposition at the pond bottom." : "standard feed amount is recommended."}`;
       }
     }
-    // 7. EXTRA TREES / AI MODEL
-    else if (query.match(/(extra trees|et|model|akurasi|klasifikasi|ai|cerdas|mesin)/i)) {
+    // 7. EXTRATREES / AI MODEL
+    else if (query.match(/(extratrees|extra trees|et|hgb|model|akurasi|klasifikasi|ai|cerdas|mesin)/i)) {
       if (isIndo) {
-        responseText = `Pond Health Classifier kami menggunakan algoritma **Extra Trees Classifier (dengan 200 estimators)** yang dilatih menggunakan 4.383 baris data pengamatan sensor per jam. 
-Model ini memiliki tingkat akurasi sebesar **99.88%** dalam memprediksi kondisi kolam menjadi 'Stable' atau 'At Risk'. 
+        responseText = `Pond Health Classifier kami menggunakan algoritma **ExtraTrees Classifier** yang dilatih menggunakan 4.383 baris data pengamatan sensor per jam. 
+Model ini memiliki tingkat akurasi sebesar **93.61%** dalam memprediksi kondisi kolam menjadi 'Stable' atau 'At Risk'. 
 Pada pembacaan terbaru, model menerima masukan: Temp=${t_val}°C, DO=${do_val} mg/L, pH=${ph_val}, Turbidity=${tur_val} NTU, dan mengklasifikasikan kolam Anda sebagai **${telemetry.health_status && telemetry.health_status !== "-" ? telemetry.health_status : "STABLE"}** (Kepercayaan: ${telemetry.rf_confidence ? (telemetry.rf_confidence * 100).toFixed(1) + "%" : "100%"}).`;
       } else {
-        responseText = `Our Pond Health Classifier utilizes an **Extra Trees Classifier (with 200 estimators)** trained on 4,383 hourly sensor observations.
-The model achieves **99.88% validation accuracy** in predicting whether a pond is 'Stable' or 'At Risk'.
+        responseText = `Our Pond Health Classifier utilizes an **ExtraTrees Classifier** trained on 4,383 hourly sensor observations.
+The model achieves **93.61% validation accuracy** in predicting whether a pond is 'Stable' or 'At Risk'.
 For the latest data packet, it evaluated Temp=${t_val}°C, DO=${do_val} mg/L, pH=${ph_val}, and Turbidity=${tur_val} NTU to predict a status of **${telemetry.health_status && telemetry.health_status !== "-" ? telemetry.health_status : "STABLE"}** (Confidence: ${telemetry.rf_confidence ? (telemetry.rf_confidence * 100).toFixed(1) + "%" : "100%"}).`;
       }
     }
@@ -279,14 +279,14 @@ Silakan tanyakan secara lebih spesifik, seperti:
 - "Bagaimana kondisi kadar pH kolam?"
 - "Kenapa pompa air / aerator menyala?"
 - "Berikan saran penanganan kolam saat ini."
-- "Bagaimana cara kerja model Extra Trees AI Anda?"`;
+- "Bagaimana cara kerja model ExtraTrees AI Anda?"`;
       } else {
         responseText = `I hear your question about the pond. Based on the latest telemetry (Temp: ${t_val}°C, DO: ${do_val} mg/L, pH: ${ph_val}, Turbidity: ${tur_val} NTU), the pond is currently **${telemetry.health_status && telemetry.health_status !== "-" ? telemetry.health_status : "STABLE"}**.
 Please ask a more specific question, such as:
 - "What is the status of the pond's pH levels?"
 - "Why is the aerator or water pump running?"
 - "Give me recommendations for current pond status."
-- "How does the Extra Trees AI model classify this?"`;
+- "How does the ExtraTrees AI model classify this?"`;
       }
     }
 

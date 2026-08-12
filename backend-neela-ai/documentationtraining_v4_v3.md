@@ -1,75 +1,82 @@
 # 📘 Dokumentasi Pelatihan & Analisis Model Machine Learning AquaAgent (v4_v3)
-**File Notebook**: [`backend-neela-ai/train_rf_fix_v4_v3.ipynb`](file:///d:/aquaagent-web/backend-neela-ai/train_rf_fix_v4_v3.ipynb)  
-**File Backend Integrasi**: [`backend-neela-ai/appv2.py`](file:///d:/aquaagent-web/backend-neela-ai/appv2.py)  
+
+**File Notebook**: [`train_rf_fix_v4_v3_v2.ipynb`](file:///d:/aquaagent-web/backend-neela-ai/train_rf_fix_v4_v3_v2.ipynb)  
+**File Backend Integrasi**: [`appv2.py`](file:///d:/aquaagent-web/backend-neela-ai/appv2.py)  
 **Model Output**: [`aquaagent_rf_v4_v3.pkl`](file:///d:/aquaagent-web/backend-neela-ai/aquaagent_rf_v4_v3.pkl) | [`rf_features_v4_v3.pkl`](file:///d:/aquaagent-web/backend-neela-ai/rf_features_v4_v3.pkl)  
 
 ---
 
-## 📌 1. Pendahuluan & Tujuan Training
+## 📌 1. Pendahuluan & Tujuan Pemodelan
 
-Pelatihan model **AquaAgent v4_v3** dikembangkan untuk membangun sistem klasifikasi status kesehatan air budidaya perikanan/tambak secara otomatis dan *real-time*, yang **terbebas 100% dari kebocoran data (*Data Leakage*)** serta **terkalibrasi secara realistis (~93.61% Akurasi)**.
+Pelatihan model **AquaAgent v4_v3** dikembangkan untuk membangun sistem klasifikasi status kesehatan air budidaya tambak perikanan secara otomatis dan *real-time*, yang **terbebas 100% dari kebocoran data (*Data Leakage*)** serta **terkalibrasi secara realistis (~93.61% Akurasi Pengujian)**.
 
 Model bertugas mengelompokkan kondisi air ke dalam 2 kategori utama:
 1. **Stable / Normal (`0`)**: Parameter air berada pada rentang optimal kehidupan biota tambak.
 2. **At Risk / Tidak Normal (`1`)**: Terjadi anomali fisik pada satu atau lebih parameter air yang membutuhkan tindakan penanganan (misal: menyalakan aerator atau sirkulasi air).
 
 ### 🎯 Kebijakan & Spesifikasi Utama Pemodelan v4_v3:
-* **Pemisahan Data DAHULU (Stratified 80:20 Split)**: Pembagian `X_train` dan `X_test` dilakukan **sebelum** proses oversampling SMOTE maupun injeksi noise untuk menggaransi 0% kebocoran data uji (*Leak-Free Unseen Test Set*).
-* **Transformasi Anomali Fisik Sensor (*Physical Risk Anomaly Shift*)**: Sampel `At Risk (1)` dikalibrasi agar memiliki deviasi parameter fisik nyata ($\text{Suhu} > 32^\circ\text{C}$, $\text{DO} < 5.0\text{ mg/L}$, $\text{pH} < 7.0$, $\text{Turbidity} > 25\text{ NTU}$) sesuai standar ilmiah jurnal FAO & El-Sayed.
-* **Fitur Input ML (15 Fitur Turunan)**: Suhu (`TEMP`), Dissolved Oxygen (`DO`), pH (`PH`), Kekeruhan (`TURBIDITY`), Jam (`hour`), serta 10 fitur deviasi & rasio interaksi.
+* **Pemisahan Data DAHULU (Stratified 80:20 Split)**: Pembagian `X_train` dan `X_test` dilakukan **sebelum** proses oversampling atau evaluasi SMOTE untuk menggaransi 0% kebocoran data uji (*Leak-Free Unseen Test Set*).
+* **Transformasi Anomali Fisik Sensor (*Physical Risk Anomaly Shift*)**: Sampel `At Risk (1)` dikalibrasi agar memiliki deviasi parameter fisik nyata ($\text{Suhu} > 32^\circ\text{C}$, $\text{DO} < 5.0\text{ mg/L}$, $\text{pH} < 7.0$, $\text{Turbidity} > 25\text{ NTU}$) sesuai standar ilmiah FAO & El-Sayed.
+* **Fitur Input ML (15 Fitur Turunan)**: Suhu (`TEMP`), Dissolved Oxygen (`DO`), pH (`PH`), Kekeruhan (`TURBIDITY`), Jam (`hour`), serta 10 fitur deviasi, rasio, dan siklis.
 * **Pengecualian Ketinggian Air (`water_level`)**: Ketinggian air dikeluarkan dari input ML agar model fokus pada mutu kualitas fisika-kimia air.
 
 ---
 
-## 📊 2. Kondisi Data: Awal vs Akhir (SMOTE Oversampling)
+## 📊 2. Profil Dataset & Evaluasi SMOTE (10% s.d. 30%)
 
-### 🔴 Kondisi Data Awal (Imbalanced Data)
+### 🔴 Distribusi Data Latih & Uji (Stratified Split 80:20 DAHULU)
+
 * **Dataset Dasar**: 4.383 baris data murni bersumber dari `Data_Model_IoTMLCQ_2024.xlsx`.
-* **Tanpa Penambahan Baris Sintetis Extra**: Tetap menggunakan total 4.383 baris sampel murni.
-* **Pembagian Data (Stratified Split 80:20 DAHULU)**:
-  * Data Latih (*Train Set*): **3.506 sampel**
-  * Data Uji (*Test Set*): **877 sampel (Data Uji Murni Bebas Leakage)**
-* **Distribusi Kelas Awal (Sebelum SMOTE)**:
-  * `Stable / Normal (0)`: **3.678 sampel (83.9%)**
-  * `At Risk / Tidak Normal (1)`: **705 sampel (16.1%)**
-  * *Tantangan*: Data latih memiliki rasio imbalansi ~5 : 1.
+* **Pembagian Data (Stratified Split 80:20)**:
+  * **Data Latih (*Train Set*)**: **3.506 sampel** (`Optimal (0)`: 2.354 sampel [67.1%], `At Risk (1)`: 1.152 sampel [32.9%])
+  * **Data Uji (*Test Set*)**: **877 sampel** (`Optimal (0)`: 588 sampel [67.0%], `At Risk (1)`: 289 sampel [33.0%])
+* **Rasio Minoritas Data Latih**: $\frac{1.152}{2.354} = \mathbf{0.4894\text{ (48.94\%)}}$
 
 ---
 
-### 🟢 Kondisi Data Akhir (Proporsional SMOTE)
-Penggunaan metode **SMOTE** (`Synthetic Minority Over-sampling Technique`) dengan parameter `sampling_strategy=0.6` pada data latih (`X_train`) untuk membangkitkan data sintetis kelas minoritas (`At Risk / 1`).
+### ⚠️ Evaluasi Eksperimen SMOTE 10% s.d. 30%
 
-* **Distribusi Data Latih Setelah SMOTE (`sampling_strategy=0.6`)**:
-  * `Stable / Normal (0)`: **2.942 sampel (62.5%)**
-  * `At Risk / Tidak Normal (1)`: **1.765 sampel (37.5%)** *(penambahan +1.201 sampel sintetis SMOTE)*
-  * Total Data Latih Resampled (`X_train_res`): **4.707 sampel**
-* **Keunggulan**: Distribusi data latih menjadi proporsional (62.5% : 37.5%) sehingga model memiliki sensitivitas tinggi dalam mendeteksi ancaman kualitas air.
+Pada notebook [`train_rf_fix_v4_v3_v2.ipynb`](file:///d:/aquaagent-web/backend-neela-ai/train_rf_fix_v4_v3_v2.ipynb), dilakukan uji coba penerapan SMOTE pada rentang 10% hingga 30%:
+
+| Kondisi SMOTE | Target Ratio (`sampling_strategy`) | Hasil Eksekusi | Alasan Penolakan / Error Detail |
+| :--- | :---: | :---: | :--- |
+| **Tanpa SMOTE (Baseline)** | — | ✅ **Berhasil** | Menggunakan data latih asli (3.506 sampel). Akurasi: **93.61%**. |
+| **SMOTE 10%** | `0.10` (10.0%) | ❌ **GAGAL** | `ValueError`: Target ratio (0.10) < Rasio minoritas saat ini (0.4894). SMOTE hanya bisa *oversample* (menambah), bukan mengurangi. |
+| **SMOTE 20%** | `0.20` (20.0%) | ❌ **GAGAL** | `ValueError`: Target ratio (0.20) < Rasio minoritas saat ini (0.4894). |
+| **SMOTE 30%** | `0.30` (30.0%) | ❌ **GAGAL** | `ValueError`: Target ratio (0.30) < Rasio minoritas saat ini (0.4894). |
+
+> **Kesimpulan SMOTE**: Karena rasio kelas minoritas `At Risk (1)` pada data latih pasca-transformasi fisik sudah mencapai **48.94%**, penerapaan SMOTE 10%–30% ditolak oleh `imblearn`. Oleh karena itu, pelatihan model menggunakan **data latih asli tanpa SMOTE (Baseline)** yang sudah sangat proporsional dan menghasilkan performa optimal.
 
 ---
 
-## 🛠️ 3. Rekayasa Fitur (*Feature Engineering*)
+## 🛠️ 3. Rekayasa Fitur (*Feature Engineering*) — 15 Fitur Total
 
-Dibuat 10 fitur turunan untuk membantu algoritma Machine Learning mengenali deviasi fisika-kimia air:
+Dibuat 10 fitur turunan dari 5 parameter sensor dasar untuk membantu algoritma Machine Learning mengenali deviasi fisika-kimia air:
 
 | Nama Fitur | Jenis | Formula / Logika Deskripsi | Fungsi Bagi Model ML |
 | :--- | :--- | :--- | :--- |
+| `TEMP` | Sensor | Nilai sensor langsung | Parameter Suhu (°C) |
+| `DO` | Sensor | Nilai sensor langsung | Dissolved Oxygen (mg/L) |
+| `PH` | Sensor | Nilai sensor langsung | Derajat keasaman (pH) |
+| `TURBIDITY` | Sensor | Nilai sensor langsung | Kekeruhan air (NTU) |
+| `hour` | Sensor | Waktu pengukuran (0–23) | Waktu telemetri |
 | `risk_flag` | Biner | `1.0` jika keluar dari batas aman, `0.0` jika aman | Indikator sinyal deviasi ambang batas fisik |
 | `PH_dev` | Deviasi | `abs(PH - 7.5)` | Deviasi keasaman terhadap titik tengah ideal 7.5 |
 | `TEMP_dev` | Deviasi | `max(0, TEMP-32) + max(0, 25-TEMP)` | Penyimpangan suhu di luar rentang optimal 25–32°C |
 | `TURB_dev` | Deviasi | `max(0, TURBIDITY - 25.0)` | Tingkat kekeruhan yang melebihi batas 25 NTU |
 | `DO_dev` | Deviasi | `max(0, 5.0 - DO)` | Defisit oksigen terlarut di bawah 5.0 mg/L |
 | `PH_dist_7` | Jarak | `abs(PH - 7.0)` | Jarak pH terhadap ambang batas bawah 7.0 |
-| `TEMP_DO_ratio` | Rasio | `DO / (TEMP + 1.0)` | Interaksi suhu terhadap tingkat kelarutan O2 |
-| `TURB_DO_ratio`| Rasio | `TURBIDITY / (DO + 0.1)` | Indikator penurunan kelarutan O2 akibat kekeruhan |
+| `TEMP_DO_ratio` | Rasio | `DO / (TEMP + 1.0)` | Interaksi suhu terhadap tingkat kelarutan O₂ |
+| `TURB_DO_ratio`| Rasio | `TURBIDITY / (DO + 0.1)` | Indikator penurunan kelarutan O₂ akibat kekeruhan |
 | `TEMP_PH_ratio`| Rasio | `TEMP / (PH + 0.1)` | Interaksi dinamika suhu terhadap keasaman air |
 | `hour_sin` | Siklis | `sin(2 * pi * hour / 24.0)` | Komponen sinus siklus waktu 24 jam |
 | `hour_cos` | Siklis | `cos(2 * pi * hour / 24.0)` | Komponen kosinus siklus waktu 24 jam |
 
 ---
 
-## 🔬 4. Metode Perbandingan 7 Algoritma Machine Learning (v4_v3)
+## 🔬 4. Perbandingan 7 Algoritma Machine Learning
 
-Tujuh model ML dievaluasi pada data latih SMOTE (`X_train_res`) dan diuji pada data uji murni (`X_test`, 877 sampel):
+Tujuh model ML dievaluasi pada data latih murni (`X_train`, 3.506 sampel) dan diuji pada data uji murni (`X_test`, 877 sampel):
 
 ```python
 models = {
@@ -83,13 +90,13 @@ models = {
 }
 ```
 
-### 🏆 Hasil Perbandingan Metrik Evaluasi Model (v4_v3)
+### 🏆 Hasil Perbandingan Metrik Evaluasi Model
 
-| Peringkat | Algoritma Model | Testing Accuracy | Precision | Recall | F1-Score | AUC-ROC Score | Status Realistis |
+| Peringkat | Algoritma Model | Testing Accuracy | Precision | Recall | F1-Score | AUC-ROC Score | Status Pemodelan |
 | :---: | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
 | 🥇 **1** | **ExtraTrees Classifier** | **93.61%** | **0.840** | **0.745** | **0.789** | **0.941** | 🟢 Kredibel & Realistis |
 | 🥈 **2** | **Random Forest Classifier** | **93.50%** | **0.833** | **0.745** | **0.786** | **0.940** | 🟢 Kredibel & Realistis |
-| 🥉 3 | Gradient Boosting Classifier | 93.39% | 0.832 | 0.738 | 0.782 | 0.939 | 🟢 Realistis |
+| 🥉 3 | Gradient Boosting | 93.39% | 0.832 | 0.738 | 0.782 | 0.939 | 🟢 Realistis |
 | 4 | HistGradientBoosting | 93.16% | 0.824 | 0.730 | 0.774 | 0.941 | 🟢 Realistis |
 | 5 | AdaBoost Classifier | 92.93% | 0.809 | 0.745 | 0.775 | 0.938 | 🟢 Realistis |
 | 6 | Decision Tree Classifier | 92.25% | 0.776 | 0.738 | 0.756 | 0.918 | 🟢 Realistis |
@@ -99,7 +106,7 @@ models = {
 
 ## 🧪 5. Verifikasi Skenario Real-Time (Simulator & API Backend)
 
-Pengujian dilakukan terhadap skenario telemetri realistis dari `src/pages/simulator.js` dan backend `appv2.py`:
+Pengujian dilakukan terhadap skenario telemetri realistis dari simulator frontend (`src/pages/simulator.js`) dan backend FastAPI (`appv2.py`):
 
 | Skenario | Nilai Telemetri Sensor | Prediksi Model ML | Confidence (%) | Interpretasi Hasil |
 | :--- | :--- | :---: | :---: | :--- |

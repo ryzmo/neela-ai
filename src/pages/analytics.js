@@ -339,7 +339,7 @@ export default function AnalyticsPage() {
                 Estimated Decision Accuracy
               </h2>
               <p className="text-[11px] text-slate-500 mt-1 max-w-lg leading-relaxed">
-                Calculated validation rates matching Extra Trees outputs against expert manual telemetry classification.
+                Calculated validation rates matching ExtraTrees outputs against expert manual telemetry classification.
               </p>
             </div>
             
@@ -386,7 +386,7 @@ export default function AnalyticsPage() {
                   <tr className="border-b bg-[#f8fafc] text-[10px] font-black text-slate-500 uppercase tracking-wider">
                     <th className="p-4 text-left">Timestamp</th>
                     <th className="p-4 text-left">Sensor Readings snapshot</th>
-                    <th className="p-4 text-left">ET Status Output</th>
+                    <th className="p-4 text-left">HGB Status Output</th>
                     <th className="p-4 text-left">Final System Decision</th>
                   </tr>
                 </thead>
