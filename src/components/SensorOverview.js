@@ -10,7 +10,7 @@ export default function SensorOverview({ sensor }) {
       <SensorCard
         title="Water Level"
         value={sensor.water_level}
-        unit="cm"
+        unit="%"
       />
     </div>
   );

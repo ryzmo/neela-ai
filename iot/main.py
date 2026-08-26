@@ -1,207 +1,713 @@
-import machine
-import time
 import network
 import urequests
-import json
-from machine import Pin, ADC
+import time
+import machine
+from machine import Pin, PWM, ADC
+import onewire
+import ds18x20
+
+buzzer = Pin(25, Pin.OUT)
+
+# Tombol restart
+restart_button = Pin(18, Pin.IN, Pin.PULL_UP)
+
+restart_requested = False
+
+def restart_handler(pin):
+    global restart_requested
+    restart_requested = True
+
+restart_button.irq(
+    trigger=Pin.IRQ_FALLING,
+    handler=restart_handler
+)
+
+def beep(duration=0.15):
+    buzzer.on()
+    time.sleep(duration)
+    buzzer.off()
+
+
+def beep_success():
+    # bip
+    beep(0.2)
+
+
+def beep_connecting():
+    # bip bip
+    beep(0.1)
+    time.sleep(0.1)
+    beep(0.1)
+
+
+def beep_failed():
+    # bip bip bip bip
+    for i in range(4):
+        beep(0.1)
+        time.sleep(0.1)
+
+
+def beep_action():
+    # bip pendek
+    beep(0.05)
+
+
+SSID = "Hnn"
+PASSWORD = "11111111"
+
+wifi = network.WLAN(network.STA_IF)
+wifi.active(True)
+wifi.connect(SSID, PASSWORD)
+
+print("Connecting...")
+
+beep_connecting()
+
+while not wifi.isconnected():
+    time.sleep(1)
+
+print("Connected!")
+print(wifi.ifconfig())
+beep_success()
+
+timeout = 15
+
+while not wifi.isconnected() and timeout > 0:
+    time.sleep(1)
+    timeout -= 1
+
+if not wifi.isconnected():
+    print("WiFi Failed")
+    beep_failed()
+
+API_ANALYZE = "http://172.20.10.3:8000/analyze"
+
+API_BEEP_ACK = "http://172.20.10.3:8000/beep/ack"
+
+API_ACTUATOR = "http://172.20.10.3:8000/actuator"
+
+API_FEEDING = "http://172.20.10.3:8000/feeding-schedule"
+
+API_FEEDING_VERSION = "http://172.20.10.3:8000/feeding-version"
+
+API_SETTINGS = "http://172.20.10.3:8000/settings"
+
+API_FEEDER_ACK = "http://172.20.10.3:8000/feeder/ack"
+
+API_ACTUATOR_ACK = "http://172.20.10.3:8000/actuator/ack"
+
+def get_actuator():
+
+    try:
+
+        response = urequests.get(API_ACTUATOR)
+
+        result = response.json()
+
+        response.close()
+
+        return result
+
+    except Exception as e:
+
+        print("Actuator Error:", e)
+
+        return None
+    
+def get_feeding_schedule():
+
+    try:
+
+        response = urequests.get(API_FEEDING)
+
+        data = response.json()
+
+        response.close()
+
+        return data
+
+    except Exception as e:
+
+        print("Schedule Error:", e)
+
+        return None
+    
+def get_feeding_version():
+
+    try:
+
+        response = urequests.get(API_FEEDING_VERSION)
+
+        version = response.json()["version"]
+
+        response.close()
+
+        return version
+
+    except:
+
+        return None
+    
+def get_settings():
+
+    try:
+
+        response = urequests.get(API_SETTINGS)
+
+        data = response.json()
+
+        response.close()
+
+        return data
+
+    except:
+
+        return {
+            "refreshInterval": 5
+        }
+
+# Relay aktif LOW
+ON = 0
+OFF = 1
+
+relay_aerator = Pin(22, Pin.OUT)
+relay_pump = Pin(21, Pin.OUT)
+relay_ph = Pin(19, Pin.OUT)
+
+
+
+servo = PWM(Pin(13), freq=50)
+
+# ==========================
+# PH SENSOR
+# ==========================
+ph_pin = ADC(Pin(32))
+ph_pin.atten(ADC.ATTN_11DB)
+ph_pin.width(ADC.WIDTH_12BIT)
+
+# ==========================
+# TURBIDITY SENSOR
+# ==========================
+turbidity_pin = ADC(Pin(34))
+turbidity_pin.atten(ADC.ATTN_11DB)
+turbidity_pin.width(ADC.WIDTH_12BIT)
+
+# ==========================
+# DS18B20
+# ==========================
+data_pin = Pin(4)
+ds_sensor = ds18x20.DS18X20(onewire.OneWire(data_pin))
+roms = ds_sensor.scan()
+
+print("DS18B20 Found:", roms)
 
 # ==========================================
-# 🌐 KONFIGURASI JARINGAN & BACKEND SERVER
+# ULTRASONIC / WATER LEVEL
 # ==========================================
-WIFI_SSID = "YOUR_WIFI_SSID"
-WIFI_PASS = "YOUR_WIFI_PASSWORD"
-BACKEND_URL = "http://192.168.1.50:8000"  # Sesuaikan dengan IP Server Backend LAN
 
-# Interval Refresh Pengiriman Data (detik)
-REFRESH_INTERVAL = 5
+TRIG = Pin(26, Pin.OUT)
+ECHO = Pin(27, Pin.IN)
 
 # ==========================================
-# 🔌 PIN MAPPING ESP32
+# KALIBRASI WATER LEVEL
 # ==========================================
-# Sensor Digital & Analog
-PIN_DS18B20 = 4       # Suhu Air (OneWire)
-PIN_PH = 34           # pH Sensor (ADC)
-PIN_TURBIDITY = 35    # Turbidity Sensor (ADC)
-PIN_WATER_LEVEL = 36  # Water Level Sensor (ADC)
 
-# Aktuator Relay (Active LOW)
-PIN_RELAY_AERATOR = 25     # Relay 1: Aerator Air Pump
-PIN_RELAY_PUMP = 26        # Relay 2: Water Circulation Pump
-PIN_RELAY_FEEDER = 32      # Relay 3: Auto Feeder Motor/Servo
-PIN_RELAY_STABILIZER = 33  # Relay 4: pH Neutralizer Dosing Pump
-PIN_BUZZER = 27            # Active Buzzer Alarm
+SENSOR_HEIGHT = 8.5
+MAX_WATER_HEIGHT = 6.0
 
-# Inisialisasi Relay (Default OFF / HIGH untuk Active LOW)
-relay_aerator = Pin(PIN_RELAY_AERATOR, Pin.OUT, value=1)
-relay_pump = Pin(PIN_RELAY_PUMP, Pin.OUT, value=1)
-relay_feeder = Pin(PIN_RELAY_FEEDER, Pin.OUT, value=1)
-relay_stabilizer = Pin(PIN_RELAY_STABILIZER, Pin.OUT, value=1)
-buzzer = Pin(PIN_BUZZER, Pin.OUT, value=0)
-
-# Inisialisasi Analog Sensor (ADC)
-adc_ph = ADC(Pin(PIN_PH))
-adc_ph.atten(ADC.ATTN_11DB)  # 0 - 3.3V range
-
-adc_turbidity = ADC(Pin(PIN_TURBIDITY))
-adc_turbidity.atten(ADC.ATTN_11DB)
-
-adc_water_level = ADC(Pin(PIN_WATER_LEVEL))
-adc_water_level.atten(ADC.ATTN_11DB)
-
-# Standard DS18B20 OneWire Sensor
-try:
-    import onewire, ds18x20
-    ow_pin = Pin(PIN_DS18B20)
-    ds_sensor = ds18x20.DS18X20(onewire.OneWire(ow_pin))
-    roms = ds_sensor.scan()
-    print("Found DS18B20 sensors:", len(roms))
-except Exception as e:
-    ds_sensor = None
-    roms = []
-    print("DS18B20 initialization error:", e)
 
 # ==========================================
-# 📶 WIFICONNECTION HELPER
+# MEMBACA JARAK SENSOR KE PERMUKAAN AIR
 # ==========================================
-def connect_wifi():
-    wlan = network.WLAN(network.STA_IF)
-    wlan.active(True)
-    if not wlan.isconnected():
-        print("Connecting to WiFi:", WIFI_SSID)
-        wlan.connect(WIFI_SSID, WIFI_PASS)
-        timeout = 20
-        while not wlan.isconnected() and timeout > 0:
-            time.sleep(0.5)
-            timeout -= 1
-    if wlan.isconnected():
-        print("WiFi Connected! IP Info:", wlan.ifconfig())
-    else:
-        print("WiFi Connection Failed!")
 
-# ==========================================
-# 🌡️ SENSOR READING FUNCTIONS
-# ==========================================
-def read_temperature():
-    """Membaca suhu air (°C) dari DS18B20."""
-    if ds_sensor and roms:
-        try:
-            ds_sensor.convert_temp()
-            time.sleep_ms(750)
-            for rom in roms:
-                temp = ds_sensor.read_temp(rom)
-                if temp and temp > -55 and temp < 125:
-                    return round(temp, 2)
-        except Exception as e:
-            print("Error reading DS18B20:", e)
-    # Default fallback temperature jika sensor belum terpasang
-    return 28.5
+def get_distance():
 
-def read_ph():
-    """Membaca nilai keasaman (pH) dari Gravity Analog pH Sensor."""
-    raw = adc_ph.read()
-    voltage = (raw / 4095.0) * 3.3
-    # Formula linear mapping (Kalibrasi pH 4.0 & 7.0)
-    ph_val = 3.5 * voltage + 1.2
-    return round(max(0.0, min(14.0, ph_val)), 2)
+    TRIG.off()
+    time.sleep_us(2)
 
-def read_turbidity():
-    """Membaca tingkat kekeruhan air (NTU) dari SEN0189 Optical Sensor."""
-    raw = adc_turbidity.read()
-    voltage = (raw / 4095.0) * 3.3
-    # Formula linear mapping kekeruhan
-    turb_ntu = max(0.0, (2.5 - voltage) * 100.0)
-    return round(turb_ntu, 1)
+    TRIG.on()
+    time.sleep_us(10)
+    TRIG.off()
 
-def read_water_level():
-    """Membaca ketinggian air (cm) dari sensor water level resistif."""
-    raw = adc_water_level.read()
-    voltage = (raw / 4095.0) * 3.3
-    level_cm = (voltage / 3.3) * 25.0
-    return round(max(0.0, level_cm), 1)
+    while ECHO.value() == 0:
+        start = time.ticks_us()
+
+    while ECHO.value() == 1:
+        end = time.ticks_us()
+
+    duration = time.ticks_diff(
+        end,
+        start
+    )
+
+    distance = (
+        duration * 0.0343
+    ) / 2
+
+    return distance
+
 
 # ==========================================
-# 🕹️ ACTUATOR RELAY CONTROL (ACTIVE LOW)
+# MENGHITUNG KETINGGIAN AIR
 # ==========================================
-def update_actuators(act_data):
-    """Menyetel state Relay (Active LOW: ON = 0, OFF = 1)."""
-    if not act_data:
-        return
 
-    # Aerator
-    is_aerator_on = (act_data.get("aerator") == "ON" or act_data.get("aerator") is True)
-    relay_aerator.value(0 if is_aerator_on else 1)
+def calculate_water_height(distance):
 
-    # Water Circulation Pump
-    is_pump_on = (act_data.get("water_circulation") == "ON" or act_data.get("pump") is True)
-    relay_pump.value(0 if is_pump_on else 1)
+    water_height = SENSOR_HEIGHT - distance
 
-    # pH Neutralizer Dosing Pump
-    is_ph_on = (act_data.get("ph_neutralizer") == "ON" or act_data.get("stabilizer") is True)
-    relay_stabilizer.value(0 if is_ph_on else 1)
+    if water_height < 0:
+        water_height = 0
 
-    # Auto Feeder
-    is_feeder_on = (act_data.get("feeder") == "ON" or act_data.get("feeder") is True)
-    relay_feeder.value(0 if is_feeder_on else 1)
+    elif water_height > MAX_WATER_HEIGHT:
+        water_height = MAX_WATER_HEIGHT
 
-    # Alarm Buzzer (Active HIGH)
-    is_buzzer_on = (act_data.get("buzzer") == "ON" or act_data.get("buzzer") is True)
-    buzzer.value(1 if is_buzzer_on else 0)
+    return water_height
+
 
 # ==========================================
-# 🚀 MAIN ESP32 LOOP
+# MENGHITUNG PERSENTASE AIR
 # ==========================================
-def main():
-    connect_wifi()
 
-    print("AquaAgent (NEELA AI) ESP32 Firmware Started.")
+def calculate_level(water_height):
 
-    while True:
-        try:
-            # 1. Pembacaan Telemetri Sensor
-            temp = read_temperature()
-            ph = read_ph()
-            turb = read_turbidity()
-            w_level = read_water_level()
+    level = (
+        water_height / MAX_WATER_HEIGHT
+    ) * 100
 
-            current_hour = time.localtime()[3] if time else 12
+    if level < 0:
+        level = 0
 
-            payload = {
-                "temperature": temp,
-                "ph": ph,
-                "turbidity": turb,
-                "water_level": w_level,
-                "hour": current_hour,
-                "source": "iot"
+    elif level > 100:
+        level = 100
+
+    return level
+
+
+# ==========================================
+# FUNGSI WATER LEVEL
+# ==========================================
+
+def get_water_level():
+
+    distance = get_distance()
+
+    water_height = calculate_water_height(
+        distance
+    )
+
+    level = calculate_level(
+        water_height
+    )
+
+    return {
+        "distance": round(distance, 2),
+        "height": round(water_height, 2),
+        "level": round(level, 2)
+    }
+
+def get_ph():
+
+    # Baca ADC
+    adc = ph_pin.read()
+
+    # Konversi ADC ke voltage
+    voltage = adc * (3.3 / 4095)
+
+    # ==========================================
+    # KALIBRASI POLYNOMIAL
+    # pH = aV² + bV + c
+    # ==========================================
+
+    a = -13.021343985879776
+    b = 52.51123561813835
+    c = -43.04810862294683
+
+    ph = (
+        a * voltage * voltage
+        + b * voltage
+        + c
+    )
+
+    # Batasi nilai pH
+    if ph < 0:
+        ph = 0
+
+    elif ph > 14:
+        ph = 14
+
+    return round(ph, 2)
+
+
+def get_turbidity():
+
+    adc = turbidity_pin.read()
+    voltage = adc * (3.3 / 4095)
+
+    return {
+        "adc": adc,
+        "voltage": round(voltage, 2)
+    }
+
+
+def get_temperature():
+
+    if len(roms) == 0:
+        return None
+
+    ds_sensor.convert_temp()
+    time.sleep(1)
+
+    temp = ds_sensor.read_temp(roms[0])
+
+    return round(temp, 2)
+
+def feed_now():
+
+    servo.duty(FORWARD)
+    time.sleep(0.8)
+
+    servo.duty(BACKWARD)
+    time.sleep(0.8)
+
+    servo.duty(STOP)
+    
+def actuator_ack(name):
+
+    try:
+
+        response = urequests.post(
+            API_ACTUATOR_ACK,
+            json={
+                "name": name
             }
+        )
 
-            print("\n[TELEMETRY SEND]", payload)
+        response.close()
 
-            # 2. HTTP POST Telemetry ke Endpoint /analyze
-            res = urequests.post(
-                BACKEND_URL + "/analyze",
-                headers={"Content-Type": "application/json"},
-                data=json.dumps(payload)
+    except Exception as e:
+
+        print("ACK Error:", e)
+    
+def send_sensor_data(temperature, ph, turbidity, water_level):
+
+    payload = {
+        "temperature": temperature,
+        "ph": ph,
+        "turbidity": turbidity,
+        "water_level": water_level,
+        "hour": time.localtime()[3],
+        "source": "iot"
+    }
+
+    try:
+
+        response = urequests.post(
+            API_ANALYZE,
+            json=payload
+        )
+
+        result = response.json()
+        response.close()
+
+        return result
+
+    except Exception as e:
+        print("Send Error:", e)
+        return None
+    
+last_feeder = False
+last_feed_key = ""
+feeding_schedule = None
+
+feeding_version = -1
+previous_data = None
+
+while True:
+    
+    if restart_requested:
+        print("Restarting ESP32...")
+
+        # Matikan semua actuator
+        relay_aerator.value(OFF)
+        relay_pump.value(OFF)
+        relay_ph.value(OFF)
+        buzzer.off()
+
+        time.sleep_ms(100)
+
+        machine.reset()
+    
+    temperature = get_temperature()
+    ph = get_ph()
+    turbidity = get_turbidity()
+
+    water_data = get_water_level()
+
+    print(
+        "Distance    :",
+        water_data["distance"],
+        "cm"
+    )
+
+    print(
+        "Water Height:",
+        water_data["height"],
+        "cm"
+    )
+
+    print(
+        "Water Level :",
+        water_data["level"],
+        "%"
+    )
+        
+    print("Temperature :", temperature, "°C")
+    print("pH          :", ph)
+    print(
+        "Turbidity   :",
+        turbidity["adc"],
+        "|",
+        turbidity["voltage"],
+        "V"
+    )
+    print("----------------------------")
+        
+    current_version = get_feeding_version()
+
+    if (
+        current_version is not None and
+        current_version != feeding_version
+    ):
+
+        feeding_schedule = get_feeding_schedule()
+
+        feeding_version = current_version
+
+        print("Feeding schedule updated")
+
+    if (
+        feeding_schedule and
+        feeding_schedule["enabled"]
+    ):
+
+        now = time.localtime()
+
+        current_hour = now[3]
+        current_minute = now[4]
+
+        start_hour, start_minute = map(
+            int,
+            feeding_schedule["feedingTime"].split(":")
+        )
+
+        interval = feeding_schedule["interval"]
+
+        current_minutes = (
+            current_hour * 60 +
+            current_minute
+        )
+
+        start_minutes = (
+            start_hour * 60 +
+            start_minute
+        )
+
+        diff = (
+            current_minutes -
+            start_minutes
+        ) % (24 * 60)
+
+        if diff % (interval * 60) == 0:
+
+            feed_key = "{}-{}-{}".format(
+                now[0],
+                now[7],
+                diff
             )
 
-            if res.status_code == 200:
-                result_data = res.json()
-                print("[ANALYZE RESPONSE]", result_data.get("health_status"), result_data.get("reason"))
-            res.close()
+            if feed_key != last_feed_key:
 
-            # 3. HTTP GET Current Actuator State
-            act_res = urequests.get(BACKEND_URL + "/actuator")
-            if act_res.status_code == 200:
-                act_data = act_res.json()
-                print("[ACTUATOR STATE]", act_data)
-                update_actuators(act_data)
-            act_res.close()
+                print("=== SCHEDULED FEEDING ===")
+
+                beep_action()
+                
+
+                feed_now()
+
+                last_feed_key = feed_key
+
+    data = send_sensor_data(
+        temperature,
+        ph,
+        turbidity["voltage"],
+        water_data["level"]
+    )
+    
+    actuator = get_actuator()
+    print(actuator)
+    
+    if actuator and actuator.get("beep"):
+
+        beep_action()
+
+        try:
+
+            response = urequests.post(API_BEEP_ACK)
+            response.close()
 
         except Exception as e:
-            print("[MAIN LOOP ERROR]", e)
-            # Reconnect WiFi jika terputus
-            connect_wifi()
 
-        time.sleep(REFRESH_INTERVAL)
+            print("Beep Ack Error:", e)
+    def refresh_actuator():
 
-if __name__ == "__main__":
-    main()
+        actuator = get_actuator()
+
+        if actuator is None:
+            return None
+
+        print("Refresh:", actuator)
+
+        return actuator
+
+    if actuator:
+
+        if actuator["aerator"]:
+
+            relay_aerator.value(ON)
+
+            time.sleep(5)
+
+            relay_aerator.value(OFF)
+
+            actuator_ack("aerator")
+            
+            actuator = refresh_actuator()
+        else:
+            relay_aerator.value(OFF)
+
+        if actuator["pump"]:
+
+            relay_pump.value(ON)
+
+            time.sleep(0.5)
+
+            relay_pump.value(OFF)
+
+            actuator_ack("pump")
+            
+            actuator = refresh_actuator()
+        else:
+            relay_pump.value(OFF)
+
+        if actuator["stabilizer"]:
+
+            relay_ph.value(ON)
+
+            time.sleep(0.5)
+
+            relay_ph.value(OFF)
+
+            actuator_ack("stabilizer")
+            actuator = refresh_actuator()
+        else:
+            relay_ph.value(OFF)
+
+        if actuator["buzzer"]:
+
+            buzzer.on()
+
+            time.sleep(5)
+
+            buzzer.off()
+
+            actuator_ack("buzzer")
+            actuator = refresh_actuator()
+        else:
+            buzzer.off()
+        # Manual Feed
+        if actuator["mode"] == "MANUAL":
+
+            if actuator["feeder"] and not last_feeder:
+
+                print("Manual Feeding")
+
+                beep_action()
+
+                feed_now()
+
+                try:
+
+                    response = urequests.post(API_FEEDER_ACK)
+
+                    response.close()
+
+                except Exception as e:
+
+                    print("Feeder Ack Error:", e)
+
+        last_feeder = actuator["feeder"]
+    
+    if data:
+
+        if data.get("success") is False:
+
+            print("IoT Receiver OFF")
+
+        else:
+
+            print("===== AI RESULT =====")
+            print("Health :", data["health_status"])
+            print("DO     :", data["sensor_data"]["do"])
+            print("Reason :", data["reason"])
+            print("=====================")
+
+    #if data:
+
+        # Ada command baru dari dashboard
+        #if previous_data is not None and data != previous_data:
+        #   print("New action received")
+        #    beep_action()
+
+        # Aerator
+        #if data["aerator"] == "ON":
+        #    relay_aerator.value(ON)
+        #else:
+        #    relay_aerator.value(OFF)
+
+        # Pump
+        #if data["water_circulation"] == "ON":
+        #    relay_pump.value(ON)
+        #else:
+        #    relay_pump.value(OFF)
+
+        # pH Stabilizer
+        #if data["ph_neutralizer"] == "ON":
+        #    relay_ph.value(ON)
+        #else:
+        #    relay_ph.value(OFF)
+
+        # Buzzer
+        #if data["buzzer"] == "ON":
+        #    buzzer.on()
+        #else:
+        #    buzzer.off()
+
+        # Feeder
+        #if data["feeder"] and not last_feeder:
+        #    beep_action()
+        #    feed_now()
+
+        #last_feeder = data["feeder"]
+
+        # Simpan data terakhir
+        #previous_data = data.copy()
+
+    settings = get_settings()
+
+    interval = settings.get(
+        "refreshInterval",
+        5
+    )
+
+    time.sleep(interval)
+

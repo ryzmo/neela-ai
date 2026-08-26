@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 last_email_time = None
 
-def send_email_notification(result):
+def send_email_notification(result, cooldown_minutes=30, cooldown_seconds=0):
 
     global last_email_time
 
@@ -77,11 +77,12 @@ def send_email_notification(result):
         and
 
         now - last_email_time <
-        timedelta(minutes=30)
+        timedelta(minutes=cooldown_minutes, seconds=cooldown_seconds)
 
     ):
 
         return
+
 
     conn = sqlite3.connect(
         "aquaagent.db"

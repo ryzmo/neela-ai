@@ -149,7 +149,7 @@ VALUES(
     8.0,
     30,
     15,
-    20,
+    85,
     1,
     5
 )
@@ -181,7 +181,7 @@ def get_current_settings():
         "phMax": row[2],
         "tempMax": row[3],
         "turbidityMax": row[4],
-        "waterLevelMax": row[5],
+        "waterLevelMax": row[5] if row[5] is not None else 85.0,
         "iotEnabled": bool(row[6]),
         "refreshInterval": row[7]
     }

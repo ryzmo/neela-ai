@@ -29,7 +29,7 @@ const SENSOR_RANGES = {
   do: { min: 0, max: 10, color: "cyan", label: "Dissolved O₂", unit: "mg/L" },
   ph: { min: 0, max: 14, color: "teal", label: "pH Level", unit: "" },
   turbidity: { min: 0, max: 50, color: "blue", label: "Water Turbidity", unit: "NTU" },
-  water_level: { min: 0, max: 20, color: "indigo", label: "Water Height", unit: "cm" },
+  water_level: { min: 0, max: 100, color: "indigo", label: "Water Level", unit: "%" },
 };
 
 const COLOR_MAP = {
@@ -406,7 +406,7 @@ function RuleItem({ label, triggered, action }) {
         ? "bg-rose-100 text-rose-800 border-rose-200 animate-pulse"
         : "bg-slate-100 text-slate-500 border-slate-200"
         }`}>
-        {triggered ? `⚠️ Trigger: ${action}` : "✓ Passed"}
+        {triggered ? `Trigger: ${action}` : "Passed"}
       </span>
     </div>
   );

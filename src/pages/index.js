@@ -1123,37 +1123,37 @@ export default function LandingPage() {
             {/* Col 2: Navigation Links */}
             <div className="flex flex-col gap-3 items-center md:items-start">
               <span className="text-[10px] font-bold tracking-widest text-slate-400 uppercase mb-2">NAVIGATION</span>
-              <Link href="/dashboard" onClick={(e) => handleNavClick(e, "/dashboard")} className={`font-bold text-xs text-slate-700 hover:text-[#1a6fc4] transition-colors uppercase flex items-center gap-1 ${!isLoggedIn ? "opacity-50 cursor-not-allowed" : ""}`}>
-                {!isLoggedIn && "🔒 "}DASHBOARD
+              <Link href="/dashboard" onClick={(e) => handleNavClick(e, "/dashboard")} className={`font-bold text-xs text-slate-700 hover:text-[#1a6fc4] transition-colors uppercase flex items-center gap-1.5 ${!isLoggedIn ? "opacity-50 cursor-not-allowed" : ""}`}>
+                {!isLoggedIn && <Lock size={12} className="text-slate-400" />}DASHBOARD
               </Link>
-              <Link href="/simulator" onClick={(e) => handleNavClick(e, "/simulator")} className={`font-bold text-xs text-slate-700 hover:text-[#1a6fc4] transition-colors uppercase flex items-center gap-1 ${!isLoggedIn ? "opacity-50 cursor-not-allowed" : ""}`}>
-                {!isLoggedIn && "🔒 "}IOT SIMULATOR
+              <Link href="/simulator" onClick={(e) => handleNavClick(e, "/simulator")} className={`font-bold text-xs text-slate-700 hover:text-[#1a6fc4] transition-colors uppercase flex items-center gap-1.5 ${!isLoggedIn ? "opacity-50 cursor-not-allowed" : ""}`}>
+                {!isLoggedIn && <Lock size={12} className="text-slate-400" />}IOT SIMULATOR
               </Link>
-              <Link href="/actuator" onClick={(e) => handleNavClick(e, "/actuator")} className={`font-bold text-xs text-slate-700 hover:text-[#1a6fc4] transition-colors uppercase flex items-center gap-1 ${!isLoggedIn ? "opacity-50 cursor-not-allowed" : ""}`}>
-                {!isLoggedIn && "🔒 "}ACTUATOR
+              <Link href="/actuator" onClick={(e) => handleNavClick(e, "/actuator")} className={`font-bold text-xs text-slate-700 hover:text-[#1a6fc4] transition-colors uppercase flex items-center gap-1.5 ${!isLoggedIn ? "opacity-50 cursor-not-allowed" : ""}`}>
+                {!isLoggedIn && <Lock size={12} className="text-slate-400" />}ACTUATOR
               </Link>
-              <Link href="/ai-center" onClick={(e) => handleNavClick(e, "/ai-center")} className={`font-bold text-xs text-slate-700 hover:text-[#1a6fc4] transition-colors uppercase flex items-center gap-1 ${!isLoggedIn ? "opacity-50 cursor-not-allowed" : ""}`}>
-                {!isLoggedIn && "🔒 "}AI CENTER
+              <Link href="/ai-center" onClick={(e) => handleNavClick(e, "/ai-center")} className={`font-bold text-xs text-slate-700 hover:text-[#1a6fc4] transition-colors uppercase flex items-center gap-1.5 ${!isLoggedIn ? "opacity-50 cursor-not-allowed" : ""}`}>
+                {!isLoggedIn && <Lock size={12} className="text-slate-400" />}AI CENTER
               </Link>
-              <Link href="/chat" onClick={(e) => handleNavClick(e, "/chat")} className={`font-bold text-xs text-slate-700 hover:text-[#1a6fc4] transition-colors uppercase flex items-center gap-1 ${!isLoggedIn ? "opacity-50 cursor-not-allowed" : ""}`}>
-                {!isLoggedIn && "🔒 "}NEELA AI CHAT
+              <Link href="/chat" onClick={(e) => handleNavClick(e, "/chat")} className={`font-bold text-xs text-slate-700 hover:text-[#1a6fc4] transition-colors uppercase flex items-center gap-1.5 ${!isLoggedIn ? "opacity-50 cursor-not-allowed" : ""}`}>
+                {!isLoggedIn && <Lock size={12} className="text-slate-400" />}NEELA AI CHAT
               </Link>
             </div>
 
             {/* Col 3: Tech Links */}
             <div className="flex flex-col gap-3 items-center md:items-start">
               <span className="text-[10px] font-bold tracking-widest text-slate-400 uppercase mb-2">SYSTEM FILES</span>
-              <Link href="/alerts" onClick={(e) => handleNavClick(e, "/alerts")} className={`font-bold text-xs text-slate-700 hover:text-[#1a6fc4] transition-colors uppercase flex items-center gap-1 ${!isLoggedIn ? "opacity-50 cursor-not-allowed" : ""}`}>
-                {!isLoggedIn && "🔒 "}ALERTS ENGINE
+              <Link href="/alerts" onClick={(e) => handleNavClick(e, "/alerts")} className={`font-bold text-xs text-slate-700 hover:text-[#1a6fc4] transition-colors uppercase flex items-center gap-1.5 ${!isLoggedIn ? "opacity-50 cursor-not-allowed" : ""}`}>
+                {!isLoggedIn && <Lock size={12} className="text-slate-400" />}ALERTS ENGINE
               </Link>
-              <Link href="/analytics" onClick={(e) => handleNavClick(e, "/analytics")} className={`font-bold text-xs text-slate-700 hover:text-[#1a6fc4] transition-colors uppercase flex items-center gap-1 ${!isLoggedIn ? "opacity-50 cursor-not-allowed" : ""}`}>
-                {!isLoggedIn && "🔒 "}ANALYTICS CENTER
+              <Link href="/analytics" onClick={(e) => handleNavClick(e, "/analytics")} className={`font-bold text-xs text-slate-700 hover:text-[#1a6fc4] transition-colors uppercase flex items-center gap-1.5 ${!isLoggedIn ? "opacity-50 cursor-not-allowed" : ""}`}>
+                {!isLoggedIn && <Lock size={12} className="text-slate-400" />}ANALYTICS CENTER
               </Link>
-              <Link href="/help" onClick={(e) => handleNavClick(e, "/help")} className={`font-bold text-xs text-slate-700 hover:text-[#1a6fc4] transition-colors uppercase flex items-center gap-1 ${!isLoggedIn ? "opacity-50 cursor-not-allowed" : ""}`}>
-                {!isLoggedIn && "🔒 "}HELP CENTER
+              <Link href="/help" onClick={(e) => handleNavClick(e, "/help")} className={`font-bold text-xs text-slate-700 hover:text-[#1a6fc4] transition-colors uppercase flex items-center gap-1.5 ${!isLoggedIn ? "opacity-50 cursor-not-allowed" : ""}`}>
+                {!isLoggedIn && <Lock size={12} className="text-slate-400" />}HELP CENTER
               </Link>
-              <Link href="/settings" onClick={(e) => handleNavClick(e, "/settings")} className={`font-bold text-xs text-slate-700 hover:text-[#1a6fc4] transition-colors uppercase flex items-center gap-1 ${!isLoggedIn ? "opacity-50 cursor-not-allowed" : ""}`}>
-                {!isLoggedIn && "🔒 "}SETTINGS
+              <Link href="/settings" onClick={(e) => handleNavClick(e, "/settings")} className={`font-bold text-xs text-slate-700 hover:text-[#1a6fc4] transition-colors uppercase flex items-center gap-1.5 ${!isLoggedIn ? "opacity-50 cursor-not-allowed" : ""}`}>
+                {!isLoggedIn && <Lock size={12} className="text-slate-400" />}SETTINGS
               </Link>
             </div>
 

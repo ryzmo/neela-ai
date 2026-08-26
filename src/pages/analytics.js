@@ -317,7 +317,7 @@ export default function AnalyticsPage() {
               <AnalyticsCard
                 title="Water Level"
                 value={avgWaterLevel}
-                unit="cm"
+                unit="%"
                 theme="indigo"
               />
             </div>
@@ -328,27 +328,7 @@ export default function AnalyticsPage() {
             <SensorChart history={history} />
           </div>
 
-          {/* AI ACCURACY SUMMARY */}
-          <div className="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 md:p-8 relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50/40 rounded-full blur-2xl pointer-events-none" />
-            <div>
-              <span className="bg-blue-50 text-[#1a6fc4] border border-blue-200/50 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider">
-                Reliability Indicator
-              </span>
-              <h2 className="text-lg font-black text-slate-900 uppercase tracking-wide mt-2">
-                Estimated Decision Accuracy
-              </h2>
-              <p className="text-[11px] text-slate-500 mt-1 max-w-lg leading-relaxed">
-                Calculated validation rates matching ExtraTrees outputs against expert manual telemetry classification.
-              </p>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <span className="text-5xl font-black text-emerald-600 bg-emerald-50 border border-emerald-100 px-6 py-4 rounded-3xl shadow-sm tracking-wide">
-                92.4%
-              </span>
-            </div>
-          </div>
+
 
           {/* AUDIT LOG TABLE LIST */}
           <div className="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 md:p-8">
@@ -411,7 +391,7 @@ export default function AnalyticsPage() {
                             </span>
                             {item.water_level && (
                               <span className="bg-slate-100 border border-slate-200 rounded-lg px-2 py-1 text-slate-700">
-                                Water: <strong className="font-bold text-slate-800">{item.water_level} cm</strong>
+                                Water: <strong className="font-bold text-slate-800">{item.water_level}%</strong>
                               </span>
                             )}
                           </div>
@@ -432,8 +412,8 @@ export default function AnalyticsPage() {
                               : "text-slate-500"
                           }`}>
                             {item.health_status?.toLowerCase().includes("risk")
-                              ? "⚠️ Corrective Action Triggered"
-                              : "✓ Normal Idle Status"}
+                              ? "Corrective Action Triggered"
+                              : "Normal Idle Status"}
                           </span>
                         </td>
                       </tr>

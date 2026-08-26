@@ -19,7 +19,8 @@ import {
   Fish,
   CircleHelp,
   LogOut,
-  MessageSquare
+  MessageSquare,
+  GitFork
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -68,6 +69,11 @@ export default function Sidebar() {
       icon: BarChart3,
       label: "Analytics",
       href: "/analytics",
+    },
+    {
+      icon: GitFork,
+      label: "Decision Tree",
+      href: "/decision-tree",
     },
     {
   icon: CircleHelp,

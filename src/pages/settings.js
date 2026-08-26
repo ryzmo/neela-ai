@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import {
@@ -12,7 +12,9 @@ import {
   Waves,
   CheckCircle2,
   AlertTriangle,
-  Activity
+  Activity,
+  BellOff,
+  Timer
 } from "lucide-react";
 
 export default function SettingsPage() {
@@ -23,9 +25,12 @@ export default function SettingsPage() {
     phMax: 8.0,
     tempMax: 30,
     turbidityMax: 15,
+    waterLevelMax: 85,
     aiEnabled: true,
     iotEnabled: true,
-    refreshInterval: 5
+    refreshInterval: 5,
+    alertCooldownMinutes: 30,
+    alertCooldownSeconds: 0
   });
 
   const [saving, setSaving] = useState(false);
@@ -54,6 +59,37 @@ export default function SettingsPage() {
     setTimeout(() => {
       loadSettings();
     }, 0);
+  }, []);
+
+  // === Alert Cooldown Live Status ===
+  const [cooldownStatus, setCooldownStatus] = useState({ remaining: 0, active: false, cooldownTotal: 0, lastAlertTime: null });
+  const remainingRef = useRef(0);
+
+  useEffect(() => {
+    async function fetchCooldownStatus() {
+      try {
+        const res = await axios.get("http://localhost:8000/alert-cooldown-status");
+        setCooldownStatus(res.data);
+        remainingRef.current = res.data.remaining;
+      } catch (err) {
+        // silent
+      }
+    }
+    fetchCooldownStatus();
+    const poll = setInterval(fetchCooldownStatus, 5000);
+    return () => clearInterval(poll);
+  }, []);
+
+  // Local 1-second tick for smooth countdown
+  useEffect(() => {
+    const tick = setInterval(() => {
+      setCooldownStatus((prev) => {
+        if (!prev.active || prev.remaining <= 0) return prev;
+        const next = Math.max(0, prev.remaining - 1);
+        return { ...prev, remaining: next, active: next > 0 };
+      });
+    }, 1000);
+    return () => clearInterval(tick);
   }, []);
 
   function updateSetting(key, value) {
@@ -175,6 +211,14 @@ export default function SettingsPage() {
                 icon={Waves}
                 iconColor="text-blue-600 bg-blue-50 border-blue-100"
               />
+              <InputField
+                label="Maximum Water Level"
+                value={settings.waterLevelMax}
+                onChange={(v) => updateSetting("waterLevelMax", v)}
+                unit="%"
+                icon={Droplets}
+                iconColor="text-indigo-600 bg-indigo-50 border-indigo-100"
+              />
             </div>
           </div>
 
@@ -258,6 +302,122 @@ export default function SettingsPage() {
                     sec
                   </span>
                 </div>
+              </div>
+
+            </div>
+          </div>
+
+          {/* ALERT COOLDOWN CONFIGURATION */}
+          <div className="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 md:p-8">
+            <div className="mb-6 pb-4 border-b border-slate-100">
+              <h2 className="text-lg font-black text-slate-900 uppercase tracking-wide">
+                Alert Cooldown Configuration
+              </h2>
+              <p className="text-[10px] font-bold text-slate-450 uppercase tracking-widest mt-0.5">
+                Minimum interval between repeated alert notifications and buzzer activations when risk persists
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+              
+              {/* Minutes Input */}
+              <div className="p-5 rounded-2xl bg-[#f8fafc] border border-slate-150 shadow-sm flex flex-col justify-between">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-100 text-rose-600 flex-shrink-0">
+                    <BellOff className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-black text-xs uppercase tracking-wide text-slate-800">
+                      Cooldown Minutes
+                    </h3>
+                    <p className="text-[10px] font-medium text-slate-500 mt-0.5">
+                      Suppress duplicate alerts for this many minutes.
+                    </p>
+                  </div>
+                </div>
+                <div className="relative">
+                  <input
+                    type="number"
+                    value={settings.alertCooldownMinutes}
+                    onChange={(e) => updateSetting("alertCooldownMinutes", Math.max(0, Math.min(1440, Number(e.target.value))))}
+                    min={0}
+                    max={1440}
+                    className="w-full bg-white border border-slate-250 rounded-xl py-3 px-4 text-xs font-bold text-slate-800 focus:outline-none focus:border-rose-400 transition-colors pr-14"
+                  />
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[9.5px] font-black uppercase text-slate-400">
+                    min
+                  </span>
+                </div>
+              </div>
+
+              {/* Seconds Input */}
+              <div className="p-5 rounded-2xl bg-[#f8fafc] border border-slate-150 shadow-sm flex flex-col justify-between">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-100 text-amber-600 flex-shrink-0">
+                    <Timer className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-black text-xs uppercase tracking-wide text-slate-800">
+                      Cooldown Seconds
+                    </h3>
+                    <p className="text-[10px] font-medium text-slate-500 mt-0.5">
+                      Additional seconds on top of the minute setting.
+                    </p>
+                  </div>
+                </div>
+                <div className="relative">
+                  <input
+                    type="number"
+                    value={settings.alertCooldownSeconds}
+                    onChange={(e) => updateSetting("alertCooldownSeconds", Math.max(0, Math.min(59, Number(e.target.value))))}
+                    min={0}
+                    max={59}
+                    className="w-full bg-white border border-slate-250 rounded-xl py-3 px-4 text-xs font-bold text-slate-800 focus:outline-none focus:border-amber-400 transition-colors pr-14"
+                  />
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[9.5px] font-black uppercase text-slate-400">
+                    sec
+                  </span>
+                </div>
+              </div>
+
+              {/* Live Countdown */}
+              <div className={`p-5 rounded-2xl border shadow-sm flex flex-col justify-center items-center min-h-[140px] transition-all duration-500 ${
+                cooldownStatus.active
+                  ? "bg-gradient-to-br from-amber-900 to-amber-950 border-amber-700"
+                  : "bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700"
+              }`}>
+                {cooldownStatus.active ? (
+                  <>
+                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-amber-400 mb-1 animate-pulse">
+                      ⏳ Cooldown Active
+                    </span>
+                    <span className="text-3xl font-black text-white tracking-tight tabular-nums">
+                      {Math.floor(cooldownStatus.remaining / 60)}m {cooldownStatus.remaining % 60}s
+                    </span>
+                    <span className="text-[9px] font-bold text-amber-400/60 uppercase tracking-widest mt-1">
+                      Remaining
+                    </span>
+                    {/* Progress bar */}
+                    <div className="w-full mt-3 h-1.5 bg-amber-950 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-amber-400 rounded-full transition-all duration-1000 ease-linear"
+                        style={{ width: `${cooldownStatus.cooldownTotal > 0 ? (cooldownStatus.remaining / cooldownStatus.cooldownTotal) * 100 : 0}%` }}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2">
+                      {cooldownStatus.lastAlertTime ? "Cooldown Complete" : "Active Cooldown"}
+                    </span>
+                    <span className="text-3xl font-black text-white tracking-tight">
+                      {settings.alertCooldownMinutes}m {settings.alertCooldownSeconds}s
+                    </span>
+                    <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-2">
+                      {cooldownStatus.lastAlertTime ? "Ready For Next Alert" : "Between Repeated Alerts"}
+                    </span>
+                  </>
+                )}
               </div>
 
             </div>

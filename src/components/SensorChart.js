@@ -37,7 +37,7 @@ const CHARTS = [
     key: "water_level",
     title: "Water Level History",
     color: "#2563EB",
-    unit: "cm",
+    unit: "%",
   },
 ];
 

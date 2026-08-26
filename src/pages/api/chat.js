@@ -39,7 +39,7 @@ CURRENT POND CONTEXT:
   * Dissolved Oxygen (DO): ${telemetry.sensor_data?.do} mg/L (Optimal: > 5.0 mg/L)
   * pH Level: ${telemetry.sensor_data?.ph} (Optimal: 6.5 - 8.0)
   * Turbidity: ${telemetry.sensor_data?.turbidity} NTU (Optimal: < 15 NTU)
-  * Water Level: ${telemetry.sensor_data?.water_level} cm (Max: 20 cm)
+  * Water Level: ${telemetry.sensor_data?.water_level}% (Optimal: 60 - 80%, Max: 85%)
 - Actuators Relays State:
   * Aerator (Air Pump): ${telemetry.aerator || "OFF"}
   * Feeder (Auto Feeder): ${telemetry.feeder || "OFF"}

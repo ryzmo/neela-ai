@@ -74,6 +74,11 @@ export default function AlertsPage() {
       severity: "WARNING",
       message: `pH is currently ${data.sensor_data?.ph} which is outside the safe range of 6.5 - 8.0.`,
     },
+    Number(data.sensor_data?.water_level) > 85 && {
+      title: "High Water Level",
+      severity: "WARNING",
+      message: `Water level is currently ${data.sensor_data?.water_level}% (Warning Threshold: > 85%).`,
+    },
   ].filter(Boolean);
 
   async function addEmail() {
@@ -231,7 +236,7 @@ export default function AlertsPage() {
                 </div>
                 <div>
                   <h2 className="text-lg font-black uppercase tracking-wider">
-                    🚨 Emergency Buzzer Activated
+                    Emergency Buzzer Activated
                   </h2>
                   <p className="text-xs text-white/80 leading-relaxed font-semibold mt-1">
                     AI models have detected multiple critical water conditions. Actuators have been triggered automatically to save livestock.

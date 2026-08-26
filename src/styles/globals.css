@@ -122,3 +122,38 @@ html.lenis, html.lenis body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* ========== Decision Tree Visualizer Animations ========== */
+@keyframes glowPulseGreen {
+  0%, 100% { box-shadow: 0 0 8px 2px rgba(16, 185, 129, 0.3); }
+  50% { box-shadow: 0 0 20px 6px rgba(16, 185, 129, 0.6); }
+}
+@keyframes glowPulseRed {
+  0%, 100% { box-shadow: 0 0 8px 2px rgba(239, 68, 68, 0.3); }
+  50% { box-shadow: 0 0 20px 6px rgba(239, 68, 68, 0.6); }
+}
+@keyframes edgeFlowGreen {
+  0% { stroke-dashoffset: 20; }
+  100% { stroke-dashoffset: 0; }
+}
+@keyframes edgeFlowRed {
+  0% { stroke-dashoffset: 20; }
+  100% { stroke-dashoffset: 0; }
+}
+@keyframes nodeEnter {
+  from { opacity: 0; transform: scale(0.85) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-glow-green { animation: glowPulseGreen 2s ease-in-out infinite; }
+.animate-glow-red { animation: glowPulseRed 2s ease-in-out infinite; }
+.animate-node-enter { animation: nodeEnter 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 30%, rgba(255,255,255,0.15) 50%, transparent 70%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}

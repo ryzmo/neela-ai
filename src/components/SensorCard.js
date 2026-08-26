@@ -50,7 +50,7 @@ const CONFIG = {
   "Water Level": {
     icon: Gauge,
     min: 0,
-    max: 20,
+    max: 100,
     bar: "bg-blue-400",
     text: "text-blue-600",
   },
@@ -91,17 +91,6 @@ export default function SensorCard({
         )
       );
 
-  const waterPercentage =
-    title === "Water Level"
-      ? Math.min(
-          Math.max(
-            (numeric / 20) * 100,
-            0
-          ),
-          100
-        )
-      : 0;
-
   return (
     <div
       className="
@@ -128,30 +117,21 @@ export default function SensorCard({
         <span className="text-base font-normal text-slate-400">
           {unit}
         </span>
-
-        {title === "Water Level" && (
-          <span className="text-base font-semibold text-blue-600">
-            ({Math.round(waterPercentage)}%)
-          </span>
-        )}
       </div>
 
       <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden">
         <div
           className={`h-full rounded-full ${cfg.bar}`}
           style={{
-            width:
-              title === "Water Level"
-                ? `${waterPercentage}%`
-                : `${percentage}%`,
+            width: `${percentage}%`,
           }}
         />
       </div>
 
       {title === "Water Level" && (
-        <div className="flex justify-between mt-1 text-[11px] text-slate-400">
-          <span>0 cm</span>
-          <span>20 cm</span>
+        <div className="flex justify-between mt-1 text-[11px] text-slate-400 font-medium">
+          <span>0%</span>
+          <span>100%</span>
         </div>
       )}
     </div>

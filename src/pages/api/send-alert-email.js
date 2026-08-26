@@ -161,8 +161,13 @@ html: `
                 </tr>
                 
                 <tr>
-                  <td style="padding:14px 16px; font-weight:700; color:#334155;">Water Turbidity</td>
-                  <td align="right" style="padding:14px 16px; font-weight:800; color:#0f172a;">${sensorData.turbidity} NTU</td>
+                  <td style="padding:14px 16px; border-bottom:1px solid #f1f5f9; font-weight:700; color:#334155;">Water Turbidity</td>
+                  <td align="right" style="padding:14px 16px; border-bottom:1px solid #f1f5f9; font-weight:800; color:#0f172a;">${sensorData.turbidity} NTU</td>
+                </tr>
+                
+                <tr>
+                  <td style="padding:14px 16px; font-weight:700; color:#334155;">Water Level</td>
+                  <td align="right" style="padding:14px 16px; font-weight:800; color:#0f172a;">${sensorData.water_level || '-'} %</td>
                 </tr>
               </table>
             </td>
@@ -174,7 +179,7 @@ html: `
               <div style="background-color:${buzzer === 'ON' ? '#fef2f2' : '#f0fdf4'}; border:1px solid ${buzzer === 'ON' ? '#fca5a5' : '#bbf7d0'}; border-radius:16px; padding:16px 20px; text-align:center;">
                 <span style="font-size:10px; font-weight:800; color:${buzzer === 'ON' ? '#b91c1c' : '#15803d'}; text-transform:uppercase; letter-spacing:1.5px; display:block; margin-bottom:4px;">Physical Alarm Relay</span>
                 <span style="font-size:16px; font-weight:900; color:${buzzer === 'ON' ? '#dc2626' : '#16a34a'}; text-transform:uppercase; letter-spacing:0.5px;">
-                  ${buzzer === 'ON' ? '🚨 EMERGENCY BUZZER TRIGGERED' : '✓ ALL SYSTEMS NORMAL'}
+                  ${buzzer === 'ON' ? 'EMERGENCY BUZZER TRIGGERED' : 'ALL SYSTEMS NORMAL'}
                 </span>
               </div>
             </td>
