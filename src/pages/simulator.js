@@ -88,13 +88,13 @@ export default function Simulator() {
     {
       key: "turbidity",
       label: "Water Turbidity",
-      unit: "NTU",
+      unit: "%",
       icon: Waves,
-      iconColor: "text-blue-600 bg-blue-50 border-blue-100",
+      iconColor: "text-purple-600 bg-purple-50 border-purple-100",
       min: 0,
-      max: 60,
-      step: 0.1,
-      description: "Optimal: ≤25.0 NTU. High suspended solids clog tilapia gills and cause respiratory distress."
+      max: 100,
+      step: 0.5,
+      description: "Optimal: ≤25.0% (Jernih). 25%–75% (Sedang), ≥75% (Pekat). Kekeruhan tinggi berisiko menyumbat insang nila."
     },
     {
       key: "water_level",
@@ -124,7 +124,7 @@ export default function Simulator() {
     {
       title: "Normal Morning",
       description: "Typical stable parameters in early morning hours. Clean water with optimal temperature, DO, and pH.",
-      values: { temperature: 27.18, do: 6.5, ph: 7.91, turbidity: 3.25, water_level: 80, hour: 6 },
+      values: { temperature: 27.18, do: 6.5, ph: 7.91, turbidity: 4.5, water_level: 80, hour: 6 },
       theme: {
         border: "border-emerald-200 hover:border-emerald-400 bg-emerald-50/20",
         badge: "bg-emerald-100 text-emerald-800 border-emerald-200/50",
@@ -134,7 +134,7 @@ export default function Simulator() {
     {
       title: "Normal Afternoon",
       description: "Stable mid-day telemetry. Optimal temperature and DO levels under moderate sunlight.",
-      values: { temperature: 29.50, do: 5.80, ph: 7.60, turbidity: 8.20, water_level: 75, hour: 13 },
+      values: { temperature: 29.50, do: 5.80, ph: 7.60, turbidity: 12.0, water_level: 75, hour: 13 },
       theme: {
         border: "border-blue-200 hover:border-blue-400 bg-blue-50/20",
         badge: "bg-blue-100 text-blue-800 border-blue-200/50",
@@ -144,7 +144,7 @@ export default function Simulator() {
     {
       title: "Thermal Stress (>32°C)",
       description: "Peak solar radiation raising water temperature above the critical 32°C optimal threshold.",
-      values: { temperature: 34.80, do: 4.50, ph: 8.35, turbidity: 18.0, water_level: 70, hour: 14 },
+      values: { temperature: 34.80, do: 4.50, ph: 8.35, turbidity: 22.0, water_level: 70, hour: 14 },
       theme: {
         border: "border-orange-200 hover:border-orange-400 bg-orange-50/20",
         badge: "bg-orange-100 text-orange-850 border-orange-200/50",
@@ -154,7 +154,7 @@ export default function Simulator() {
     {
       title: "Hypoxia / DO Drop",
       description: "Critical oxygen depletion below 5.0 mg/L during early dawn due to respiration.",
-      values: { temperature: 28.50, do: 2.80, ph: 7.30, turbidity: 10.0, water_level: 75, hour: 4 },
+      values: { temperature: 28.50, do: 2.80, ph: 7.30, turbidity: 15.0, water_level: 75, hour: 4 },
       theme: {
         border: "border-amber-200 hover:border-amber-400 bg-amber-50/20",
         badge: "bg-amber-100 text-amber-800 border-amber-200/50",
@@ -163,8 +163,8 @@ export default function Simulator() {
     },
     {
       title: "High Turbidity / Bloom",
-      description: "Algal bloom or sediment suspension elevating turbidity beyond standard 25.0 NTU limit.",
-      values: { temperature: 29.00, do: 4.20, ph: 8.50, turbidity: 38.5, water_level: 70, hour: 16 },
+      description: "Algal bloom or sediment suspension elevating turbidity beyond standard 25.0% clear limit.",
+      values: { temperature: 29.00, do: 4.20, ph: 8.50, turbidity: 82.5, water_level: 70, hour: 16 },
       theme: {
         border: "border-purple-200 hover:border-purple-400 bg-purple-50/20",
         badge: "bg-purple-100 text-purple-800 border-purple-200/50",
@@ -174,7 +174,7 @@ export default function Simulator() {
     {
       title: "Critical Emergency",
       description: "Acidic runoff, severe water level drop, thermal stress, DO drop, and heavy turbidity.",
-      values: { temperature: 33.00, do: 3.40, ph: 5.80, turbidity: 45.0, water_level: 15, hour: 15 },
+      values: { temperature: 33.00, do: 3.40, ph: 5.80, turbidity: 88.0, water_level: 15, hour: 15 },
       theme: {
         border: "border-rose-200 hover:border-rose-450 bg-rose-50/20",
         badge: "bg-rose-100 text-rose-800 border-rose-200/50",
@@ -364,7 +364,7 @@ export default function Simulator() {
                         </span>
                         <span>DO: {sc.values.do}mg/L</span>
                         <span>pH: {sc.values.ph}</span>
-                        <span>TURB: {sc.values.turbidity} NTU</span>
+                        <span>TURB: {sc.values.turbidity}%</span>
                         <span>Level: {sc.values.water_level}%</span>
                       </div>
                     </button>

@@ -198,8 +198,8 @@ export default function AnalyticsPage() {
             "Temp (°C)",
             "DO (mg/L)",
             "pH",
-            "Turbidity (NTU)",
-            "Water Level (cm)",
+            "Turbidity (%)",
+            "Water Level (%)",
             "Diagnosis Status"
           ]
         ],
@@ -311,8 +311,8 @@ export default function AnalyticsPage() {
               <AnalyticsCard
                 title="Turbidity"
                 value={avgTurbidity}
-                unit="NTU"
-                theme="blue"
+                unit="%"
+                theme="purple"
               />
               <AnalyticsCard
                 title="Water Level"
@@ -387,7 +387,7 @@ export default function AnalyticsPage() {
                               pH: <strong className="font-bold text-slate-800">{item.ph}</strong>
                             </span>
                             <span className="bg-slate-100 border border-slate-200 rounded-lg px-2 py-1 text-slate-700">
-                              Turb: <strong className="font-bold text-slate-800">{item.turbidity} NTU</strong>
+                              Turb: <strong className="font-bold text-slate-800">{item.turbidity}%</strong>
                             </span>
                             {item.water_level && (
                               <span className="bg-slate-100 border border-slate-200 rounded-lg px-2 py-1 text-slate-700">

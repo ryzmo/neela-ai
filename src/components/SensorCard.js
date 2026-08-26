@@ -42,9 +42,9 @@ const CONFIG = {
   Turbidity: {
     icon: Waves,
     min: 0,
-    max: 50,
-    bar: "bg-blue-400",
-    text: "text-blue-600",
+    max: 100,
+    bar: "bg-purple-500",
+    text: "text-purple-600",
   },
 
   "Water Level": {
@@ -91,6 +91,22 @@ export default function SensorCard({
         )
       );
 
+  // Status for Turbidity: JERNIH (<25%), SEDANG (25-75%), PEKAT (>=75%)
+  let turbidityStatus = null;
+  let turbidityBadge = "";
+  if (title === "Turbidity" && !isNaN(numeric)) {
+    if (numeric >= 75) {
+      turbidityStatus = "PEKAT";
+      turbidityBadge = "bg-rose-100 text-rose-750 border-rose-200";
+    } else if (numeric >= 25) {
+      turbidityStatus = "SEDANG";
+      turbidityBadge = "bg-amber-100 text-amber-800 border-amber-200";
+    } else {
+      turbidityStatus = "JERNIH";
+      turbidityBadge = "bg-emerald-100 text-emerald-800 border-emerald-200";
+    }
+  }
+
   return (
     <div
       className="
@@ -99,14 +115,25 @@ export default function SensorCard({
         bg-slate-50
         border
         border-slate-200
+        transition-all
+        duration-200
+        hover:shadow-md
       "
     >
-      <div className="flex items-center gap-2 mb-3">
-        <Icon size={16} className={cfg.text} />
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <Icon size={16} className={cfg.text} />
 
-        <p className="text-sm text-slate-500">
-          {title}
-        </p>
+          <p className="text-sm text-slate-500 font-medium">
+            {title}
+          </p>
+        </div>
+
+        {turbidityStatus && (
+          <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border ${turbidityBadge}`}>
+            {turbidityStatus}
+          </span>
+        )}
       </div>
 
       <div className="flex items-baseline gap-1.5 mb-4">
@@ -121,7 +148,7 @@ export default function SensorCard({
 
       <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden">
         <div
-          className={`h-full rounded-full ${cfg.bar}`}
+          className={`h-full rounded-full ${cfg.bar} transition-all duration-500`}
           style={{
             width: `${percentage}%`,
           }}
@@ -129,9 +156,16 @@ export default function SensorCard({
       </div>
 
       {title === "Water Level" && (
-        <div className="flex justify-between mt-1 text-[11px] text-slate-400 font-medium">
+        <div className="flex justify-between mt-1.5 text-[11px] text-slate-400 font-medium">
           <span>0%</span>
           <span>100%</span>
+        </div>
+      )}
+
+      {title === "Turbidity" && (
+        <div className="flex justify-between mt-1.5 text-[11px] text-slate-400 font-medium">
+          <span>0% (Jernih)</span>
+          <span>100% (Pekat)</span>
         </div>
       )}
     </div>

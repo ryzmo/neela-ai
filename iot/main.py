@@ -8,19 +8,8 @@ import ds18x20
 
 buzzer = Pin(25, Pin.OUT)
 
-# Tombol restart
-restart_button = Pin(18, Pin.IN, Pin.PULL_UP)
-
-restart_requested = False
-
-def restart_handler(pin):
-    global restart_requested
-    restart_requested = True
-
-restart_button.irq(
-    trigger=Pin.IRQ_FALLING,
-    handler=restart_handler
-)
+# Tombol restart sementara dinonaktifkan
+restart_button = None
 
 def beep(duration=0.15):
     buzzer.on()
@@ -177,6 +166,12 @@ relay_ph = Pin(19, Pin.OUT)
 
 
 servo = PWM(Pin(13), freq=50)
+FORWARD = 65
+BACKWARD = 88
+STOP = 77
+
+# Posisi awal servo
+servo.duty(STOP)
 
 # ==========================
 # PH SENSOR
@@ -338,28 +333,151 @@ def get_ph():
     return round(ph, 2)
 
 
+# ==========================================
+# TURBIDITY SENSOR
+# ==========================================
+
+turbidity_pin = ADC(Pin(34))
+
+turbidity_pin.width(ADC.WIDTH_12BIT)
+turbidity_pin.atten(ADC.ATTN_11DB)
+
+
+# ==========================================
+# HASIL KALIBRASI TURBIDITY
+# ==========================================
+
+V_PEKAT = 0.0000
+V_SEDANG = 0.6726
+V_KERAN = 0.8830
+
+T_PEKAT = 100.0
+T_SEDANG = 50.0
+T_KERAN = 0.0
+
+
+# ==========================================
+# MENGHITUNG KEKERUHAN
+# ==========================================
+
+def calculate_turbidity(voltage):
+
+    # Sangat keruh
+    if voltage <= V_PEKAT:
+
+        turbidity = 100.0
+
+    # Pekat → Sedang
+    elif voltage <= V_SEDANG:
+
+        turbidity = T_PEKAT + (
+            (voltage - V_PEKAT)
+            * (T_SEDANG - T_PEKAT)
+            / (V_SEDANG - V_PEKAT)
+        )
+
+    # Sedang → Jernih
+    elif voltage <= V_KERAN:
+
+        turbidity = T_SEDANG + (
+            (voltage - V_SEDANG)
+            * (T_KERAN - T_SEDANG)
+            / (V_KERAN - V_SEDANG)
+        )
+
+    # Lebih jernih dari air keran
+    else:
+
+        turbidity = 0.0
+
+    return turbidity
+
+
+# ==========================================
+# MEMBACA TURBIDITY
+# ==========================================
+
 def get_turbidity():
 
+    # Baca ADC
     adc = turbidity_pin.read()
-    voltage = adc * (3.3 / 4095)
+
+    # ADC → Voltage
+    voltage = adc * 3.3 / 4095
+
+    # Hitung kekeruhan
+    turbidity = calculate_turbidity(voltage)
+
+    # Tentukan status
+    if turbidity >= 75:
+
+        status = "PEKAT"
+
+    elif turbidity >= 25:
+
+        status = "SEDANG"
+
+    else:
+
+        status = "JERNIH"
 
     return {
         "adc": adc,
-        "voltage": round(voltage, 2)
+        "voltage": round(voltage, 4),
+        "turbidity": round(turbidity, 2),
+        "status": status
     }
 
 
+# ==========================================
+# SENSOR SUHU DS18B20
+# ==========================================
+
+data_pin = Pin(4)
+
+ds_sensor = ds18x20.DS18X20(
+    onewire.OneWire(data_pin)
+)
+
+roms = ds_sensor.scan()
+
+print("DS18B20 Found:", roms)
+
+if not roms:
+    print("DS18B20 tidak ditemukan!")
+
+rom = roms[0]
+
+
+# ==========================================
+# HASIL KALIBRASI SUHU
+# ==========================================
+
+SLOPE = 1.000632
+OFFSET = -0.396
+
+
+# ==========================================
+# MEMBACA SUHU
+# ==========================================
+
 def get_temperature():
 
-    if len(roms) == 0:
-        return None
-
+    # Meminta sensor melakukan konversi
     ds_sensor.convert_temp()
-    time.sleep(1)
 
-    temp = ds_sensor.read_temp(roms[0])
+    # Tunggu konversi selesai
+    time.sleep_ms(750)
 
-    return round(temp, 2)
+    # Baca suhu asli sensor
+    sensor_temp = ds_sensor.read_temp(rom)
+
+    # Koreksi menggunakan hasil kalibrasi
+    temperature = (
+        SLOPE * sensor_temp
+    ) + OFFSET
+
+    return round(temperature, 2)
 
 def feed_now():
 
@@ -424,19 +542,6 @@ previous_data = None
 
 while True:
     
-    if restart_requested:
-        print("Restarting ESP32...")
-
-        # Matikan semua actuator
-        relay_aerator.value(OFF)
-        relay_pump.value(OFF)
-        relay_ph.value(OFF)
-        buzzer.off()
-
-        time.sleep_ms(100)
-
-        machine.reset()
-    
     temperature = get_temperature()
     ph = get_ph()
     turbidity = get_turbidity()
@@ -465,8 +570,13 @@ while True:
     print("pH          :", ph)
     print(
         "Turbidity   :",
-        turbidity["adc"],
-        "|",
+        turbidity["turbidity"],
+        "% |",
+        turbidity["status"]
+    )
+
+    print(
+        "Turbidity V :",
         turbidity["voltage"],
         "V"
     )
@@ -539,7 +649,7 @@ while True:
     data = send_sensor_data(
         temperature,
         ph,
-        turbidity["voltage"],
+        turbidity["turbidity"],
         water_data["level"]
     )
     
@@ -656,8 +766,8 @@ while True:
         else:
 
             print("===== AI RESULT =====")
-            print("Health :", data["health_status"])
-            print("DO     :", data["sensor_data"]["do"])
+            #print("Health :", data["health_status"])
+            #print("DO     :", data["sensor_data"]["do"])
             print("Reason :", data["reason"])
             print("=====================")
 

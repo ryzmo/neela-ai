@@ -13,10 +13,10 @@ const LINES = [
   { key: "temperature", label: "Temperature", color: "#0E9FD6" },
   { key: "do", label: "DO", color: "#16A34A" },
   { key: "ph", label: "pH", color: "#D97706" },
-  { key: "turbidity", label: "Turbidity", color: "#9333EA" },
+  { key: "turbidity", label: "Turbidity (%)", color: "#9333EA" },
   {
     key: "water_level",
-    label: "Water Level",
+    label: "Water Level (%)",
     color: "#2563EB",
   },
 ];

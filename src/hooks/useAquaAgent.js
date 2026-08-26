@@ -8,7 +8,8 @@ export default function useAquaAgent() {
       temperature: "-",
       do: "-",
       ph: "-",
-      turbidity: "-"
+      turbidity: "-",
+      water_level: "-"
     },
     health_status: "-",
     risk_level: "-",

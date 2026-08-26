@@ -79,8 +79,8 @@ export default function ChatPage() {
                   <span>pH: {data.sensor_data?.ph}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Waves className="w-3.5 h-3.5 text-blue-500" />
-                  <span>Kekeruhan: {data.sensor_data?.turbidity} NTU</span>
+                  <Waves className="w-3.5 h-3.5 text-purple-500" />
+                  <span>Kekeruhan: {data.sensor_data?.turbidity}%</span>
                 </div>
               </div>
             </div>

@@ -666,7 +666,7 @@ export default function DecisionTreePage() {
                   </span>
                 </div>
                 <p className="text-sm font-bold text-slate-800 mt-0.5">
-                  Status: <span className={isLiveRisk ? "text-red-600" : "text-emerald-600"}>{liveData?.health_status || "Stable"}</span> · Suhu: <span className="font-semibold">{sensor.temperature}°C</span>, DO: <span className="font-semibold">{sensor.do} mg/L</span>, pH: <span className="font-semibold">{sensor.ph}</span>, Turbiditas: <span className="font-semibold">{sensor.turbidity} NTU</span>
+                  Status: <span className={isLiveRisk ? "text-red-600" : "text-emerald-600"}>{liveData?.health_status || "Stable"}</span> · Suhu: <span className="font-semibold">{sensor.temperature}°C</span>, DO: <span className="font-semibold">{sensor.do} mg/L</span>, pH: <span className="font-semibold">{sensor.ph}</span>, Turbiditas: <span className="font-semibold">{sensor.turbidity}%</span>
                 </p>
               </div>
             </div>
@@ -925,12 +925,12 @@ export default function DecisionTreePage() {
                 />
                 <SensorSlider
                   label="Turbiditas"
-                  unit="NTU"
+                  unit="%"
                   icon={Waves}
-                  iconClass="text-blue-600 bg-blue-50 border-blue-100"
+                  iconClass="text-purple-600 bg-purple-50 border-purple-100"
                   value={sensor.turbidity}
                   min={0}
-                  max={50}
+                  max={100}
                   step={0.5}
                   onChange={(v) => updateSensor("turbidity", v)}
                 />

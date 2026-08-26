@@ -162,7 +162,7 @@ html: `
                 
                 <tr>
                   <td style="padding:14px 16px; border-bottom:1px solid #f1f5f9; font-weight:700; color:#334155;">Water Turbidity</td>
-                  <td align="right" style="padding:14px 16px; border-bottom:1px solid #f1f5f9; font-weight:800; color:#0f172a;">${sensorData.turbidity} NTU</td>
+                  <td align="right" style="padding:14px 16px; border-bottom:1px solid #f1f5f9; font-weight:800; color:#0f172a;">${sensorData.turbidity} %</td>
                 </tr>
                 
                 <tr>

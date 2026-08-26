@@ -207,9 +207,9 @@ export default function SettingsPage() {
                 label="Maximum Turbidity"
                 value={settings.turbidityMax}
                 onChange={(v) => updateSetting("turbidityMax", v)}
-                unit="NTU"
+                unit="%"
                 icon={Waves}
-                iconColor="text-blue-600 bg-blue-50 border-blue-100"
+                iconColor="text-purple-600 bg-purple-50 border-purple-100"
               />
               <InputField
                 label="Maximum Water Level"

@@ -38,7 +38,7 @@ CURRENT POND CONTEXT:
   * Temperature: ${telemetry.sensor_data?.temperature}°C (Optimal: < 30°C)
   * Dissolved Oxygen (DO): ${telemetry.sensor_data?.do} mg/L (Optimal: > 5.0 mg/L)
   * pH Level: ${telemetry.sensor_data?.ph} (Optimal: 6.5 - 8.0)
-  * Turbidity: ${telemetry.sensor_data?.turbidity} NTU (Optimal: < 15 NTU)
+  * Turbidity: ${telemetry.sensor_data?.turbidity}% (Optimal: < 25% Jernih, 25-75% Sedang, >= 75% Pekat)
   * Water Level: ${telemetry.sensor_data?.water_level}% (Optimal: 60 - 80%, Max: 85%)
 - Actuators Relays State:
   * Aerator (Air Pump): ${telemetry.aerator || "OFF"}
@@ -207,19 +207,22 @@ Feel free to ask me about specific sensors (pH, temperature, dissolved oxygen/DO
       const turNum = parseFloat(tur_val);
       let turStatus = "jernih dan aman";
       let action = "Sirkulasi penyaringan berjalan normal.";
-      if (turNum > 15.0) {
-        turStatus = "terlalu keruh (tinggi)";
-        action = `Kekeruhan tinggi mendeteksi penumpukan sedimen/plankton, sehingga **Pompa Sirkulasi menyala (${telemetry.water_circulation})** untuk mengalirkan air melewati filter fisik.`;
+      if (turNum >= 75.0) {
+        turStatus = "sangat keruh / pekat";
+        action = `Kekeruhan pekat mendeteksi penumpukan sedimen/lumpur tinggi, sehingga **Pompa Sirkulasi menyala (${telemetry.water_circulation})** untuk mengalirkan air melewati filter fisik.`;
+      } else if (turNum >= 25.0) {
+        turStatus = "sedang (perlu pemantauan)";
+        action = `Kekeruhan berada pada batas sedang. Pompa sirkulasi menjaga stabilitas filtrasi.`;
       }
 
       if (isIndo) {
-        responseText = `Tingkat **kekeruhan air saat ini adalah ${tur_val} NTU** (Batas aman: < 15 NTU). Kondisi air dinilai **${turStatus}**. ${action} Air yang terlalu keruh dapat menyumbat insang ikan dan mengganggu jarak pandang makan mereka.`;
+        responseText = `Tingkat **kekeruhan air saat ini adalah ${tur_val}%** (Batas ideal jernih: < 25%, Sedang: 25-75%, Pekat: >= 75%). Kondisi air dinilai **${turStatus}**. ${action} Air yang terlalu keruh dapat menyumbat insang ikan dan mengganggu nafsu makan nila.`;
       } else {
-        const turStatusEn = turNum > 15.0 ? "too turbid (cloudy)" : "clear and safe";
-        const actionEn = turNum > 15.0 
+        const turStatusEn = turNum >= 75.0 ? "heavy / pekat (cloudy)" : turNum >= 25.0 ? "moderate (sedang)" : "clear and safe (jernih)";
+        const actionEn = turNum >= 25.0 
           ? `High turbidity triggers the **Water Circulation pump ${telemetry.water_circulation}** to run the water through the filtration unit.` 
           : "The filtration circulation is in normal idle status.";
-        responseText = `The **turbidity reading is ${tur_val} NTU** (Optimal: < 15 NTU), which is **${turStatusEn}**. ${actionEn} Suspended solids can clog tilapia gills and limit natural light penetration.`;
+        responseText = `The **turbidity reading is ${tur_val}%** (Optimal: < 25% clear), which is **${turStatusEn}**. ${actionEn} Suspended solids can clog tilapia gills and limit natural light penetration.`;
       }
     }
     // 6. SARAN / REKOMENDASI / STATUS / SUMMARY
@@ -233,7 +236,7 @@ Feel free to ask me about specific sensors (pH, temperature, dissolved oxygen/DO
       if (doNum < 5.0) warnings.push(isIndo ? "Kadar oksigen (DO) kritis" : "Dissolved Oxygen is low");
       if (phNum < 6.5 || phNum > 8.0) warnings.push(isIndo ? "pH di luar batas aman" : "pH is out of range");
       if (tempNum > 30.0) warnings.push(isIndo ? "Suhu air terlalu panas" : "Water temperature is too high");
-      if (turNum > 15.0) warnings.push(isIndo ? "Air terlalu keruh" : "Pond water is too turbid");
+      if (turNum >= 25.0) warnings.push(isIndo ? "Air keruh (sedang/pekat)" : "Pond water is turbid");
 
       if (isIndo) {
         responseText = `### Laporan Konsultasi Kolam (Status: **${telemetry.health_status && telemetry.health_status !== "-" ? telemetry.health_status : "STABLE"}**)
@@ -264,24 +267,24 @@ ${warnings.length > 0 ? `- **Alerts Triggered**: ${warnings.join(", ")}.` : "- *
       if (isIndo) {
         responseText = `Pond Health Classifier kami menggunakan algoritma **ExtraTrees Classifier** yang dilatih menggunakan 4.383 baris data pengamatan sensor per jam. 
 Model ini memiliki tingkat akurasi sebesar **93.61%** dalam memprediksi kondisi kolam menjadi 'Stable' atau 'At Risk'. 
-Pada pembacaan terbaru, model menerima masukan: Temp=${t_val}°C, DO=${do_val} mg/L, pH=${ph_val}, Turbidity=${tur_val} NTU, dan mengklasifikasikan kolam Anda sebagai **${telemetry.health_status && telemetry.health_status !== "-" ? telemetry.health_status : "STABLE"}** (Kepercayaan: ${telemetry.rf_confidence ? (telemetry.rf_confidence * 100).toFixed(1) + "%" : "100%"}).`;
+Pada pembacaan terbaru, model menerima masukan: Temp=${t_val}°C, DO=${do_val} mg/L, pH=${ph_val}, Turbidity=${tur_val}%, dan mengklasifikasikan kolam Anda sebagai **${telemetry.health_status && telemetry.health_status !== "-" ? telemetry.health_status : "STABLE"}** (Kepercayaan: ${telemetry.rf_confidence ? (telemetry.rf_confidence * 100).toFixed(1) + "%" : "100%"}).`;
       } else {
         responseText = `Our Pond Health Classifier utilizes an **ExtraTrees Classifier** trained on 4,383 hourly sensor observations.
 The model achieves **93.61% validation accuracy** in predicting whether a pond is 'Stable' or 'At Risk'.
-For the latest data packet, it evaluated Temp=${t_val}°C, DO=${do_val} mg/L, pH=${ph_val}, and Turbidity=${tur_val} NTU to predict a status of **${telemetry.health_status && telemetry.health_status !== "-" ? telemetry.health_status : "STABLE"}** (Confidence: ${telemetry.rf_confidence ? (telemetry.rf_confidence * 100).toFixed(1) + "%" : "100%"}).`;
+For the latest data packet, it evaluated Temp=${t_val}°C, DO=${do_val} mg/L, pH=${ph_val}, and Turbidity=${tur_val}% to predict a status of **${telemetry.health_status && telemetry.health_status !== "-" ? telemetry.health_status : "STABLE"}** (Confidence: ${telemetry.rf_confidence ? (telemetry.rf_confidence * 100).toFixed(1) + "%" : "100%"}).`;
       }
     }
     // 8. FALLBACK / GENERAL
     else {
       if (isIndo) {
-        responseText = `Saya memahami pertanyaan Anda tentang kolam. Berdasarkan telemetri terbaru (Suhu: ${t_val}°C, DO: ${do_val} mg/L, pH: ${ph_val}, Kekeruhan: ${tur_val} NTU), kolam berada dalam status **${telemetry.health_status && telemetry.health_status !== "-" ? telemetry.health_status : "STABLE"}**.
+        responseText = `Saya memahami pertanyaan Anda tentang kolam. Berdasarkan telemetri terbaru (Suhu: ${t_val}°C, DO: ${do_val} mg/L, pH: ${ph_val}, Kekeruhan: ${tur_val}%), kolam berada dalam status **${telemetry.health_status && telemetry.health_status !== "-" ? telemetry.health_status : "STABLE"}**.
 Silakan tanyakan secara lebih spesifik, seperti:
 - "Bagaimana kondisi kadar pH kolam?"
 - "Kenapa pompa air / aerator menyala?"
 - "Berikan saran penanganan kolam saat ini."
 - "Bagaimana cara kerja model ExtraTrees AI Anda?"`;
       } else {
-        responseText = `I hear your question about the pond. Based on the latest telemetry (Temp: ${t_val}°C, DO: ${do_val} mg/L, pH: ${ph_val}, Turbidity: ${tur_val} NTU), the pond is currently **${telemetry.health_status && telemetry.health_status !== "-" ? telemetry.health_status : "STABLE"}**.
+        responseText = `I hear your question about the pond. Based on the latest telemetry (Temp: ${t_val}°C, DO: ${do_val} mg/L, pH: ${ph_val}, Turbidity: ${tur_val}%), the pond is currently **${telemetry.health_status && telemetry.health_status !== "-" ? telemetry.health_status : "STABLE"}**.
 Please ask a more specific question, such as:
 - "What is the status of the pond's pH levels?"
 - "Why is the aerator or water pump running?"

@@ -6,7 +6,7 @@ export default function SensorOverview({ sensor }) {
       <SensorCard title="Temperature" value={sensor.temperature} unit="°C" />
       <SensorCard title="DO" value={sensor.do} unit="mg/L" />
       <SensorCard title="pH" value={sensor.ph} unit="pH" />
-      <SensorCard title="Turbidity" value={sensor.turbidity} unit="NTU" />
+      <SensorCard title="Turbidity" value={sensor?.turbidity} unit="%" />
       <SensorCard
         title="Water Level"
         value={sensor.water_level}

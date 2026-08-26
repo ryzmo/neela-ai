@@ -271,7 +271,7 @@ TELEMETRI SENSOR:
 - Suhu Air: {sensor.temperature} C (Optimal: 25.0 - 32.0 C)
 - Oksigen Terlarut (DO): {estimated_do} mg/L (Optimal: >= 5.0 mg/L)
 - pH Air: {sensor.ph} (Optimal: 6.5 - 8.0)
-- Kekeruhan (Turbiditas): {sensor.turbidity} NTU (Optimal: <= 25.0 NTU)
+- Kekeruhan (Turbiditas): {sensor.turbidity}% (0% Jernih - 100% Pekat, Optimal: <= 25.0%)
 - Ketinggian Air (Water Level): {sensor.water_level}% (Optimal: 60% - 80%, Maksimal Aman: {settings['waterLevelMax']}%)
 - Jam Pengamatan: {sensor.hour}:00
 
@@ -320,8 +320,8 @@ Gunakan cetak tebal **kata kunci penting** agar tampilan visual rapi. Keluarkan 
         diag_effects.append(f"Suhu air ({sensor.temperature} C > 30 C) menaikkan laju metabolisme basal sekaligus menurunkan kelarutan oksigen alami.")
         actions_taken.append("Pompa sirkulasi aktif mereduksi panas permukaan.")
 
-    if sensor.turbidity > 15.0:
-        diag_effects.append(f"Turbiditas tinggi ({sensor.turbidity} NTU > 15 NTU) berisiko menyumbat filamen insang.")
+    if sensor.turbidity > 25.0:
+        diag_effects.append(f"Turbiditas tinggi ({sensor.turbidity}% > 25% batas jernih) berisiko menyumbat filamen insang.")
         if "Pompa sirkulasi" not in " ".join(actions_taken):
             actions_taken.append("Pompa sirkulasi aktif mengalirkan air ke filtrasi fisik.")
 
@@ -334,14 +334,10 @@ Gunakan cetak tebal **kata kunci penting** agar tampilan visual rapi. Keluarkan 
         diag_effects.append(f"Ketinggian air ({sensor.water_level}%) melampaui batas aman kapasitas penampungan kolam ({settings['waterLevelMax']}%).")
         actions_taken.append("Sirine alarm aktif memberi sinyal pembuangan limpasan.")
 
-    if health_status == "At Risk":
-        prognosis = "Dengan aksi aktuator otomatis yang berjalan, pemulihan parameter diproyeksikan tercapai dalam rentang **1 hingga 2 jam** ke depan."
-        reassurance = "Pengelola diimbau tetap tenang; sistem otomatis NEELA AI secara aktif melakukan intervensi darurat. Disarankan untuk memverifikasi kebersihan nozzle aerator/filter dan menunda sementara pemberian pakan guna mencegah pengendapan amonia."
-    else:
-        prognosis = "Kondisi ekosistem kolam diprediksi tetap stabil dan kondusif untuk laju pertumbuhan optimal ikan nila."
-        reassurance = "Pengelola dapat menjalankan rutinitas pemeliharaan dan jadwal pemberian pakan secara normal sesuai standar operasional."
+    prognosis = "Diharapkan stabil kembali dalam 30–60 menit ke depan seiring respons korektif aktuator."
+    reassurance = "Kondisi terkendali oleh NEELA AI. Periksa unit filter fisik serta kurangi porsi pakan untuk meminimalkan beban organik kolam."
 
-    if diag_effects:
+    if len(diag_effects) > 0:
         diag_text = " ".join(diag_effects)
         act_text = " ".join(actions_taken)
         return (
@@ -350,7 +346,7 @@ Gunakan cetak tebal **kata kunci penting** agar tampilan visual rapi. Keluarkan 
         )
     else:
         return (
-            f"Berdasarkan klasifikasi model ExtraTrees ({status_str}, Kepercayaan: {confidence * 100:.1f}%), seluruh parameter fisiologis air (Suhu {sensor.temperature} C, DO {estimated_do} mg/L, pH {sensor.ph}, Turbiditas {sensor.turbidity} NTU, Water Level {sensor.water_level}%) dalam batas ideal. "
+            f"Berdasarkan klasifikasi model ExtraTrees ({status_str}, Kepercayaan: {confidence * 100:.1f}%), seluruh parameter fisiologis air (Suhu {sensor.temperature} C, DO {estimated_do} mg/L, pH {sensor.ph}, Turbiditas {sensor.turbidity}%, Water Level {sensor.water_level}%) dalam batas ideal. "
             f"**Prognosis:** {prognosis} **Panduan Pengelola:** {reassurance}"
         )
 

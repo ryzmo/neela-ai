@@ -31,7 +31,7 @@ const CHARTS = [
     key: "turbidity",
     title: "Turbidity History",
     color: "#9333EA",
-    unit: "NTU",
+    unit: "%",
   },
   {
     key: "water_level",
