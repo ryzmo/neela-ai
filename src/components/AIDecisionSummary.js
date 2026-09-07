@@ -17,8 +17,8 @@ import {
 const ACTUATORS = [
   { key: "aerator", label: "Aerator", icon: Wind },
   { key: "feeder", label: "Feeder", icon: Utensils },
-  { key: "water_circulation", label: "Water circulation", icon: RefreshCw },
-  { key: "ph_neutralizer", label: "pH neutralizer", icon: Beaker },
+  { key: "water_circulation", label: "pH UP pump", icon: RefreshCw },
+  { key: "ph_neutralizer", label: "pH DOWN pump", icon: Beaker },
   { key: "buzzer", label: "Buzzer", icon: BellRing },
 ];
 

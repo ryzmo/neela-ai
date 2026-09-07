@@ -93,7 +93,12 @@ CREATE TABLE IF NOT EXISTS settings (
     iot_enabled INTEGER DEFAULT 1,
     refresh_interval INTEGER DEFAULT 5,
     alert_cooldown_minutes INTEGER DEFAULT 30,
-    alert_cooldown_seconds INTEGER DEFAULT 0
+    alert_cooldown_seconds INTEGER DEFAULT 0,
+    aerator_duration REAL DEFAULT 5.0,
+    pump_duration REAL DEFAULT 0.5,
+    stabilizer_duration REAL DEFAULT 0.5,
+    buzzer_duration REAL DEFAULT 5.0,
+    feeder_duration REAL DEFAULT 0.8
 )
 """)
 
@@ -126,15 +131,20 @@ VALUES(
 
 conn.commit()
 
-# Migrate existing DB: add cooldown columns if missing
-try:
-    cursor.execute("ALTER TABLE settings ADD COLUMN alert_cooldown_minutes INTEGER DEFAULT 30")
-except Exception:
-    pass
-try:
-    cursor.execute("ALTER TABLE settings ADD COLUMN alert_cooldown_seconds INTEGER DEFAULT 0")
-except Exception:
-    pass
+# Migrate existing DB: add cooldown & actuator duration columns if missing
+for col_name, col_type in [
+    ("alert_cooldown_minutes", "INTEGER DEFAULT 30"),
+    ("alert_cooldown_seconds", "INTEGER DEFAULT 0"),
+    ("aerator_duration", "REAL DEFAULT 5.0"),
+    ("pump_duration", "REAL DEFAULT 0.5"),
+    ("stabilizer_duration", "REAL DEFAULT 0.5"),
+    ("buzzer_duration", "REAL DEFAULT 5.0"),
+    ("feeder_duration", "REAL DEFAULT 0.8")
+]:
+    try:
+        cursor.execute(f"ALTER TABLE settings ADD COLUMN {col_name} {col_type}")
+    except Exception:
+        pass
 
 conn.commit()
 
@@ -151,7 +161,12 @@ INSERT OR IGNORE INTO settings(
     iot_enabled,
     refresh_interval,
     alert_cooldown_minutes,
-    alert_cooldown_seconds
+    alert_cooldown_seconds,
+    aerator_duration,
+    pump_duration,
+    stabilizer_duration,
+    buzzer_duration,
+    feeder_duration
 )
 VALUES(
     1,
@@ -164,7 +179,12 @@ VALUES(
     1,
     5,
     30,
-    0
+    0,
+    5.0,
+    0.5,
+    0.5,
+    5.0,
+    0.8
 )
 """)
 
@@ -182,7 +202,12 @@ def get_current_settings():
         iot_enabled,
         refresh_interval,
         alert_cooldown_minutes,
-        alert_cooldown_seconds
+        alert_cooldown_seconds,
+        aerator_duration,
+        pump_duration,
+        stabilizer_duration,
+        buzzer_duration,
+        feeder_duration
     FROM settings
     WHERE id = 1
     """)
@@ -199,15 +224,20 @@ def get_current_settings():
         "iotEnabled": bool(row[6]),
         "refreshInterval": row[7],
         "alertCooldownMinutes": row[8] if row[8] is not None else 30,
-        "alertCooldownSeconds": row[9] if row[9] is not None else 0
+        "alertCooldownSeconds": row[9] if row[9] is not None else 0,
+        "aeratorDuration": row[10] if len(row) > 10 and row[10] is not None else 5.0,
+        "pumpDuration": row[11] if len(row) > 11 and row[11] is not None else 0.5,
+        "stabilizerDuration": row[12] if len(row) > 12 and row[12] is not None else 0.5,
+        "buzzerDuration": row[13] if len(row) > 13 and row[13] is not None else 5.0,
+        "feederDuration": row[14] if len(row) > 14 and row[14] is not None else 0.8
     }
 
 def decision_engine(sensor, health_status, estimated_do):
     settings = get_current_settings()
 
     aerator = "OFF"
-    water_circulation = "OFF"
-    ph_neutralizer = "OFF"
+    water_circulation = "OFF"  # pH UP Pump
+    ph_neutralizer = "OFF"     # pH DOWN Pump
     buzzer = "OFF"
 
     reasons = []
@@ -217,16 +247,21 @@ def decision_engine(sensor, health_status, estimated_do):
         reasons.append("Low dissolved oxygen detected.")
 
     if sensor.temperature > settings["tempMax"]:
-        water_circulation = "ON"
         reasons.append("High temperature detected.")
 
     if sensor.turbidity > settings["turbidityMax"]:
-        water_circulation = "ON"
         reasons.append("High turbidity detected.")
 
-    if sensor.ph < settings["phMin"] or sensor.ph > settings["phMax"]:
+    # pH Control Logic:
+    # Jika pH di bawah batas minimum -> aktifkan pompa pH UP
+    if sensor.ph < settings["phMin"]:
+        water_circulation = "ON"
+        reasons.append(f"Low pH detected ({sensor.ph} < {settings['phMin']}). Activating pH UP pump.")
+
+    # Jika pH di atas batas maksimum -> aktifkan pompa pH DOWN
+    if sensor.ph > settings["phMax"]:
         ph_neutralizer = "ON"
-        reasons.append("Abnormal pH detected.")
+        reasons.append(f"High pH detected ({sensor.ph} > {settings['phMax']}). Activating pH DOWN pump.")
 
     if sensor.water_level > settings["waterLevelMax"]:
         buzzer = "ON"
@@ -377,6 +412,11 @@ class SettingsInput(BaseModel):
     refreshInterval: int
     alertCooldownMinutes: int = 30
     alertCooldownSeconds: int = 0
+    aeratorDuration: float = 5.0
+    pumpDuration: float = 0.5
+    stabilizerDuration: float = 0.5
+    buzzerDuration: float = 5.0
+    feederDuration: float = 0.8
 
 class FeedingScheduleInput(BaseModel):
     feedingTime: str
@@ -414,7 +454,8 @@ def get_settings():
     SELECT
         do_threshold, ph_min, ph_max, temp_max,
         turbidity_max, water_level_max, iot_enabled, refresh_interval,
-        alert_cooldown_minutes, alert_cooldown_seconds
+        alert_cooldown_minutes, alert_cooldown_seconds,
+        aerator_duration, pump_duration, stabilizer_duration, buzzer_duration, feeder_duration
     FROM settings
     WHERE id = 1
     """)
@@ -429,7 +470,12 @@ def get_settings():
         "iotEnabled": bool(row[6]),
         "refreshInterval": row[7],
         "alertCooldownMinutes": row[8] if row[8] is not None else 30,
-        "alertCooldownSeconds": row[9] if row[9] is not None else 0
+        "alertCooldownSeconds": row[9] if row[9] is not None else 0,
+        "aeratorDuration": row[10] if len(row) > 10 and row[10] is not None else 5.0,
+        "pumpDuration": row[11] if len(row) > 11 and row[11] is not None else 0.5,
+        "stabilizerDuration": row[12] if len(row) > 12 and row[12] is not None else 0.5,
+        "buzzerDuration": row[13] if len(row) > 13 and row[13] is not None else 5.0,
+        "feederDuration": row[14] if len(row) > 14 and row[14] is not None else 0.8
     }
 
 @app.get("/feeding-schedule")
@@ -467,12 +513,15 @@ def save_feeding_schedule(data: FeedingScheduleInput):
 def save_settings(data: SettingsInput):
     cursor.execute("""
     UPDATE settings
-    SET do_threshold=?, ph_min=?, ph_max=?, temp_max=?, turbidity_max=?, water_level_max=?, iot_enabled=?, refresh_interval=?, alert_cooldown_minutes=?, alert_cooldown_seconds=?
+    SET do_threshold=?, ph_min=?, ph_max=?, temp_max=?, turbidity_max=?, water_level_max=?,
+        iot_enabled=?, refresh_interval=?, alert_cooldown_minutes=?, alert_cooldown_seconds=?,
+        aerator_duration=?, pump_duration=?, stabilizer_duration=?, buzzer_duration=?, feeder_duration=?
     WHERE id=1
     """, (
         data.doThreshold, data.phMin, data.phMax, data.tempMax,
         data.turbidityMax, data.waterLevelMax, int(data.iotEnabled), data.refreshInterval,
-        data.alertCooldownMinutes, data.alertCooldownSeconds
+        data.alertCooldownMinutes, data.alertCooldownSeconds,
+        data.aeratorDuration, data.pumpDuration, data.stabilizerDuration, data.buzzerDuration, data.feederDuration
     ))
     conn.commit()
     get_actuator_state()["beep"] = True

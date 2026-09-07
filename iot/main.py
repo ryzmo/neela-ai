@@ -65,25 +65,20 @@ while not wifi.isconnected() and timeout > 0:
     time.sleep(1)
     timeout -= 1
 
-if not wifi.isconnected():
-    print("WiFi Failed")
-    beep_failed()
+# ==========================
+# KONFIGURASI SERVER & API
+# ==========================
+BASE_URL = "http://172.20.10.3:8000"
 
-API_ANALYZE = "http://172.20.10.3:8000/analyze"
+API_ANALYZE         = BASE_URL + "/analyze"
+API_BEEP_ACK        = BASE_URL + "/beep/ack"
+API_ACTUATOR        = BASE_URL + "/actuator"
+API_FEEDING         = BASE_URL + "/feeding-schedule"
+API_FEEDING_VERSION = BASE_URL + "/feeding-version"
+API_SETTINGS        = BASE_URL + "/settings"
+API_FEEDER_ACK      = BASE_URL + "/feeder/ack"
+API_ACTUATOR_ACK    = BASE_URL + "/actuator/ack"
 
-API_BEEP_ACK = "http://172.20.10.3:8000/beep/ack"
-
-API_ACTUATOR = "http://172.20.10.3:8000/actuator"
-
-API_FEEDING = "http://172.20.10.3:8000/feeding-schedule"
-
-API_FEEDING_VERSION = "http://172.20.10.3:8000/feeding-version"
-
-API_SETTINGS = "http://172.20.10.3:8000/settings"
-
-API_FEEDER_ACK = "http://172.20.10.3:8000/feeder/ack"
-
-API_ACTUATOR_ACK = "http://172.20.10.3:8000/actuator/ack"
 
 def get_actuator():
 
@@ -152,7 +147,12 @@ def get_settings():
     except:
 
         return {
-            "refreshInterval": 5
+            "refreshInterval": 5,
+            "aeratorDuration": 5.0,
+            "pumpDuration": 0.5,
+            "stabilizerDuration": 0.5,
+            "buzzerDuration": 5.0,
+            "feederDuration": 0.8
         }
 
 # Relay aktif LOW
@@ -160,8 +160,9 @@ ON = 0
 OFF = 1
 
 relay_aerator = Pin(22, Pin.OUT)
-relay_pump = Pin(21, Pin.OUT)
-relay_ph = Pin(19, Pin.OUT)
+relay_pump    = Pin(21, Pin.OUT)  # Pompa pH UP (Menaikkan pH / Basa)
+relay_ph      = Pin(19, Pin.OUT)  # Pompa pH DOWN (Menurunkan pH / Asam)
+
 
 
 
@@ -479,13 +480,13 @@ def get_temperature():
 
     return round(temperature, 2)
 
-def feed_now():
+def feed_now(duration=0.8):
 
     servo.duty(FORWARD)
-    time.sleep(0.8)
+    time.sleep(duration)
 
     servo.duty(BACKWARD)
-    time.sleep(0.8)
+    time.sleep(duration)
 
     servo.duty(STOP)
     
@@ -584,6 +585,14 @@ while True:
         
     current_version = get_feeding_version()
 
+    settings = get_settings()
+
+    aerator_dur = settings.get("aeratorDuration", 5.0)
+    pump_dur = settings.get("pumpDuration", 0.5)
+    stabilizer_dur = settings.get("stabilizerDuration", 0.5)
+    buzzer_dur = settings.get("buzzerDuration", 5.0)
+    feeder_dur = settings.get("feederDuration", 0.8)
+
     if (
         current_version is not None and
         current_version != feeding_version
@@ -642,7 +651,7 @@ while True:
                 beep_action()
                 
 
-                feed_now()
+                feed_now(feeder_dur)
 
                 last_feed_key = feed_key
 
@@ -681,11 +690,14 @@ while True:
 
     if actuator:
 
+        # Simpan state feeder di awal sebelum relay lain mengubah actuator via refresh
+        feeder_requested = actuator.get("feeder", False)
+
         if actuator["aerator"]:
 
             relay_aerator.value(ON)
 
-            time.sleep(5)
+            time.sleep(aerator_dur)
 
             relay_aerator.value(OFF)
 
@@ -695,11 +707,13 @@ while True:
         else:
             relay_aerator.value(OFF)
 
+        # pH UP Pump (Relay Pin 21)
         if actuator["pump"]:
 
+            print("Activating pH UP Pump...")
             relay_pump.value(ON)
 
-            time.sleep(0.5)
+            time.sleep(pump_dur)
 
             relay_pump.value(OFF)
 
@@ -709,11 +723,13 @@ while True:
         else:
             relay_pump.value(OFF)
 
+        # pH DOWN Pump (Relay Pin 19)
         if actuator["stabilizer"]:
 
+            print("Activating pH DOWN Pump...")
             relay_ph.value(ON)
 
-            time.sleep(0.5)
+            time.sleep(stabilizer_dur)
 
             relay_ph.value(OFF)
 
@@ -726,7 +742,7 @@ while True:
 
             buzzer.on()
 
-            time.sleep(5)
+            time.sleep(buzzer_dur)
 
             buzzer.off()
 
@@ -734,16 +750,17 @@ while True:
             actuator = refresh_actuator()
         else:
             buzzer.off()
-        # Manual Feed
+
+        # Manual Feed — gunakan feeder_requested yang disimpan di awal
         if actuator["mode"] == "MANUAL":
 
-            if actuator["feeder"] and not last_feeder:
+            if feeder_requested and not last_feeder:
 
                 print("Manual Feeding")
 
                 beep_action()
 
-                feed_now()
+                feed_now(feeder_dur)
 
                 try:
 
@@ -755,7 +772,7 @@ while True:
 
                     print("Feeder Ack Error:", e)
 
-        last_feeder = actuator["feeder"]
+        last_feeder = feeder_requested
     
     if data:
 

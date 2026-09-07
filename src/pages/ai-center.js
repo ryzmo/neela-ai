@@ -179,16 +179,16 @@ export default function AICenter() {
                 description="ON when dissolved oxygen is critical."
               />
               <DecisionCard
-                title="Water circulation pump"
+                title="pH UP Pump"
                 value={data.water_circulation}
                 icon={RefreshCw}
-                description="ON on high temperature/turbidity."
+                description="ON when pH is below minimum threshold."
               />
               <DecisionCard
-                title="pH neutralizer buffer"
+                title="pH DOWN Pump"
                 value={data.ph_neutralizer}
                 icon={Beaker}
-                description="ON when pH is out of 6.5-8.0 bounds."
+                description="ON when pH is above maximum threshold."
               />
               <DecisionCard
                 title="Emergency buzzer"

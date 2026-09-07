@@ -14,7 +14,11 @@ import {
   AlertTriangle,
   Activity,
   BellOff,
-  Timer
+  Timer,
+  Wind,
+  Zap,
+  ShieldAlert,
+  Utensils
 } from "lucide-react";
 
 export default function SettingsPage() {
@@ -30,7 +34,12 @@ export default function SettingsPage() {
     iotEnabled: true,
     refreshInterval: 5,
     alertCooldownMinutes: 30,
-    alertCooldownSeconds: 0
+    alertCooldownSeconds: 0,
+    aeratorDuration: 5.0,
+    pumpDuration: 0.5,
+    stabilizerDuration: 0.5,
+    buzzerDuration: 5.0,
+    feederDuration: 0.8
   });
 
   const [saving, setSaving] = useState(false);
@@ -423,6 +432,61 @@ export default function SettingsPage() {
             </div>
           </div>
 
+          {/* ACTUATOR ACTIVE DURATION CONFIGURATION */}
+          <div className="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 md:p-8">
+            <div className="mb-6 pb-4 border-b border-slate-100">
+              <h2 className="text-lg font-black text-slate-900 uppercase tracking-wide">
+                Actuator Active Duration
+              </h2>
+              <p className="text-[10px] font-bold text-slate-450 uppercase tracking-widest mt-0.5">
+                Set runtime duration (in seconds) for each hardware actuator during execution
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+              <InputField
+                label="Aerator Relay"
+                value={settings.aeratorDuration}
+                onChange={(v) => updateSetting("aeratorDuration", v)}
+                unit="sec"
+                icon={Wind}
+                iconColor="text-sky-600 bg-sky-50 border-sky-100"
+              />
+              <InputField
+                label="pH UP Pump"
+                value={settings.pumpDuration}
+                onChange={(v) => updateSetting("pumpDuration", v)}
+                unit="sec"
+                icon={Droplets}
+                iconColor="text-blue-600 bg-blue-50 border-blue-100"
+              />
+              <InputField
+                label="pH DOWN Pump"
+                value={settings.stabilizerDuration}
+                onChange={(v) => updateSetting("stabilizerDuration", v)}
+                unit="sec"
+                icon={FlaskConical}
+                iconColor="text-teal-600 bg-teal-50 border-teal-100"
+              />
+              <InputField
+                label="Buzzer Alarm"
+                value={settings.buzzerDuration}
+                onChange={(v) => updateSetting("buzzerDuration", v)}
+                unit="sec"
+                icon={ShieldAlert}
+                iconColor="text-rose-600 bg-rose-50 border-rose-100"
+              />
+              <InputField
+                label="Servo Feeder"
+                value={settings.feederDuration}
+                onChange={(v) => updateSetting("feederDuration", v)}
+                unit="sec"
+                icon={Utensils}
+                iconColor="text-amber-600 bg-amber-50 border-amber-100"
+              />
+            </div>
+          </div>
+
           {/* SAVE SETTINGS BUTTON */}
           <button
             onClick={saveSettings}
@@ -456,9 +520,10 @@ function InputField({ label, value, onChange, unit, icon: Icon, iconColor }) {
       <div className="relative">
         <input
           type="number"
-          value={value}
+          value={value ?? 0}
           onChange={(e) => onChange(Number(e.target.value))}
-          step={unit === "pH" ? 0.1 : 1}
+          step={unit === "pH" || unit === "sec" ? 0.1 : 1}
+          min={0}
           className="w-full bg-white border border-slate-250 rounded-xl py-3 px-4 text-xs font-bold text-slate-800 focus:outline-none focus:border-[#1a6fc4] transition-colors pr-14"
         />
         <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[9.5px] font-black uppercase text-slate-400">

@@ -4,6 +4,7 @@ import {
   Wind,
   Utensils,
   RefreshCw,
+  Droplets,
   Beaker,
   BellRing,
   Cpu,
@@ -234,8 +235,8 @@ export default function ActuatorPage() {
   const actuatorList = [
     { key: "aerator", label: "Pond Aerator", description: "Pumps oxygen into water.", icon: Wind, iconColor: "text-blue-600 bg-blue-50 border-blue-100" },
     { key: "feeder", label: "Auto Feeder", description: "Dispenses tilapia pellets.", icon: Utensils, iconColor: "text-amber-600 bg-amber-50 border-amber-100" },
-    { key: "pump", label: "Circulation Pump", description: "Filters turbidity & heat.", icon: RefreshCw, iconColor: "text-cyan-600 bg-cyan-50 border-cyan-100" },
-    { key: "stabilizer", label: "pH Stabilizer", description: "Dispenses pH balancing buffers.", icon: Beaker, iconColor: "text-teal-650 bg-teal-50 border-teal-100" },
+    { key: "pump", label: "pH UP Pump", description: "Injects alkaline solution to raise pH.", icon: Droplets, iconColor: "text-cyan-600 bg-cyan-50 border-cyan-100" },
+    { key: "stabilizer", label: "pH DOWN Pump", description: "Injects acidic buffer to lower pH.", icon: Beaker, iconColor: "text-teal-650 bg-teal-50 border-teal-100" },
     { key: "buzzer", label: "Alarm Buzzer", description: "Warning audio for risk anomalies.", icon: BellRing, iconColor: "text-rose-600 bg-rose-50 border-rose-100" }
   ];
 
