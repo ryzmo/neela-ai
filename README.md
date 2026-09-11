@@ -22,7 +22,7 @@ Ikuti langkah-langkah berikut secara berurutan untuk menjalankan frontend dari a
 Buka terminal atau command prompt, lalu arahkan ke folder root frontend:
 
 ```bash
-cd aquaagent-web
+cd neela-ai
 ```
 
 ### 2. Konfigurasi Environment Variable
