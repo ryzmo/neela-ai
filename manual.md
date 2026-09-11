@@ -1,169 +1,285 @@
-# 📘 MANUAL SISA & DOKUMENTASI SISTEM INTEGRASI AQUAAGENT (NEELA AI)
+# 📘 MANUAL & PANDUAN PENGOPERASIAN LENGKAP SISTEM AQUAAGENT (NEELA AI)
 
-> **AquaAgent (NEELA AI)** — *Smart Aquaculture Monitoring, Autonomous Control, & Machine Learning Decision Engine for Tilapia Fish Farming*  
+> **AquaAgent (NEELA AI)** — *Smart Aquaculture Monitoring, Autonomous Control, Explainable AI (XAI) Decision Tree, & Machine Learning Decision Engine for Tilapia Fish Farming*  
 > **Lokasi File Manual**: [`manual.md`](file:///d:/aquaagent-web/manual.md)  
-> **Versi Sistem**: v2.0 (Model ML v4_v3 — ExtraTrees & Random Forest)  
-> **Tanggal Update**: 7 Agustus 2026
+> **Versi Sistem**: v2.0 (Model ML v4_v3 — ExtraTrees & Random Forest Classifier)  
+> **Tanggal Update**: 11 September 2026
 
 ---
 
 ## 📋 DAFTAR ISI
-1. [📌 1. Pendahuluan & Gambaran Umum Sistem](#-1-pendahuluan--gambaran-umum-sistem)
-2. [🏗️ 2. Arsitektur Sistem & Alur Kerja End-to-End](#️-2-arsitektur-sistem--alur-kerja-end-to-end)
-3. [💻 3. Teknologi & Tech Stack](#-3-teknologi--tech-stack)
-4. [📁 4. Struktur Direktori Proyek](#-4-struktur-direktori-proyek)
-5. [⚙️ 5. Panduan Instalasi & Setup Environment](#️-5-panduan-instalasi--setup-environment)
-   - [5.1 Setup Backend API & Engine ML (`backend-neela-ai`)](#51-setup-backend-api--engine-ml-backend-neela-ai)
-   - [5.2 Setup Web Frontend (`aquaagent-web`)](#52-setup-web-frontend-aquaagent-web)
-   - [5.3 Setup IoT Firmware MicroPython (`iot/main.py`)](#53-setup-iot-firmware-micropython-iotmainpy)
-6. [🕹️ 6. Panduan Penggunaan & Cara Pakai Aplikasi Web](#️-6-panduan-penggunaan--cara-pakai-aplikasi-web)
-   - [6.1 Dashboard Telemetry Real-time (`/dashboard` & `/`)](#61-dashboard-telemetry-real-time-dashboard--)
-   - [6.2 Kontrol Aktuator & Relay (`/actuator`)](#62-kontrol-aktuator--relay-actuator)
-   - [6.3 AI Assistant & Smart Chat Center (`/ai-center` & `/chat`)](#63-ai-assistant--smart-chat-center-ai-center--chat)
-   - [6.4 Telemetry Simulator (`/simulator`)](#64-telemetry-simulator-simulator)
-   - [6.5 Pengaturan Ambang Batas & Jadwal Pakan (`/settings`)](#65-pengaturan-ambang-batas--jadwal-pakan-settings)
-   - [6.6 Analisis Historis & Riwayat Data (`/analytics`)](#66-analisis-historis--riwayat-data-analytics)
-7. [🧠 7. Modul Backend API & Machine Learning (`appv2.py` & Model v4_v3)](#-7-modul-backend-api--machine-learning-appv2py--model-v4_v3)
-   - [7.1 Mesin Keputusan Dual-Tier (Hybrid ML + Rule-Based)](#71-mesin-keputusan-dual-tier-hybrid-ml--rule-based)
-   - [7.2 Rekayasa Fitur (15 Fitur Input Random Forest / ExtraTrees)](#72-rekayasa-fitur-15-fitur-input-random-forest--extratrees)
-   - [7.3 Pelatihan Model Machine Learning (`train_rf_fix_v4_v3.ipynb`)](#73-pelatihan-model-machine-learning-train_rf_fix_v4_v3ipynb)
-   - [7.4 Ringkasan Dokumentasi API Endpoint](#74-ringkasan-dokumentasi-api-endpoint)
-8. [🔌 8. Modul IoT & Firmware ESP32 MicroPython (`iot/main.py`)](#-8-modul-iot--firmware-esp32-micropython-iotmainpy)
-   - [8.1 Arsitektur Hardware & Pin Mapping ESP32](#81-arsitektur-hardware--pin-mapping-esp32)
-   - [8.2 Logic & Workflow Firmware MicroPython](#82-logic--workflow-firmware-micropython)
-9. [📧 9. Mekanisme Notifikasi Email Kritis](#-9-mekanisme-notifikasi-email-kritis)
-10. [🔧 10. Troubleshooting & FAQ](#-10-troubleshooting--faq)
+1. [🌟 1. Panduan Cepat untuk Pengguna Awam / Peternak Ikan (SOP Harian)](#-1-panduan-cepat-untuk-pengguna-awam--peternak-ikan-sop-harian)
+   - [1.1 Alur Pengoperasian 5 Menit (Start-to-Finish)](#11-alur-pengoperasian-5-menit-start-to-finish)
+   - [1.2 Membaca Status & Indikator Warna di Layar](#12-membaca-status--indikator-warna-di-layar)
+   - [1.3 Apa yang Terjadi Saat Air Bermasalah? (Otomatis vs Manual)](#13-apa-yang-terjadi-saat-air-bermasalah-otomatis-vs-manual)
+   - [1.4 Cara Memberi Pakan Ikan & Mengatur Jadwal](#14-cara-memberi-pakan-ikan--mengatur-jadwal)
+   - [1.5 Cara Bertanya & Konsultasi ke Asisten AI (NEELA AI)](#15-cara-bertanya--konsultasi-ke-asisten-ai-neela-ai)
+2. [📌 2. Pendahuluan & Gambaran Umum Sistem](#-2-pendahuluan--gambaran-umum-sistem)
+3. [🏗️ 3. Arsitektur Sistem & Alur Kerja End-to-End](#️-3-arsitektur-sistem--alur-kerja-end-to-end)
+4. [💻 4. Teknologi & Tech Stack](#-4-teknologi--tech-stack)
+5. [📁 5. Struktur Direktori Proyek](#-5-struktur-direktori-proyek)
+6. [⚙️ 6. Panduan Instalasi & Setup Environment (Bagi Pengembang/Teknisi)](#️-6-panduan-instalasi--setup-environment-bagi-pengembangteknisi)
+   - [6.1 Setup Backend API & Engine ML (`backend-neela-ai`)](#61-setup-backend-api--engine-ml-backend-neela-ai)
+   - [6.2 Setup Web Frontend (`aquaagent-web`)](#62-setup-web-frontend-aquaagent-web)
+   - [6.3 Setup IoT Firmware MicroPython (`iot/main.py`)](#63-setup-iot-firmware-micropython-iotmainpy)
+7. [🕹️ 7. Panduan Fitur Lengkap Aplikasi Web (Menu demi Menu)](#️-7-panduan-fitur-lengkap-aplikasi-web-menu-demi-menu)
+   - [7.1 Dashboard Telemetry Real-time (`/dashboard` & `/`)](#71-dashboard-telemetry-real-time-dashboard--)
+   - [7.2 Kontrol Aktuator & Relay Dual Pump pH (`/actuator`)](#72-kontrol-aktuator--relay-dual-pump-ph-actuator)
+   - [7.3 AI Assistant & Smart Chat Center (`/ai-center` & `/chat`)](#73-ai-assistant--smart-chat-center-ai-center--chat)
+   - [7.4 Explainable AI & Interactive Decision Tree Visualizer (`/decision-tree`)](#74-explainable-ai--interactive-decision-tree-visualizer-decision-tree)
+   - [7.5 Telemetry Simulator (`/simulator`)](#75-telemetry-simulator-simulator)
+   - [7.6 Pengaturan Ambang Batas, Durasi Aktuator & Jadwal Pakan (`/settings`)](#76-pengaturan-ambang-batas-durasi-aktuator--jadwal-pakan-settings)
+   - [7.7 Analisis Historis & Riwayat Data (`/analytics`)](#77-analisis-historis--riwayat-data-analytics)
+   - [7.8 Riwayat Peringatan Dini (`/alerts`)](#78-riwayat-peringatan-dini-alerts)
+8. [🧠 8. Modul Backend API & Machine Learning (`appv2.py` & Model v4_v3)](#-8-modul-backend-api--machine-learning-appv2py--model-v4_v3)
+   - [8.1 Mesin Keputusan Dual-Tier (Hybrid ExtraTrees + Rule-Based Engine)](#81-mesin-keputusan-dual-tier-hybrid-extratrees--rule-based-engine)
+   - [8.2 Rekayasa Fitur (15 Fitur Input ExtraTrees / Random Forest)](#82-rekayasa-fitur-15-fitur-input-extratrees--random-forest)
+   - [8.3 Pelatihan Model Machine Learning (`train_rf_fix_v4_v3_v2.ipynb`)](#83-pelatihan-model-machine-learning-train_rf_fix_v4_v3_v2ipynb)
+   - [8.4 Ringkasan Dokumentasi API Endpoint](#84-ringkasan-dokumentasi-api-endpoint)
+9. [🔌 9. Modul IoT & Firmware ESP32 MicroPython (`iot/main.py`)](#-9-modul-iot--firmware-esp32-micropython-iotmainpy)
+   - [9.1 Arsitektur Hardware & Pin Mapping ESP32 Terkini](#91-arsitektur-hardware--pin-mapping-esp32-terkini)
+   - [9.2 Logic & Workflow Firmware MicroPython](#92-logic--workflow-firmware-micropython)
+10. [📧 10. Mekanisme Notifikasi Email Kritis](#-10-mekanisme-notifikasi-email-kritis)
+11. [🔧 11. Troubleshooting & FAQ](#-11-troubleshooting--faq)
 
 ---
 
-## 📌 1. Pendahuluan & Gambaran Umum Sistem
+## 🌟 1. Panduan Cepat untuk Pengguna Awam / Peternak Ikan (SOP Harian)
 
-**AquaAgent (NEELA AI)** adalah ekosistem platform *Smart Aquaculture* berbasis IoT dan Machine Learning yang dirancang khusus untuk otomatisasi pemantauan dan pengelolaan kualitas air pada budidaya ikan gurami / nila.
+Bagian ini dirancang dengan bahasa sederhana untuk mempermudah peternak ikan, pengelola kolam, atau pengguna awam dalam mengoperasikan sistem sehari-hari tanpa perlu memahami koding.
+
+```
+┌───────────────────────────────────────────────────────────────────────────────────────┐
+│                        ALUR PENGGUNAAN HARIAN (SOP OPERATOR)                          │
+│                                                                                       │
+│  [1. Nyalakan Alat]   ──►   [2. Buka Web]   ──►   [3. Cek Status]  ──► [4. Selesai]   │
+│  ESP32 & Relay Box          Buka Browser          Lihat Warna Kartu    Alat Bekerja   │
+│  Colok ke Listrik           di HP / Laptop        🟢 STABLE = Aman     Otomatis       │
+│  Bunyi Bip 1x Sukses        Buka Dashboard        🔴 AT RISK = Bahaya  24 Jam         │
+└───────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### 1.1 Alur Pengoperasian 5 Menit (Start-to-Finish)
+
+1. **Langkah 1 — Nyalakan Kotak Alat IoT di Kolam**:
+   - Pastikan kabel daya kotak kontrol ESP32 terhubung ke colokan listrik.
+   - Sensor-sensor (kabel probe hitam suhu, probe kaca pH, dan probe kekeruhan) sudah tercelup ke dalam air kolam dengan posisi stabil.
+   - Dengarkan suara beeper:
+     - 🔊 *Bip.. Bip..*: Sedang mencari koneksi WiFi.
+     - 🔊 *Bip panjang (1x)*: **Koneksi Berhasil!** Alat sudah mulai memantau kolam.
+
+2. **Langkah 2 — Buka Aplikasi Web**:
+   - Buka browser (Google Chrome / Edge / Safari) di HP, Tablet, atau Komputer Anda.
+   - Masukkan alamat web dashboard: `http://localhost:3000` (atau alamat IP lokal server kolam).
+
+3. **Langkah 3 — Lihat Kondisi Kolam di Menu Dashboard**:
+   - Pada halaman utama (**Dashboard**), Anda akan langsung melihat 4 kotak indikator:
+     - **Oksigen (DO)**: Kadar oksigen untuk bernafas ikan.
+     - **Suhu Air**: Suhu kehangatan air kolam.
+     - **pH Air**: Tingkat keasaman air.
+     - **Kekeruhan**: Kejernihan air kolam.
+
+4. **Langkah 4 — Biarkan Bekerja Otomatis**:
+   - Secara default, sistem berada pada mode **AUTONOMOUS (Otomatis)**. 
+   - Anda **tidak perlu memencet tombol apa pun**. Jika kadar oksigen turun, aerator akan menyala sendiri. Jika air terlalu asam, pompa penetral akan bekerja otomatis.
+
+---
+
+### 1.2 Membaca Status & Indikator Warna di Layar
+
+Di pojok atas dashboard terdapat kartu status kesehatan kolam dengan warna yang mudah dipahami:
+
+| Warna Status | Tulisan Status | Artinya untuk Ikan Nila | Tindakan yang Harus Dilakukan |
+| :--- | :--- | :--- | :--- |
+| 🟢 **Hijau** | **STABLE (Aman)** | Kualitas air sangat bagus dan ideal untuk pertumbuhan ikan. | Tidak perlu tindakan apa-apa, kolam dalam kondisi prima. |
+| 🔴 **Merah** | **AT RISK (Bahaya)** | Terjadi kondisi kritis (misal: oksigen habis, air terlalu asam, atau suhu melonjak panas). | Sistem otomatis menyalakan penanganan darurat + sirene buzzer berbunyi + email peringatan terkirim ke HP Anda. Periksa fisik kolam. |
+
+---
+
+### 1.3 Apa yang Terjadi Saat Air Bermasalah? (Otomatis vs Manual)
+
+Sistem AquaAgent dilengkapi dengan **otak kecerdasan buatan (AI)** yang langsung menggerakkan alat penolong:
+
+```
+Masalah yang Terdeteksi                  Reaksi Otomatis Alat
+─────────────────────────────────────────────────────────────────────────────
+1. Oksigen Rendah (< 5.0 mg/L)      ──►  🌬️ Aerator (Kincir O2) MENYALA
+2. Air Terlalu Asam (pH < 6.5)      ──►  ⬆️ Pompa pH UP MENYALA (Tambah Basa)
+3. Air Terlalu Basa (pH > 8.0)      ──►  ⬇️ Pompa pH DOWN MENYALA (Tambah Asam)
+4. Air Terlalu Keruh / Suhu Panas   ──►  🔄 Pompa Sirkulasi Air MENYALA
+5. Kondisi Kritis / Bahaya          ──►  🚨 Sirene Buzzer Bunyi + Email Dikirim
+```
+
+> **Ingin Menyalakan Alat Sendiri Secara Manual?**
+> 1. Buka menu **Actuator** di bilah navigasi kiri.
+> 2. Geser tombol mode dari **AUTONOMOUS** ke **MANUAL**.
+> 3. Klik tombol switch pada alat yang ingin Anda nyalakan (misal: menyalakan Aerator atau Pompa).
+
+---
+
+### 1.4 Cara Memberi Pakan Ikan & Mengatur Jadwal
+
+Ada 2 cara memberi pakan:
+1. **Pemberian Pakan Seketika (Instant Feed)**:
+   - Masuk ke menu **Actuator**.
+   - Klik tombol **"Feed Now"** pada kartu **Auto Feeder**. Motor pakan akan berputar mengeluarkan pelet selama durasi yang ditentukan.
+2. **Pengaturan Jadwal Pakan Otomatis (Rutin Harian)**:
+   - Masuk ke menu **Settings**.
+   - Pada bagian **Feeding Schedule**, tentukan jam pakan pertama (misal `08:00`) dan interval pemberiannya (misal setiap `6 jam`).
+   - Klik **"Save Settings"**. Alat akan memberi pakan otomatis tepat waktu setiap hari.
+
+---
+
+### 1.5 Cara Bertanya & Konsultasi ke Asisten AI (NEELA AI)
+
+Jika Anda bingung mengapa ikan terlihat pasif atau ingin tahu takaran pakan yang pas:
+1. Masuk ke menu **NEELA Chat** (atau **AI Center**).
+2. Ketik pertanyaan dalam Bahasa Indonesia seperti mengobrol biasa di WhatsApp, contoh:
+   - *"Neela, kenapa air kolam saya pH-nya 5.8? Apa bahayanya buat ikan nila?"*
+   - *"Berapa kali sebaiknya kasih makan ikan saat suhu air 31 derajat?"*
+   - *"Jelaskan kenapa aerator barusan menyala sendiri?"*
+3. NEELA AI akan membaca data sensor kolam Anda saat itu juga dan memberikan saran langkah penanganan yang tepat.
+
+---
+
+## 📌 2. Pendahuluan & Gambaran Umum Sistem
+
+**AquaAgent (NEELA AI)** adalah ekosistem platform *Smart Aquaculture* berbasis IoT, Machine Learning, dan Explainable AI (XAI) yang dirancang khusus untuk otomatisasi pemantauan dan pengelolaan kualitas air pada budidaya ikan gurami / nila (*Oreochromis niloticus*).
 
 Sistem ini mengintegrasikan 3 pilar utama:
-1. **Perangkat Hardware IoT (ESP32 DevKit V1)**: Mengukur parameter fisik air (Suhu, pH, Kekeruhan/Turbidity, Ketinggian Air) secara berkesinambungan dan mengendalikan aktuator tambak (Aerator, Pompa Sirkulasi, Dosing Pump Neutralizer pH, Motor Pakan Otomatis, dan Buzzer Alarm).
-2. **FastAPI Backend & ML Decision Engine (`appv2.py`)**: Bertindak sebagai otak terpusat yang memproses telemetry sensor, mengeksekusi inferensi Machine Learning Model `v4_v3` (ExtraTrees / Random Forest 93.61% accuracy), menghitung rumus fisika estimasi Oksigen Terlarut (DO), memicu alarm email, serta menyimpan riwayat ke database SQLite (`aquaagent.db`).
-3. **Web Application Frontend (`aquaagent-web`)**: Portal UI interaktif berbasis Next.js 16 yang menyajikan visualisasi data *real-time*, modul pengambil keputusan mandiri, fitur simulasi telemetri, pengaturan ambang batas dinamis, hingga Asisten AI (NEELA AI Chatbot) berbasis LLM.
+1. **Perangkat Hardware IoT (ESP32 DevKit V1)**: Mengukur parameter fisik air (Suhu DS18B20, pH Sensor, Turbidity Sensor, Water Level Sensor) secara berkesinambungan dan mengendalikan aktuator tambak secara presisi (Aerator, Pompa pH UP, Pompa pH DOWN, Motor Servo Auto-Feeder pakan, dan Active Buzzer Audio Feedback).
+2. **FastAPI Backend & ML Decision Engine (`appv2.py`)**: Bertindak sebagai otak terpusat yang memproses telemetry sensor, mengeksekusi inferensi Machine Learning Model `v4_v3` (ExtraTrees / Random Forest 93.61% accuracy), menghitung rumus fisika estimasi Oksigen Terlarut (DO), memicu alarm email darurat, menyajikan serialisasi pohon keputusan XAI (`/tree-structure` & `/tree-trace`), serta menyimpan riwayat ke database SQLite (`aquaagent.db`).
+3. **Web Application Frontend (`aquaagent-web`)**: Portal UI modern berbasis Next.js 16 yang menyajikan visualisasi data *real-time*, modul pengambil keputusan mandiri, pohon visualisasi XAI interaktif, simulator telemetri, pengaturan ambang batas & durasi aktuator dinamis, hingga Asisten AI (NEELA AI Chatbot) berbasis LLM.
 
 ---
 
-## 🏗️ 2. Arsitektur Sistem & Alur Kerja End-to-End
+## 🏗️ 3. Arsitektur Sistem & Alur Kerja End-to-End
 
 Berikut adalah bagan alur kerja sistem dari pembacaan sensor IoT hingga visualisasi Web Dashboard dan eksekusi aktuator:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────────────┐
 │                                 PERANGKAT IOT (ESP32)                                   │
-│  - Sensor DS18B20 (Suhu)                                                                │
-│  - Sensor pH Gravity V2                                                                 │
-│  - Sensor Turbidity SEN0189                                                             │
-│  - Sensor Water Level                                                                   │
+│  - Sensor DS18B20 (Suhu - GPIO 4)                                                       │
+│  - Sensor pH ADC (GPIO 32)                                                              │
+│  - Sensor Turbidity ADC (GPIO 34)                                                       │
+│  - Servo Pakan PWM (GPIO 13)                                                            │
+│  - Relay Aerator (GPIO 22), Relay pH UP (GPIO 21), Relay pH DOWN (GPIO 19)              │
+│  - Active Buzzer (GPIO 25)                                                              │
 │                                                                                         │
 │  Main Loop: Baca Sensor  ──►  POST /analyze  ───────┐                                   │
-│            Set Relay    ◄──  GET /actuator  ──────┐ │                                   │
-└───────────────────────────────────────────────────┼─┼───────────────────────────────────┘
-                                                    │ │
-                                                    ▼ │
-┌─────────────────────────────────────────────────────┼───────────────────────────────────┐
-│                           FASTAPI BACKEND (appv2.py) │                                   │
-│                                                     │                                   │
-│  1. Menghitung Estimasi DO (Henry's Law)            │                                   │
-│  2. Generate 15 Fitur Turunan ML                    │                                   │
-│  3. Inferensi Model ML v4_v3 (aquaagent_rf_v4_v3)   │                                   │
-│  4. Evaluasi Rule-Based Engine                      │                                   │
-│  5. Simpan Log ke SQLite (aquaagent.db)             │                                   │
-│                                                     │                                   │
-│  Mode Kontrol:                                      │                                   │
-│  - AUTONOMOUS: Aktuator diatur otomatis oleh Engine  │                                   │
-│  - MANUAL: Aktuator mengikuti input dari Web        │                                   │
-│                                                     │                                   │
-│  Notifikasi Kritis ──► Trigger Email Alert (Cooldown 30 m)                             │
-└──────────────────────┬──────────────────────────────┴───────────────────────────────────┘
-                       │
-                       ▼
+│            Set Relay/PWM ◄──  GET /actuator, /feed ─┐ │                                   │
+└─────────────────────────────────────────────────────┼─┼─────────────────────────────────┘
+                                                      │ │
+                                                      ▼ │
+┌───────────────────────────────────────────────────────┼─────────────────────────────────┐
+│                           FASTAPI BACKEND (appv2.py)   │                                 │
+│                                                       │                                 │
+│  1. Menghitung Estimasi DO (Formula Kelarutan O2)     │                                 │
+│  2. Generate 15 Fitur Turunan ML                      │                                 │
+│  3. Inferensi Model ML v4_v3 (aquaagent_rf_v4_v3.pkl) │                                 │
+│  4. Evaluasi Rule-Based Engine (Dual Pump pH UP/DOWN) │                                 │
+│  5. Serialisasi Pohon Keputusan (Explainable AI Tree) │                                 │
+│  6. Simpan Log ke SQLite (aquaagent.db)               │                                 │
+│                                                       │                                 │
+│  Mode Kontrol:                                        │                                 │
+│  - AUTONOMOUS: Aktuator diatur otomatis oleh Engine    │                                 │
+│  - MANUAL: Aktuator mengikuti input dari Web          │                                 │
+│                                                       │                                 │
+│  Notifikasi Kritis ──► Trigger Email Alert (Cooldown Dinamis)                           │
+└───────────────────────┬───────────────────────────────┴─────────────────────────────────┘
+                        │
+                        ▼
 ┌─────────────────────────────────────────────────────────────────────────────────────────┐
 │                               WEB FRONTEND (Next.js 16)                                 │
-│  - Dashboard Real-time Telemetry (Recharts, Gauge UI)                                   │
-│  - Control Panel Aktuator (Switch Manual / Autonomous)                                  │
-│  - Telemetry Simulator (Skenario Uji Normal / Kritis)                                   │
-│  - AI Center & NEELA Chat Assistant (Powered by LLM API)                                │
-│  - Settings Ambang Batas, Jadwal Pakan, Recipient Email                                 │
+│  - Dashboard Real-time Telemetry (Recharts, Gauge UI, Live Status)                      │
+│  - Control Panel Aktuator (Switch Manual / Autonomous, Pulse Test)                      │
+│  - Decision Tree Visualizer (/decision-tree: Interactive Tree Node Path & Ensemble)     │
+│  - Telemetry Simulator (Skenario Uji Normal / Low DO / pH Unstable / At Risk)           │
+│  - AI Center & NEELA Chat Assistant (Powered by OpenAI / Groq LLM API)                  │
+│  - Settings Ambang Batas, Durasi Aktuator, Jadwal Pakan, Recipient Email                │
 │  - Analytics & Data Historis (Export PDF / CSV)                                         │
+│  - Centralized Alert Logs (/alerts)                                                     │
 └─────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 💻 3. Teknologi & Tech Stack
+## 💻 4. Teknologi & Tech Stack
 
 ### 🎨 Frontend Web (`aquaagent-web`)
 * **Framework**: Next.js 16.2.7 (React 19.2.4)
 * **Styling**: Tailwind CSS v4, Vanilla CSS Custom Variables, Modern Dark Glassmorphism Theme
 * **Animasi & Interaktivitas**: GSAP 3.15.0, Lenis 1.3.25 (Smooth Scrolling), Lucide React (Icon System)
-* **Grafik & Visualisasi**: Recharts 3.8.1
+* **Grafik & Visualisasi**: Recharts 3.8.1, Interactive Tree Node Canvas Renderer
 * **Ekspor & Layanan**: Axios (HTTP Client), jsPDF & jsPDF-AutoTable (PDF Reporting), Nodemailer (Email Alert Dispatcher)
 
 ### 🧠 Backend API & Engine ML (`backend-neela-ai`)
-* **Core Framework**: Python 3.9+, FastAPI, Uvicorn (ASGI Web Server)
+* **Core Framework**: Python 3.9 - 3.12 (disarankan), FastAPI, Uvicorn (ASGI Web Server)
 * **Machine Learning Stack**: Scikit-Learn (ExtraTrees & Random Forest Classifier), Joblib, Imbalanced-Learn (SMOTE Oversampling), Pandas, NumPy
 * **Database**: SQLite3 (`aquaagent.db`)
-* **Integrasi LLM**: OpenAI / Groq API Client (Asisten NEELA AI)
+* **Integrasi LLM & XAI**: OpenAI API Client / Fallback Domain-Expert Biological XAI Generator
 * **Layanan Pendukung**: `actuator.py` (State Management), `email_service.py` (Mekanisme Cooldown Alert Email)
 
 ### 🔌 Perangkat IoT & MicroPython Firmware (`iot/main.py`)
 * **Platform Mikrokontroler**: ESP32 WROOM-32 / DevKit V1
-* **Bahasa Pemrograman**: MicroPython v1.20+ (atau Arduino C++ Firmware equivalent)
+* **Bahasa Pemrograman**: MicroPython v1.20+
 * **Protokol Komunikasi**: WiFi IEEE 802.11 b/g/n, HTTP REST Client (JSON payload)
 * **Sensor**:
-  * Sensor Suhu Air: DS18B20 (Digital OneWire)
-  * Sensor Keasaman Air: DFRobot Gravity Analog pH Sensor V2
-  * Sensor Kekeruhan: Optical Turbidity Sensor SEN0189
+  * Sensor Suhu Air: DS18B20 (Digital OneWire - GPIO 4)
+  * Sensor Keasaman Air: DFRobot Gravity Analog pH Sensor (GPIO 32 ADC)
+  * Sensor Kekeruhan: Optical Turbidity Sensor SEN0189 (GPIO 34 ADC)
   * Sensor Ketinggian Air: Resistive Water Level Sensor
 * **Aktuator Hardware**:
-  * Relay Module 4-Channel (Relay 1: Aerator, Relay 2: Pompa Air, Relay 3: Feeder Pakan, Relay 4: Neutralizer pH)
-  * Active Buzzer 3.3V/5V (Sinyal bahaya lokal)
+  * Relay Aerator (GPIO 22, Active LOW)
+  * Relay Pompa pH UP / Menaikkan pH (GPIO 21, Active LOW)
+  * Relay Pompa pH DOWN / Menurunkan pH (GPIO 19, Active LOW)
+  * Servo Auto-Feeder (GPIO 13 PWM, Freq 50Hz)
+  * Active Buzzer Alarm & Audio Feedback (GPIO 25)
 
 ---
 
-## 📁 4. Struktur Direktori Proyek
+## 📁 5. Struktur Direktori Proyek
 
 ```
 aquaagent-web/
-├── manual.md                              # 📘 Dokumen Manual Lengkap (File ini)
+├── manual.md                              # 📘 Dokumen Manual Lengkap Sistem (File ini)
 ├── README.md                              # Dokumentasi ringkas proyek
-├── alat.md                                # Tasklist & Wiring Panduan Hardware IoT
+├── alat.md                                # Panduan Wiring Hardware IoT & Pinout
 ├── package.json                           # Konfigurasi dependensi Web Next.js
 ├── next.config.mjs                        # Konfigurasi Next.js
 │
 ├── backend-neela-ai/                      # 🧠 DIRECTORY BACKEND & MACHINE LEARNING
-│   ├── appv2.py                           # Application Utama FastAPI Backend API
-│   ├── aquaagent_rf_v4_v3.pkl             # Binary Model Machine Learning v4_v3 (ExtraTrees/RF)
+│   ├── appv2.py                           # Aplikasi Utama FastAPI Backend API (Decision Engine & XAI)
+│   ├── aquaagent_rf_v4_v3.pkl             # Binary Model Machine Learning v4_v3 (ExtraTrees Classifier)
 │   ├── rf_features_v4_v3.pkl              # Metadata List 15 Fitur Model v4_v3
-│   ├── train_rf_fix_v4_v3.ipynb           # Notebook Pelatihan Model (80:20 Split, SMOTE, 93.61% Acc)
+│   ├── train_rf_fix_v4_v3_v2.ipynb        # Notebook Pelatihan Model (80:20 Split, SMOTE, 93.61% Acc)
 │   ├── documentation_appv2.md             # Dokumentasi teknis endpoint backend appv2.py
-│   ├── documentationtraining_v4_v3.md     # Dokumentasi rincian eksperimen & evaluasi ML
 │   ├── actuator.py                        # Modul State Aktuator & Mode Sistem
-│   ├── email_service.py                   # Layanan Notifikasi Email Alert (Cooldown 30 m)
-│   ├── llm_decision.py                    # Script Pengujian LLM Decision Prompt
+│   ├── email_service.py                   # Layanan Notifikasi Email Alert (Cooldown Dinamis)
 │   ├── aquaagent.db                       # Database SQLite (History, Settings, Schedule, Email)
+│   ├── requirements.txt                   # Daftar dependensi Python backend
 │   └── Data_Model_IoTMLCQ_2024.xlsx       # Dataset Referensi Pelatihan
 │
 ├── iot/                                   # 🔌 DIRECTORY FIRMWARE IOT
-│   └── main.py                            # MicroPython Code / Firmware Script ESP32
+│   └── main.py                            # MicroPython Firmware Script ESP32 (Sensors, Relays, Servo, Buzzer)
 │
 └── src/                                   # 🎨 DIRECTORY FRONTEND NEXT.JS
     ├── components/                        # Komponen Reusable (Navbar, Sidebar, Cards, Charts, UI)
-    ├── hooks/                             # Custom React Hooks
-    ├── lib/                               # Helper & Konfigurasi Library
+    ├── hooks/                             # Custom React Hooks (useAquaAgent)
+    ├── lib/                               # Helper & Konfigurasi Library (api.js, etc.)
     ├── pages/                             # Next.js Pages / Routes:
     │   ├── index.js                       # Landing Page / Portal Utama
     │   ├── dashboard.js                   # Live Telemetry & Control Center
-    │   ├── actuator.js                    # Panel Kontrol Aktuator & Relays
+    │   ├── actuator.js                    # Panel Kontrol Aktuator & Relays (Dual Pump pH)
+    │   ├── decision-tree.js               # Visualisasi Pohon Keputusan XAI Interaktif
     │   ├── ai-center.js                   # Dashboard Rekomendasi ML & Diagnostik AI
     │   ├── chat.js                        # NEELA AI Interactive Chat Assistant
-    │   ├── simulator.js                   # Telemetry Simulator & Stress Testing
-    │   ├── settings.js                    # Ambang Batas, Thresholds, & Jadwal Pakan
-    │   ├── analytics.js                   # Analytics, Chart Historis, Export PDF
+    │   ├── simulator.js                   # Telemetry Simulator & Scenario Testing
+    │   ├── settings.js                    # Ambang Batas, Durasi Aktuator, & Jadwal Pakan
+    │   ├── analytics.js                   # Analytics, Chart Historis, Export PDF/CSV
     │   ├── alerts.js                      # Centralized Alert Logs
     │   └── api/                           # Next.js API Routes:
     │       ├── chat.js                    # API Handler untuk LLM NEELA AI Chat
@@ -173,39 +289,43 @@ aquaagent-web/
 
 ---
 
-## ⚙️ 5. Panduan Instalasi & Setup Environment
+## ⚙️ 6. Panduan Instalasi & Setup Environment (Bagi Pengembang/Teknisi)
 
-### 5.1 Setup Backend API & Engine ML (`backend-neela-ai`)
+### 6.1 Setup Backend API & Engine ML (`backend-neela-ai`)
 
 1. **Buka Terminal & Masuk ke Directory Backend**:
    ```bash
    cd backend-neela-ai
    ```
 
-2. **Buat Virtual Environment (Disarankan)**:
+2. **Buat Virtual Environment (Disarankan Python 3.11/3.12)**:
    ```bash
    python -m venv venv
-   # Aktifkan di Windows:
-   venv\Scripts\activate
-   # Atau di Linux/macOS:
-   source venv/bin/activate
+   # Aktifkan di Windows (PowerShell):
+   .\venv\Scripts\Activate.ps1
+   # Atau di Git Bash:
+   source venv/Scripts/activate
    ```
 
 3. **Install Dependensi Python**:
    ```bash
-   pip install fastapi uvicorn pydantic pandas numpy joblib scikit-learn requests
+   pip install -r requirements.txt
+   ```
+   *Jika `requirements.txt` belum ada, jalankan:*
+   ```bash
+   pip install fastapi uvicorn pydantic pandas numpy joblib scikit-learn requests python-dotenv openai
    ```
 
 4. **Jalankan FastAPI Backend Server**:
    ```bash
-   uvicorn appv2:app --reload --host 0.0.0.0 --port 8000
+   python -m uvicorn appv2:app --reload --host 0.0.0.0 --port 8000
    ```
-   * Server Backend akan berjalan di `http://localhost:8000`.
-   * OpenDokumentasi Swagger UI interaktif dapat diakses pada `http://localhost:8000/docs`.
+   * Server Backend berjalan pada: `http://localhost:8000`.
+   * Dokumentasi Swagger UI interaktif dapat diakses pada: `http://localhost:8000/docs`.
 
 ---
 
-### 5.2 Setup Web Frontend (`aquaagent-web`)
+### 6.2 Setup Web Frontend (`aquaagent-web`)
 
 1. **Buka Terminal di Root Directory Workspace (`aquaagent-web`)**:
    ```bash
@@ -218,11 +338,11 @@ aquaagent-web/
    ```
 
 3. **Konfigurasi Environment Variable (`.env.local`)**:
-   Buat atau pastikan file `.env.local` berisi konfigurasi berikut:
+   Buat file `.env.local` pada root project jika belum ada:
    ```env
    NEXT_PUBLIC_API_URL=http://localhost:8000
    OPENAI_API_KEY=sk-... # (Opsional untuk fitur NEELA AI Chatbot)
-   GROQ_API_KEY=gsk_...  # (Opsional jika menggunakan LLM Groq Provider)
+   GROQ_API_KEY=gsk_...  # (Opsional jika menggunakan LLM Groq)
    SMTP_HOST=smtp.gmail.com
    SMTP_PORT=587
    SMTP_USER=your_email@gmail.com
@@ -233,137 +353,138 @@ aquaagent-web/
    ```bash
    npm run dev
    ```
-   * Aplikasi Web akan berjalan di `http://localhost:3000`.
+   * Aplikasi Web berjalan pada: `http://localhost:3000`.
 
 ---
 
-### 5.3 Setup IoT Firmware MicroPython (`iot/main.py`)
+### 6.3 Setup IoT Firmware MicroPython (`iot/main.py`)
 
 1. **Persiapan Hardware**:
-   * Siapkan ESP32 DevKit V1.
-   * Hubungkan sensor DS18B20 ke GPIO 4, pH Sensor ke GPIO 34, Turbidity Sensor ke GPIO 35, Water Level Sensor ke GPIO 36.
-   * Hubungkan Relay 4-Channel ke GPIO 25 (Aerator), GPIO 26 (Pump), GPIO 32 (Feeder), GPIO 33 (pH Stabilizer), dan Active Buzzer ke GPIO 27.
+   * ESP32 DevKit V1.
+   * Sensor: DS18B20 (GPIO 4), Analog pH Sensor (GPIO 32), Turbidity Sensor (GPIO 34).
+   * Aktuator: Relay Aerator (GPIO 22), Relay pH UP (GPIO 21), Relay pH DOWN (GPIO 19), Servo Feeder (GPIO 13 PWM), Active Buzzer (GPIO 25).
 
-2. **Flash MicroPython Firmware ke ESP32**:
-   * Gunakan [Thonny IDE](https://thonny.org/) atau `esptool`.
-   * Flash firmware MicroPython ESP32 terkini (v1.20+).
-
-3. **Upload Script [`iot/main.py`](file:///d:/aquaagent-web/iot/main.py)**:
-   * Buka Thonny IDE, hubungkan ESP32 via kabel USB Serial.
-   * Sesuaikan variabel WiFi SSID, Password, dan IP Backend Server pada kode `main.py`:
+2. **Konfigurasi Koneksi & URL Backend pada [`iot/main.py`](file:///d:/aquaagent-web/iot/main.py)**:
+   * Buka file `iot/main.py` di Thonny IDE.
+   * Sesuaikan `SSID`, `PASSWORD`, dan `BASE_URL`:
      ```python
-     WIFI_SSID = "NAMA_WIFI_ANDA"
-     WIFI_PASS = "PASSWORD_WIFI_ANDA"
-     BACKEND_URL = "http://192.168.1.X:8000" # Ganti dengan IP lokal Komputer Backend
+     SSID = "NAMA_WIFI"
+     PASSWORD = "PASSWORD_WIFI"
+     BASE_URL = "http://192.168.1.X:8000" # Ganti dengan IP LAN Komputer Backend Anda
      ```
-   * Simpan file sebagai `main.py` di dalam memori internal ESP32 MicroPython.
-   * Jalankan script (`Run current script`).
+
+3. **Upload & Eksekusi di ESP32**:
+   * Simpan script ke internal flash ESP32 dengan nama `main.py`.
+   * Jalankan script (`Ctrl+R` di Thonny). Buzzer akan memberikan respon bunyi status koneksi (Connecting, Connected Success).
 
 ---
 
-## 🕹️ 6. Panduan Penggunaan & Cara Pakai Aplikasi Web
+## 🕹️ 7. Panduan Fitur Lengkap Aplikasi Web (Menu demi Menu)
 
 ---
 
-### 6.1 Dashboard Telemetry Real-time (`/dashboard` & `/`)
+### 7.1 Dashboard Telemetry Real-time (`/dashboard` & `/`)
 
 * **Fungsi Utama**: Menyajikan statistik indikator utama kondisi air tambak secara *live*.
 * **Parameter yang Ditampilkan**:
-  1. **Dissolved Oxygen (DO)**: Menampilkan tingkat kelarutan oksigen (mg/L). Status Optimal: > 5.0 mg/L.
-  2. **Water Temperature**: Menampilkan suhu air (°C). Rentang Aman: 25.0°C - 30.0°C.
+  1. **Dissolved Oxygen (DO)**: Menampilkan tingkat kelarutan oksigen (mg/L). Ambang Batas Default: >= 5.0 mg/L.
+  2. **Water Temperature**: Menampilkan suhu air (°C). Rentang Optimal: 25.0°C - 32.0°C.
   3. **pH Level**: Menampilkan derajat keasaman. Rentang Optimal: 6.5 - 8.0.
-  4. **Turbidity**: Menampilkan tingkat kekeruhan air (NTU). Batas Maksimal: 15 - 25 NTU.
-  5. **Water Level**: Ketinggian air tambak (cm). Batas Maksimal: 20 cm.
-* **Indikator Status Kesehatan Air**:
-  * 🟢 **Stable**: Air berada dalam kondisi aman untuk pertumbuhan biota.
-  * 🔴 **At Risk**: Terjadi deviasi ekstrem atau prediksi Model Machine Learning menandakan risiko tinggi. Sistem akan secara otomatis mengaktifkan intervensi aktuator dan alarm.
+  4. **Turbidity**: Menampilkan tingkat kekeruhan air (NTU/%). Batas Maksimal: 15.0 - 25.0%.
+  5. **Water Level**: Ketinggian air tambak (cm/%). Batas Maksimal Aman: 85%.
+* **Indikator Status Kesehatan Biota**:
+  * 🟢 **Stable**: Kondisi air stabil dan ideal.
+  * 🔴 **At Risk**: Deviasi parameter abnormal atau prediksi model ML menunjukkan kondisi berisiko tinggi.
 
 ---
 
-### 6.2 Kontrol Aktuator & Relay (`/actuator`)
+### 7.2 Kontrol Aktuator & Relay Dual Pump pH (`/actuator`)
 
-Portal kontrol peralatan fisik tambak. Menyediakan 2 Mode Operasional:
+Portal kontrol peralatan fisik tambak dengan 2 Mode Operasional:
 
 1. **Mode AUTONOMOUS (Otomatis)**:
-   * Sistem Backend `appv2.py` mengambil alih seluruh kendali aktuator berdasarkan inferensi ML v4_v3 dan aturan ambang batas (*Rule-Based Engine*).
-   * Pengguna tidak perlu menyalakan atau mematikan alat secara manual.
-
+   * Backend `appv2.py` mengendalikan relay dan pompa secara mandiri berdasarkan evaluasi model ML ExtraTrees v4_v3 dan aturan ambang batas.
 2. **Mode MANUAL (Kendali Pengguna)**:
-   * Pengguna dapat secara bebas melakukan *toggle ON/OFF* untuk masing-masing peranti:
-     * 🌬️ **Aerator (Air Pump)**: Menyuplai oksigen tambahan.
-     * 🔄 **Water Circulation (Pompa Air)**: Menjaga sirkulasi dan menurunkan suhu/kekeruhan.
-     * 🧪 **pH Neutralizer (Dosing Pump)**: Menetralkan pH air.
-     * 🐟 **Auto Feeder**: Pemberian pakan otomatis.
-     * 🚨 **Buzzer Alarm**: Mematikan atau menguji sinyal beeper darurat (`POST /beep/ack`).
+   * Pengguna dapat mengendalikan peranti secara individual:
+     * 🌬️ **Aerator (Air Pump)**: Menyuplai oksigen terlarut tambahan.
+     * ⬆️ **pH UP Pump (Water Circulation)**: Menambahkan larutan basa untuk menaikkan pH saat air terlalu asam.
+     * ⬇️ **pH DOWN Pump (Neutralizer)**: Menambahkan larutan asam untuk menurunkan pH saat air terlalu basa.
+     * 🐟 **Auto Feeder (Servo)**: Memberi pakan ikan seketika.
+     * 🚨 **Buzzer Alarm**: Mematikan/menguji sirene alarm darurat (`POST /beep/ack`).
 
 ---
 
-### 6.3 AI Assistant & Smart Chat Center (`/ai-center` & `/chat`)
+### 7.3 AI Assistant & Smart Chat Center (`/ai-center` & `/chat`)
 
-* **Akses**: Menu Sidebar **AI Center** atau **NEELA Chat**.
-* **Fitur Utama**:
-  * **Analisis Diagnostik Otomatis**: Menampilkan *preskripsi AI* mengenai kondisi tambak saat ini.
-  * **Interactive Chatbot (NEELA AI)**: Pengguna dapat mengajukan pertanyaan seputar budidaya ikan nila, penyebab keasaman air, rekomendasi dosis pakan, hingga penjelasan tindakan aktuator yang sedang aktif.
-  * Chatbot memiliki konteks langsung (*live context injection*) ke data telemetri sensor saat ini.
+* **Analisis Diagnostik Otomatis**: Menyajikan penjelasan natural language (Explainable AI) mengenai kondisi air, faktor stres ikan nila, dan panduan mitigasi.
+* **Interactive Chatbot (NEELA AI)**: Pengguna dapat berkonsultasi mengenai budidaya, dosis pakan, dan interpretasi aktuator. Chatbot terhubung langsung dengan konteks telemetri saat ini.
 
 ---
 
-### 6.4 Telemetry Simulator (`/simulator`)
+### 7.4 Explainable AI & Interactive Decision Tree Visualizer (`/decision-tree`)
 
-Modul pengujian mandiri tanpa memerlukan alat IoT fisik terhubung.
-
-* **Skenario Simulasi yang Tersedia**:
-  * 🟢 **Skenario Normal / Optimal**: Mengisi data sensor pada kondisi ideal (Suhu 28°C, pH 7.5, DO 6.2 mg/L, Turbidity 10 NTU).
-  * 🔴 **Skenario Oksigen Rendah (Low DO)**: Menguji aktivasi otomatis Aerator.
-  * 🔴 **Skenario Suhu & Kekeruhan Tinggi**: Menguji aktivasi Pompa Sirkulasi Air.
-  * 🔴 **Skenario Keasaman Ekstrem (pH Unstable)**: Menguji aktivasi pH Neutralizer Dosing Pump.
-  * 🔴 **Skenario Kondisi Kritis (At Risk)**: Menguji prediksi ML Random Forest dan pengiriman Notifikasi Email Alert.
-* **Penggunaan**: Pilih preset skenario, tekan tombol **"Kirim Data Simulasi"**, lalu amati reaksi pada Dashboard dan Panel Aktuator.
+Halaman khusus untuk transparansi dan auditability inferensi Machine Learning:
+* **Visualisasi Pohon Keputusan Interaktif**: Menampilkan hierarki node Decision Tree dari model ExtraTrees Ensemble.
+* **Trace Decision Path**: Memvisualisasikan langkah demi langkah traverse node dari root hingga leaf untuk sampel telemetri saat ini.
+* **Ensemble Voting Breakdown**: Menampilkan persentase voting seluruh tree estimators (misal: 85 Trees memprediksi Stable vs 15 Trees memprediksi At Risk).
+* **Feature Importance Ranking**: Mengurutkan kontribusi fitur input paling dominan dalam keputusan model.
 
 ---
 
-### 6.5 Pengaturan Ambang Batas & Jadwal Pakan (`/settings`)
+### 7.5 Telemetry Simulator (`/simulator`)
 
-Halaman pengisian konfigurasi sistem yang langsung tersimpan pada database SQLite backend:
-
-1. **Ambang Batas Sensor (*Sensor Thresholds*)**:
-   * Min & Max pH (Default: 6.5 - 8.0)
-   * Minimum Dissolved Oxygen (Default: 5.0 mg/L)
-   * Maximum Temperature (Default: 30.0 °C)
-   * Maximum Turbidity (Default: 15.0 NTU)
-   * Maximum Water Level (Default: 20.0 cm)
-2. **Interval Refresh & IoT Enable**:
-   * Mengaktifkan/mematikan penerimaan data IoT (`iotEnabled`).
-   * Menentukan frekuensi pembacaan data (detik).
-3. **Jadwal Pemberian Pakan (*Feeding Schedule*)**:
-   * Jam pakan harian & interval jam pemberian pakan.
-   * Setiap kali jadwal diubah, nilai `feeding_version` bertambah sehingga ESP32 otomatis menyinkronkan timer lokalnya.
-4. **Daftar Penerima Notifikasi Email**:
-   * Menambah dan menghapus alamat email yang berhak menerima email peringatan darurat.
+Modul simulasi pengujian tanpa hardware IoT:
+* **Preset Skenario Uji**:
+  * 🟢 **Normal / Optimal**: Suhu 28°C, pH 7.5, DO 6.2 mg/L, Turbidity 10%.
+  * 🔴 **Low DO (Oksigen Rendah)**: Menguji aktivasi otomatis Aerator.
+  * 🔴 **Low pH (Asam)**: Menguji aktivasi pompa pH UP.
+  * 🔴 **High pH (Basa)**: Menguji aktivasi pompa pH DOWN.
+  * 🔴 **At Risk Condition**: Menguji prediksi ExtraTrees dan pengiriman email alert darurat.
 
 ---
 
-### 6.6 Analisis Historis & Riwayat Data (`/analytics`)
+### 7.6 Pengaturan Ambang Batas, Durasi Aktuator & Jadwal Pakan (`/settings`)
 
-* **Visualisasi Tren Telemetri**: Grafik garis interaktif untuk memantau fluktuasi Suhu, pH, DO, dan Kekeruhan selama 24 jam / 7 hari terakhir.
-* **Log Riwayat Pengukuran**: Tabel log lengkap 50 transaksi terakhir.
-* **Ekspor Laporan**: Fitur ekspor data historis ke format **PDF** (menggunakan library `jspdf` & `jspdf-autotable`) atau **CSV** untuk keperluan dokumentasi dan riset.
+Konfigurasi dinamis yang tersimpan di SQLite:
+1. **Ambang Batas Sensor**: `do_threshold`, `ph_min`, `ph_max`, `temp_max`, `turbidity_max`, `water_level_max`.
+2. **Durasi Aktuasi Alat (Detik)**:
+   * `aeratorDuration` (Default: 5.0 s)
+   * `pumpDuration` / pH UP (Default: 0.5 s)
+   * `stabilizerDuration` / pH DOWN (Default: 0.5 s)
+   * `buzzerDuration` (Default: 5.0 s)
+   * `feederDuration` (Default: 0.8 s)
+3. **Mekanisme Cooldown Notifikasi Email**:
+   * `alertCooldownMinutes` & `alertCooldownSeconds` (Default: 30 menit).
+4. **Jadwal Pakan Harian**: Waktu pakan harian & interval jam pemberian pakan otomatis.
+5. **Daftar Penerima Email Alert**: Penambahan dan penghapusan email tujuan alarm.
 
 ---
 
-## 🧠 7. Modul Backend API & Machine Learning (`appv2.py` & Model v4_v3)
+### 7.7 Analisis Historis & Riwayat Data (`/analytics`)
 
-Backend [`backend-neela-ai/appv2.py`](file:///d:/aquaagent-web/backend-neela-ai/appv2.py) berfungsi sebagai *Decision Engine* terpusat.
+* **Tren Visualisasi**: Grafik garis fluktuasi multi-parameter (Suhu, pH, DO, Turbidity).
+* **Tabel Riwayat 50 Data Terakhir**: Log lengkap timestamp, parameter, dan status.
+* **Ekspor Laporan**: Unduh laporan historis ke format **PDF** atau **CSV**.
 
-### 7.1 Mesin Keputusan Dual-Tier (Hybrid ML + Rule-Based)
+---
+
+### 7.8 Riwayat Peringatan Dini (`/alerts`)
+
+* Halaman log riwayat notifikasi bahaya (alarm list) yang mencatat jam kejadian, penyebab parameter kritis, dan status pengiriman notifikasi email.
+
+---
+
+## 🧠 8. Modul Backend API & Machine Learning (`appv2.py` & Model v4_v3)
+
+### 8.1 Mesin Keputusan Dual-Tier (Hybrid ExtraTrees + Rule-Based Engine)
 
 ```
                        Input Telemetri Sensor
                                   │
                       ┌───────────┴───────────┐
                       ▼                       ▼
-            ML Inference (v4_v3)     Rule-Based Engine
-            (Random Forest/ET)     (Threshold Evaluation)
+           ExtraTrees Inference (v4_v3)  Rule-Based Engine
+           (Ensemble Classification)   (Threshold & Pump Rules)
                       │                       │
                       └───────────┬───────────┘
                                   ▼
@@ -371,190 +492,159 @@ Backend [`backend-neela-ai/appv2.py`](file:///d:/aquaagent-web/backend-neela-ai/
                     Status Health (Stable / At Risk)
 ```
 
-1. **Tier 1 — Inferensi Model ML (`aquaagent_rf_v4_v3.pkl`)**:
-   * Mengklasifikasikan status kesehatan air menjadi `Stable` (0) atau `At Risk` (1) dengan tingkat kepastian (*confidence score*).
-2. **Tier 2 — Rule-Based Decision Logic**:
-   * **Aerator**: Aktif (`ON`) jika `DO < doThreshold` (Default < 5.0 mg/L).
-   * **Water Circulation**: Aktif (`ON`) jika `Temperature > tempMax` ATAU `Turbidity > turbidityMax`.
-   * **pH Neutralizer**: Aktif (`ON`) jika `pH < phMin` ATAU `pH > phMax`.
-   * **Buzzer Alarm**: Aktif (`ON`) jika `Water Level > waterLevelMax` ATAU `health_status == "At Risk"`.
+1. **Tier 1 — ExtraTrees Classifier Model (`aquaagent_rf_v4_v3.pkl`)**:
+   * Memprediksi status kesehatan tambak (`Stable` vs `At Risk`) dengan confidence probability.
+2. **Tier 2 — Rule-Based Logic Engine**:
+   * **Aerator**: `ON` jika `DO < doThreshold` (Default < 5.0 mg/L).
+   * **pH UP Pump (`water_circulation`)**: `ON` jika `pH < phMin` (Default < 6.5).
+   * **pH DOWN Pump (`ph_neutralizer`)**: `ON` jika `pH > phMax` (Default > 8.0).
+   * **Buzzer Alarm**: `ON` jika `Water Level > waterLevelMax` ATAU `health_status == "At Risk"`.
 
 ---
 
-### 7.2 Rekayasa Fitur (15 Fitur Input Random Forest / ExtraTrees)
+### 8.2 Rekayasa Fitur (15 Fitur Input ExtraTrees / Random Forest)
 
-Backend merubah 4 parameter dasar telemetri + jam menjadi 15 fitur input secara *real-time*:
+Backend menghitung estimasi Oksigen Terlarut (DO) secara otomatis jika sensor fisik tidak tersedia:
 
 $$\text{DO}_{\text{est}} = 14.652 - 0.41022 \times \text{TEMP} + 0.007991 \times \text{TEMP}^2 - 0.000077774 \times \text{TEMP}^3$$
 
-| Nama Fitur | Tipe | Logika Perhitungan | Fungsi & Deskripsi |
+| Nama Fitur | Tipe | Rumus / Logika | Deskripsi |
 | :--- | :--- | :--- | :--- |
 | `TEMP` | Float | `sensor.temperature` | Suhu air (°C) |
-| `DO` | Float | `sensor.do` (atau `calculate_do(TEMP)`) | Oksigen Terlarut (mg/L) |
-| `PH` | Float | `sensor.ph` | Derajat keasaman air |
-| `TURBIDITY` | Float | `sensor.turbidity` | Kekeruhan air (NTU) |
+| `DO` | Float | `sensor.do` (atau formula DO est) | Oksigen Terlarut (mg/L) |
+| `PH` | Float | `sensor.ph` | Derajat keasaman |
+| `TURBIDITY` | Float | `sensor.turbidity` | Kekeruhan air (% / NTU) |
 | `hour` | Integer | `sensor.hour` | Jam pengukuran (0-23) |
-| `risk_flag` | Float | `1.0` jika abnormal, `0.0` jika normal | Indikator biner deviasi fisik |
-| `PH_dev` | Float | `abs(PH - 7.5)` | Penyimpangan dari pH ideal 7.5 |
-| `TEMP_dev` | Float | `max(0, TEMP-32) + max(0, 25-TEMP)` | Penyimpangan dari rentang 25–32°C |
-| `TURB_dev` | Float | `max(0, TURBIDITY - 25.0)` | Kelebihan kekeruhan dari 25 NTU |
-| `DO_dev` | Float | `max(0, 5.0 - DO)` | Defisit oksigen di bawah 5.0 mg/L |
-| `PH_dist_7` | Float | `abs(PH - 7.0)` | Jarak ke ambang batas bawah 7.0 |
+| `risk_flag` | Float | `0.0` jika optimal, `1.0` jika deviasi | Indikator kondisi fisik |
+| `PH_dev` | Float | `abs(PH - 7.5)` | Deviasi dari pH ideal 7.5 |
+| `TEMP_dev` | Float | `max(0, TEMP-32) + max(0, 25-TEMP)` | Deviasi dari rentang 25–32°C |
+| `TURB_dev` | Float | `max(0, TURBIDITY - 25.0)` | Deviasi kekeruhan dari 25% |
+| `DO_dev` | Float | `max(0, 5.0 - DO)` | Defisit DO di bawah 5.0 mg/L |
+| `PH_dist_7` | Float | `abs(PH - 7.0)` | Jarak ke ambang bawah 7.0 |
 | `TEMP_DO_ratio` | Float | `DO / (TEMP + 1.0)` | Interaksi kelarutan O2 vs Suhu |
 | `TURB_DO_ratio`| Float | `TURBIDITY / (DO + 0.1)` | Rasio kekeruhan vs Oksigen |
-| `TEMP_PH_ratio`| Float | `TEMP / (PH + 0.1)` | Rasio Suhu vs keasaman pH |
-| `hour_sin` | Float | `sin(2 * pi * hour / 24.0)` | Komponen siklis sinus waktu |
-| `hour_cos` | Float | `cos(2 * pi * hour / 24.0)` | Komponen siklis kosinus waktu |
+| `TEMP_PH_ratio`| Float | `TEMP / (PH + 0.1)` | Rasio Suhu vs keasaman |
+| `hour_sin` | Float | `sin(2 * pi * hour / 24.0)` | Komponen sinus jam harian |
+| `hour_cos` | Float | `cos(2 * pi * hour / 24.0)` | Komponen kosinus jam harian |
 
 ---
 
-### 7.3 Pelatihan Model Machine Learning (`train_rf_fix_v4_v3.ipynb`)
+### 8.3 Pelatihan Model Machine Learning (`train_rf_fix_v4_v3_v2.ipynb`)
 
-Model v4_v3 dikembangkan melalui Jupyter Notebook [`train_rf_fix_v4_v3.ipynb`](file:///d:/aquaagent-web/backend-neela-ai/train_rf_fix_v4_v3.ipynb) dengan spesifikasi:
-* **Stratified Train-Test Split (80:20 DAHULU)**: Mencegah 100% *Data Leakage*.
-* **SMOTE Resampling (`sampling_strategy=0.6`)**: Menyeimbangkan rasio sampel latih dari 5:1 menjadi proporsional (62.5% Stable : 37.5% At Risk).
-* **Hasil Evaluasi Model Terbaik**:
+* **Metodologi**: Stratified Train-Test Split (80:20 DAHULU), dilanjutkan SMOTE Oversampling (`sampling_strategy=0.6`) pada training set saja untuk menghindari *Data Leakage*.
+* **Hasil Evaluasi Model**:
   * **ExtraTrees Classifier**: **93.61% Accuracy**, AUC-ROC: **0.941**, Precision: **0.840**, Recall: **0.745**.
   * **Random Forest Classifier**: **93.50% Accuracy**, AUC-ROC: **0.940**.
 
 ---
 
-### 7.4 Ringkasan Dokumentasi API Endpoint
+### 8.4 Ringkasan Dokumentasi API Endpoint
 
 | Method | Endpoint | Fungsi & Deskripsi |
 | :--- | :--- | :--- |
-| `GET` | `/` | Core Health Check Status Server API |
-| `POST` | `/analyze` | Menerima data telemetri sensor, eksekusi ML v4_v3, simpan log SQLite, pemicu alert email |
-| `GET` | `/actuator` | Membaca status mode (`AUTONOMOUS`/`MANUAL`) dan relay aktuator |
-| `POST` | `/actuator` | Memperbarui status aktuator & mode operasional |
-| `POST` | `/beep/ack` | Konfirmasi & reset sinyal alarm buzzer |
+| `GET` | `/` | Health check & info versi API |
+| `POST` | `/analyze` | Menerima telemetri, inferensi ML, evaluasi rule engine, simpan history, kirim alert |
+| `GET` | `/latest` | Mengambil hasil analisis terakhir |
+| `GET` | `/history` | Mengambil 50 data log sensor terbaru |
+| `GET` | `/actuator` | Membaca status aktuator & mode sistem (`AUTONOMOUS`/`MANUAL`) |
+| `POST` | `/actuator` | Mengubah status aktuator secara manual |
+| `POST` | `/actuator/ack` | Konfirmasi eksekusi aktuator selesai |
+| `POST` | `/beep/ack` | Konfirmasi dan reset alarm buzzer |
 | `POST` | `/feeder/ack` | Konfirmasi proses pemberian pakan selesai |
-| `GET` | `/settings` | Membaca daftar ambang batas sensor & konfigurasi |
-| `POST` | `/settings` | Menyimpan perubahan ambang batas sensor ke SQLite |
-| `GET` | `/feeding-schedule` | Membaca jadwal pakan otomatis |
-| `POST` | `/feeding-schedule` | Memperbarui jadwal pakan (meningkatkan `feeding_version`) |
-| `GET` | `/emails` | Membaca daftar penerima notifikasi email alarm |
-| `POST` | `/emails` | Menambah email penerima alarm baru |
-| `DELETE`| `/emails/{email}` | Menghapus email penerima alarm |
-| `GET` | `/history` | Membaca 50 rekaman riwayat sensor terbaru |
-| `GET` | `/latest` | Membaca hasil analisis `/analyze` paling baru |
+| `GET` | `/settings` | Membaca setting ambang batas & durasi aktuator |
+| `POST` | `/settings` | Memperbarui setting ambang batas & durasi aktuator |
+| `GET` | `/feeding-schedule` | Membaca jadwal pemberian pakan |
+| `POST` | `/feeding-schedule` | Memperbarui jadwal pakan (menaikkan versi) |
+| `GET` | `/feeding-version` | Membaca nomor versi jadwal pakan saat ini |
+| `GET` | `/emails` | Membaca daftar email penerima alert |
+| `POST` | `/emails` | Menambahkan email penerima alert baru |
+| `DELETE`| `/emails/{email}` | Menghapus email penerima alert |
+| `GET` | `/alert-cooldown-status` | Membaca status sisa waktu cooldown email alert |
+| `GET` | `/tree-structure` | Serialisasi struktur hierarki pohon keputusan XAI |
+| `POST` | `/tree-trace` | Trace langkah keputusan pohon untuk data sensor tertentu |
 
 ---
 
-## 🔌 8. Modul IoT & Firmware ESP32 MicroPython (`iot/main.py`)
+## 🔌 9. Modul IoT & Firmware ESP32 MicroPython (`iot/main.py`)
 
-Firmware mikrokontroler ditulis dalam MicroPython pada file [`iot/main.py`](file:///d:/aquaagent-web/iot/main.py).
-
-### 8.1 Arsitektur Hardware & Pin Mapping ESP32
+### 9.1 Arsitektur Hardware & Pin Mapping ESP32 Terkini
 
 ```
-                       ┌─────────────────────────┐
-                       │     ESP32 DevKit V1     │
-                       └────────────┬────────────┘
-                                    │
-         ┌──────────────────────────┼──────────────────────────┐
-         ▼                          ▼                          ▼
-   SENSOR INPUT                POWER / SYSTEM            AKTUATOR OUTPUT
-   - DS18B20 (GPIO 4)          - 3.3V / 5V / GND         - Relay 1 Aerator (GPIO 25)
-   - pH Sensor (GPIO 34)                                 - Relay 2 Pump (GPIO 26)
-   - Turbidity (GPIO 35)                                 - Relay 3 Feeder (GPIO 32)
-   - Water Level (GPIO 36)                               - Relay 4 pH Stab (GPIO 33)
-                                                         - Active Buzzer (GPIO 27)
+                        ┌─────────────────────────┐
+                        │     ESP32 DevKit V1     │
+                        └────────────┬────────────┘
+                                     │
+         ┌───────────────────────────┼───────────────────────────┐
+         ▼                           ▼                           ▼
+   SENSOR INPUT                 POWER / GND                AKTUATOR OUTPUT
+   - DS18B20 Suhu (GPIO 4)      - 3.3V / 5V / GND          - Relay Aerator (GPIO 22)
+   - pH Sensor ADC (GPIO 32)                               - Relay Pompa pH UP (GPIO 21)
+   - Turbidity ADC (GPIO 34)                               - Relay Pompa pH DOWN (GPIO 19)
+                                                           - Servo Feeder PWM (GPIO 13)
+                                                           - Active Buzzer (GPIO 25)
 ```
 
 | Pin ESP32 | Jenis Pin | Komponen Hardware | Keterangan Operasional |
 | :--- | :--- | :--- | :--- |
-| `GPIO 4` | Digital Input | Sensor Suhu DS18B20 | Protocol OneWire, butuh pull-up resistor 4.7kΩ |
-| `GPIO 34` | Analog Input (ADC) | DFRobot pH Sensor V2 | Output tegangan 0-3.3V |
-| `GPIO 35` | Analog Input (ADC) | Sensor Turbidity SEN0189 | Output tegangan 0-3.3V |
-| `GPIO 36` | Analog Input (ADC) | Water Level Sensor | Output tegangan analog resistif |
-| `GPIO 25` | Digital Output | Relay 1 — Aerator | Active LOW |
-| `GPIO 26` | Digital Output | Relay 2 — Pompa Air | Active LOW |
-| `GPIO 32` | Digital Output | Relay 3 — Auto Feeder | Active LOW (Motor Servo/DC) |
-| `GPIO 33` | Digital Output | Relay 4 — pH Stabilizer | Active LOW (Dosing Pump) |
-| `GPIO 27` | Digital Output | Active Buzzer Alarm | Driven 3.3V/5V |
+| `GPIO 4` | Digital Input | Sensor Suhu DS18B20 | OneWire Protocol + Pull-up resistor 4.7kΩ |
+| `GPIO 32` | Analog Input (ADC) | DFRobot Analog pH Sensor | ADC 12-Bit, Atten 11dB (0-3.3V) |
+| `GPIO 34` | Analog Input (ADC) | Optical Turbidity Sensor | ADC 12-Bit, Atten 11dB (0-3.3V) |
+| `GPIO 22` | Digital Output | Relay Aerator | Active LOW (`0` = ON, `1` = OFF) |
+| `GPIO 21` | Digital Output | Relay Pompa pH UP (Basa) | Active LOW |
+| `GPIO 19` | Digital Output | Relay Pompa pH DOWN (Asam) | Active LOW |
+| `GPIO 13` | PWM Output (50Hz) | Continuous Servo Feeder | `duty 65` (Fwd), `duty 88` (Bwd), `duty 77` (Stop) |
+| `GPIO 25` | Digital Output | Active Buzzer Alarm | Audio beeping feedback & alarm bahaya |
 
 ---
 
-### 8.2 Logic & Workflow Firmware MicroPython
+### 9.2 Logic & Workflow Firmware MicroPython
 
-Kode MicroPython pada [`iot/main.py`](file:///d:/aquaagent-web/iot/main.py) menjalankan *loop* utama tanpa henti:
-
-```python
-# Pseudo-code Alur Utama Firmware ESP32 (iot/main.py)
-import time
-import network
-import urequests
-
-def main_loop():
-    connect_wifi()
-    
-    while True:
-        # 1. Baca data fisik dari sensor-sensor
-        temp = read_ds18b20()
-        ph = read_ph_sensor()
-        turb = read_turbidity_sensor()
-        w_level = read_water_level()
-        
-        # 2. Kirim telemetri ke Backend FastAPI
-        payload = {
-            "temperature": temp,
-            "ph": ph,
-            "turbidity": turb,
-            "water_level": w_level,
-            "hour": get_current_hour(),
-            "source": "iot"
-        }
-        res = urequests.post(BACKEND_URL + "/analyze", json=payload)
-        
-        # 3. Poll status aktuator dari Backend
-        act_res = urequests.get(BACKEND_URL + "/actuator").json()
-        
-        # 4. Set state Relay GPIO sesuai balasan backend
-        set_relay(PIN_AERATOR, act_res.get("aerator"))
-        set_relay(PIN_PUMP, act_res.get("water_circulation"))
-        set_relay(PIN_STABILIZER, act_res.get("ph_neutralizer"))
-        set_relay(PIN_FEEDER, act_res.get("feeder"))
-        set_relay(PIN_BUZZER, act_res.get("buzzer"))
-        
-        # 5. Cek sinkronisasi jadwal pakan
-        check_feeding_schedule_sync()
-        
-        time.sleep(REFRESH_INTERVAL)
-```
+Kode MicroPython pada [`iot/main.py`](file:///d:/aquaagent-web/iot/main.py) menjalankan alur berikut:
+1. **Inisialisasi & Koneksi WiFi**: Melakukan koneksi ke Access Point dengan audio feedback buzzer (connecting beep & success beep).
+2. **Sinkronisasi Pengaturan & Jadwal**: Mengambil interval refresh, durasi aktuator (`aeratorDuration`, `pumpDuration`, `stabilizerDuration`, `buzzerDuration`, `feederDuration`), dan jadwal pakan.
+3. **Pembacaan Sensor**: Membaca sensor suhu DS18B20, tegangan analog pH sensor, dan kekeruhan turbidity sensor.
+4. **Pengiriman Telemetri (`POST /analyze`)**: Mengirim payload JSON ke backend.
+5. **Eksekusi Aktuator Sesuai Balasan & Mode**:
+   * Menyalakan relay Aerator, Pompa pH UP, Pompa pH DOWN, Buzzer, dan Servo Feeder sesuai durasi yang telah dikonfigurasi.
+   * Mengirim sinyal acknowledgement (`POST /actuator/ack`, `POST /beep/ack`, `POST /feeder/ack`) ke backend setelah aksi selesai.
+6. **Sinkronisasi Jadwal Pakan Lokal**: Mengecek waktu dan versi jadwal (`/feeding-version`) untuk pemberian pakan otomatis berbasis timer internal.
 
 ---
 
-## 📧 9. Mekanisme Notifikasi Email Kritis
+## 📧 10. Mekanisme Notifikasi Email Kritis
 
-Backend [`email_service.py`](file:///d:/aquaagent-web/backend-neela-ai/email_service.py) bertugas memberikan peringatan dini (*Early Warning System*) kepada pengelola tambak:
+Backend [`email_service.py`](file:///d:/aquaagent-web/backend-neela-ai/email_service.py) bertugas memberikan peringatan dini (*Early Warning System*):
 
 1. **Kondisi Pemicu Alert**:
    * `DO < 5.0 mg/L` (`CRITICAL: Low Dissolved Oxygen`)
-   * `Temperature > 30.0 °C` (`WARNING: High Water Temperature`)
-   * `pH < 6.5` ATAU `pH > 8.0` (`WARNING: Unstable Water pH`)
-   * `health_status == "At Risk"` (`CRITICAL: Fish At Risk Predicted by RF Model`)
-2. **Mekanisme Cooldown 30 Menit**:
-   * Sistem mencatat timestamp pengiriman email terakhir. Jika ancaman berulang terjadi dalam rentang kurung waktu 30 menit, pengiriman email akan ditangguhkan untuk mencegah spam email.
-3. **Dispatch Email**:
-   * Backend memanggil endpoint API Next.js `/api/send-alert-email` yang menggunakan **Nodemailer** untuk mengirimkan format email HTML yang rapi ke seluruh alamat yang terdaftar pada tabel `email_recipients` SQLite.
+   * `Temperature > 30.0 °C` (`WARNING: High Temperature`)
+   * `pH < 6.5` ATAU `pH > 8.0` (`WARNING: Unstable pH`)
+   * `health_status == "At Risk"` (`CRITICAL: Fish At Risk Predicted by ExtraTrees Model`)
+2. **Mekanisme Cooldown Alert**:
+   * Mencegah spam email dengan timer cooldown dinamis (menit & detik) yang tersimpan di tabel `settings` SQLite. Status sisa cooldown dapat dipantau di endpoint `/alert-cooldown-status`.
+3. **Pengiriman Email**:
+   * Backend memanggil API Next.js `/api/send-alert-email` yang menggunakan **Nodemailer** untuk mengirimkan notifikasi format HTML ke seluruh email pada tabel `email_recipients`.
 
 ---
 
-## 🔧 10. Troubleshooting & FAQ
+## 🔧 11. Troubleshooting & FAQ
 
-### Q1: Kenapa ESP32 gagal mengirim data ke Backend (`Connection Error`)?
-* **Solusi**: Pastikan ESP32 dan komputer Backend terhubung pada **satu jaringan WiFi lokal yang sama**. Pastikan IP Address pada `BACKEND_URL` di `iot/main.py` menggunakan IP LAN Komputer (misal `192.168.1.50:8000`), bukan `localhost` atau `127.0.0.1`.
+### Q1: Kenapa muncul `ImportError: initialization failed` saat menjalankan uvicorn di Windows?
+* **Solusi**: Error ini terjadi jika library `scipy` / `scikit-learn` pada Python 3.13 mengalami kendala binary C++ wheel. Jalankan:
+  ```bash
+  pip install --upgrade --force-reinstall scipy scikit-learn numpy
+  ```
+  Dan pastikan menjalankan uvicorn via module: `python -m uvicorn appv2:app --reload --host 0.0.0.0 --port 8000`.
 
-### Q2: Mengapa status aktuator di Web tidak merespon saat diklik manual?
-* **Solusi**: Periksa mode operasional di halaman `/actuator`. Jika sistem berada pada mode `AUTONOMOUS`, keputusan aktuator dikunci oleh Machine Learning Backend Engine. Ubah mode ke `MANUAL` terlebih dahulu.
+### Q2: ESP32 gagal terhubung ke Backend (`Connection Error`)?
+* **Solusi**: Pastikan ESP32 dan komputer Backend berada pada **jaringan WiFi lokal yang sama**. Ubah `BASE_URL` pada [`iot/main.py`](file:///d:/aquaagent-web/iot/main.py) menggunakan IP LAN komputer (contoh: `http://192.168.1.50:8000`), bukan `localhost`.
 
-### Q3: Model ML v4_v3 tidak dapat dimuat (`FileNotFoundError: aquaagent_rf_v4_v3.pkl`)?
-* **Solusi**: Pastikan file model [`aquaagent_rf_v4_v3.pkl`](file:///d:/aquaagent-web/backend-neela-ai/aquaagent_rf_v4_v3.pkl) berada di dalam folder `backend-neela-ai/` dan perintah `uvicorn appv2:app` dijalankan tepat dari dalam directory `backend-neela-ai/`.
+### Q3: Kenapa relay aktuator tidak bereaksi saat diklik di Web?
+* **Solusi**: Cek mode aktuator di halaman `/actuator`. Jika sistem dalam mode `AUTONOMOUS`, aktuator dikendalikan secara otomatis oleh Machine Learning. Ubah mode ke `MANUAL` terlebih dahulu.
 
-### Q4: Nilai Oksigen Terlarut (DO) tidak muncul dari sensor?
-* **Solusi**: Nilai DO pada AquaAgent dihitung secara fisik otomatis (*Estimated DO*) menggunakan formula kelarutan oksigen berbasis suhu air jika sensor fisik DO tidak terpasang.
+### Q4: Mengapa ada 2 pompa pH (pH UP dan pH DOWN)?
+* **Solusi**: AquaAgent menggunakan konfigurasi dual dosing pump: Pompa pH UP (Relay GPIO 21 / `water_circulation`) untuk menaikkan pH saat air terlalu asam (< 6.5), dan Pompa pH DOWN (Relay GPIO 19 / `ph_neutralizer`) untuk menetralkan pH saat air terlalu basa (> 8.0).
 
 ---
 
-> **Dokumentasi Manual AquaAgent (NEELA AI)** — *Smart Aquaculture Monitoring & Control System* 🐟⚡
+> **Dokumentasi Manual AquaAgent (NEELA AI)** — *Smart Aquaculture Monitoring & Autonomous Decision Engine* 🐟⚡
