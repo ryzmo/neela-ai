@@ -24,9 +24,7 @@ import {
 
 gsap.registerPlugin(ScrollTrigger);
 
-// ============================================================
-// SYSTEM TECHNOLOGY CARDS DATA
-// ============================================================
+// Tech cards data
 
 const TECH_LAYERS = [
   {
@@ -66,7 +64,7 @@ const TECH_LAYERS = [
   }
 ];
 
-// Research Credits representing the authors and paper from the PDF (Cheerful light-mode cards)
+// Research authors
 const AUTHORS = [
   {
     name: "Eirene Christi",
@@ -94,10 +92,7 @@ const AUTHORS = [
   }
 ];
 
-// ============================================================
-// CHEERFUL CARTOON SVG ILLUSTRATIONS FOR THE SYSTEM STAGES
-// Inline vector drawings designed to float gently with eyes/faces.
-// ============================================================
+// Cartoon SVG illustrations
 
 function IoTNodeCartoon({ className = "w-24 h-24" }) {
   return (
@@ -227,7 +222,7 @@ function AlertSystemCartoon({ className = "w-24 h-24" }) {
   );
 }
 
-// Cute Smiling pH Test Tube
+// pH Probe
 function PHProbeCartoon({ className = "w-24 h-24" }) {
   return (
     <svg viewBox="0 0 120 120" className={className}>
@@ -243,7 +238,7 @@ function PHProbeCartoon({ className = "w-24 h-24" }) {
   );
 }
 
-// Cute smiling blue Tilapia fish
+// Tilapia Fish
 function TilapiaFishCartoon({ className = "w-24 h-24" }) {
   return (
     <svg viewBox="0 0 120 120" className={className}>
@@ -262,7 +257,7 @@ function TilapiaFishCartoon({ className = "w-24 h-24" }) {
   );
 }
 
-// Cute transparent bubble mascot
+// Bubble
 function BubbleCartoon({ className = "w-24 h-24" }) {
   return (
     <svg viewBox="0 0 120 120" className={className}>
@@ -276,7 +271,7 @@ function BubbleCartoon({ className = "w-24 h-24" }) {
   );
 }
 
-// Smiling Water Drop
+// Water Drop
 function WaterDropCartoon({ className = "w-24 h-24" }) {
   return (
     <svg viewBox="0 0 120 120" className={className}>
@@ -289,7 +284,7 @@ function WaterDropCartoon({ className = "w-24 h-24" }) {
   );
 }
 
-// Glowing turbidity light bulb
+// Turbidity Sensor
 function GlowSensorCartoon({ className = "w-24 h-24" }) {
   return (
     <svg viewBox="0 0 120 120" className={className}>
@@ -304,10 +299,7 @@ function GlowSensorCartoon({ className = "w-24 h-24" }) {
   );
 }
 
-// ============================================================
-// FLOATING CARTOON COMPONENTS DATABASE
-// Represents the scattered absolute coordinates of the playground.
-// ============================================================
+// Floating playground items
 
 const FLOATING_PLAYGROUND = [
   { id: 1, component: IoTNodeCartoon, label: "IoT Controller Node", left: "6%", top: "15%", speed: 120, scale: 1.1 },
@@ -327,9 +319,7 @@ const FLOATING_PLAYGROUND = [
   { id: 15, component: AlertSystemCartoon, label: "Alert Node", right: "28%", top: "10%", speed: 190, scale: 0.85 }
 ];
 
-// ============================================================
-// MAIN COMPONENT
-// ============================================================
+// Main component
 
 export default function LandingPage() {
   const router = useRouter();
@@ -343,14 +333,14 @@ export default function LandingPage() {
 
   const [scrolled, setScrolled] = useState(false);
 
-  // Auth & Toast States
+  // Auth & toast states
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [toast, setToast] = useState({ show: false, message: "", type: "error" });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Load Auth State on mount
+  // Load auth state
   useEffect(() => {
     const logged = localStorage.getItem("neela_logged_in") === "true";
     setTimeout(() => {
@@ -360,7 +350,7 @@ export default function LandingPage() {
 
   const showToast = (message, type = "error") => {
     setToast({ show: true, message, type });
-    // Animate toast using GSAP
+    // Animate toast
     setTimeout(() => {
       gsap.fromTo(".toast-notification",
         { y: -20, opacity: 0, scale: 0.95 },
@@ -368,7 +358,7 @@ export default function LandingPage() {
       );
     }, 50);
 
-    // Auto hide after 3.5s
+    // Auto hide
     setTimeout(() => {
       gsap.to(".toast-notification", {
         y: -15,
@@ -386,7 +376,7 @@ export default function LandingPage() {
 
     setLoading(true);
 
-    // Smooth GSAP button animation on submit
+    // Button animation
     gsap.to(".login-submit-btn", {
       scale: 0.95,
       duration: 0.2,
@@ -394,7 +384,7 @@ export default function LandingPage() {
       repeat: 1
     });
 
-    // Validate email format
+    // Validate email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setTimeout(() => {
@@ -404,7 +394,7 @@ export default function LandingPage() {
       return;
     }
 
-    // Validation matching
+    // Check credentials
     if (email === "operator@neela.ai" && password === "password123") {
       setTimeout(() => {
         localStorage.setItem("neela_logged_in", "true");
@@ -438,7 +428,7 @@ export default function LandingPage() {
     }
   };
 
-  // Interactive mousemove parallax for floating bubbles/decorations in Hero
+  // Mouse parallax
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (!heroRef.current) return;
@@ -467,9 +457,9 @@ export default function LandingPage() {
     };
   }, []);
 
-  // GSAP scroll animations
+  // Scroll animations
   useEffect(() => {
-    // Lenis Smooth Scroll
+    // Smooth scroll
     const lenis = new Lenis({
       duration: 1.2,
       smoothWheel: true,
@@ -492,13 +482,13 @@ export default function LandingPage() {
     gsap.ticker.lagSmoothing(0);
 
     const ctx = gsap.context(() => {
-      // Header changes color past 80px scroll
+      // Header scroll state
       ScrollTrigger.create({
         start: "top -80px",
         onToggle: (self) => setScrolled(self.isActive)
       });
 
-      // Character Highlight reveal on scroll (Intro Section)
+      // Text reveal
       const textEl = document.querySelector(".reveal-text");
       if (textEl) {
         const text = textEl.textContent.trim();
@@ -529,7 +519,7 @@ export default function LandingPage() {
         });
       }
 
-      // 1. Continuous random drifting animation on cartoon-inner icons
+      // Floating drift animation
       gsap.utils.toArray(".cartoon-inner").forEach((el) => {
         gsap.to(el, {
           x: () => gsap.utils.random(-50, 50),
@@ -542,7 +532,7 @@ export default function LandingPage() {
         });
       });
 
-      // 2. GSAP Scroll parallax translation (Y direction)
+      // Parallax scroll
       gsap.utils.toArray(".playground-node").forEach((el) => {
         const speed = parseFloat(el.getAttribute("data-speed") || "150");
 
@@ -558,7 +548,7 @@ export default function LandingPage() {
         });
       });
 
-      // Parallax scroll bubbles
+      // Parallax bubbles
       gsap.utils.toArray(".why-parallax-bubble").forEach((el, i) => {
         gsap.to(el, {
           yPercent: i % 2 === 0 ? -30 : 30,
@@ -573,7 +563,7 @@ export default function LandingPage() {
         });
       });
 
-      // Horizontal translation for Credits Track
+      // Horizontal credits scroll
       gsap.to(creditsTrackRef.current, {
         x: () => {
           const trackWidth = creditsTrackRef.current.scrollWidth;
@@ -589,7 +579,7 @@ export default function LandingPage() {
         }
       });
 
-      // Flowchart blocks reveal sequence
+      // Flowchart reveal
       gsap.from(".flow-node", {
         opacity: 0,
         y: 20,
@@ -604,7 +594,7 @@ export default function LandingPage() {
 
     }, rootRef);
 
-    // 3. Interactive Cursor Parallax Shift
+    // Cursor parallax
     const handleMouseMove = (e) => {
       if (!archSectionRef.current) return;
       const { clientX, clientY } = e;
@@ -644,9 +634,7 @@ export default function LandingPage() {
         <div className="absolute bottom-[20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[#1e9bd4]/5 blur-[130px]" />
       </div>
 
-      {/* ============================================================
-          HEADER (Aquacultural navigation themed in sidebar blues)
-          ============================================================ */}
+      {/* Header */}
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out px-6 md:px-12 flex items-center justify-between ${scrolled ? "py-4 bg-white/90 backdrop-blur-md border-b border-blue-100 shadow-sm" : "py-6 bg-transparent"
         }`}>
         <Link href="/" className="flex items-center gap-3 cursor-pointer select-none group">
@@ -692,12 +680,10 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* ============================================================
-          HERO SECTION (WELCOMING LANDING + GLASSMORPHISM LOGIN CARD)
-          ============================================================ */}
+      {/* Hero section */}
       <section ref={heroRef} className="min-h-screen pt-32 pb-16 flex items-center justify-center px-6 md:px-12 relative overflow-hidden">
 
-        {/* Floating animated bubble circles (Cheerful sky blue fills) */}
+        {/* Floating bubbles */}
         <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
           <div className="floating-bubble-item absolute top-[25%] left-[8%] w-12 h-12 rounded-full border border-blue-300/30 bg-blue-100/20 animate-float-slow" />
           <div className="floating-bubble-item absolute bottom-[20%] left-[25%] w-20 h-20 rounded-full border border-sky-300/20 bg-sky-100/15 animate-float-reverse" />
@@ -705,12 +691,12 @@ export default function LandingPage() {
           <div className="floating-bubble-item absolute bottom-[30%] right-[8%] w-24 h-24 rounded-full border border-cyan-300/30 bg-cyan-100/15 animate-float-reverse" />
         </div>
 
-        {/* Diagonal light divider decoration */}
+        {/* Background gradient */}
         <div className="absolute -top-[50%] left-[10%] w-[30%] h-[200%] bg-gradient-to-b from-white/30 via-transparent to-transparent blur-3xl rotate-45 pointer-events-none" />
 
         <div className="w-full max-w-7xl grid lg:grid-cols-12 gap-12 items-center relative z-10">
 
-          {/* Left Column: Welcoming info */}
+          {/* Left info */}
           <div className="lg:col-span-7 text-left">
 
             <h1 className="font-black text-4xl md:text-5xl lg:text-6xl leading-[1.08] tracking-tight uppercase text-[#0f172a] mb-6">
@@ -725,7 +711,7 @@ export default function LandingPage() {
               to monitor water parameters, predict risk status, and actuate pond control (aerator, water pump, pH correction) automatically.
             </p>
 
-            {/* Quick Metrics Widgets */}
+            {/* Quick metrics */}
             <div className="grid grid-cols-3 gap-4 max-w-lg mb-8">
               <div className="bg-white/70 border border-blue-100 rounded-2xl p-4 hover:border-[#1a6fc4]/30 transition-all cursor-default shadow-sm">
                 <div className="text-2xl font-black text-[#1a6fc4]">96%</div>
@@ -750,7 +736,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Right Column: Glassmorphic Cheerful Login box or Welcome Back Card */}
+          {/* Right login box */}
           <div className="lg:col-span-5 flex justify-center lg:justify-end">
             {isLoggedIn ? (
               <div className="w-full max-w-md bg-white/80 backdrop-blur-xl border border-blue-200 rounded-3xl p-8 shadow-xl relative overflow-hidden transition-all duration-300">
@@ -827,7 +813,7 @@ export default function LandingPage() {
                 </div>
 
                 <form onSubmit={handleLogin} className="space-y-5">
-                  {/* Email field */}
+                  {/* Email */}
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-bold tracking-widest text-[#1a6fc4] uppercase block">Email Address</label>
                     <div className="relative">
@@ -845,7 +831,7 @@ export default function LandingPage() {
                     </div>
                   </div>
 
-                  {/* Password field */}
+                  {/* Password */}
                   <div className="space-y-1.5">
                     <div className="flex justify-between items-center">
                       <label className="text-[10px] font-bold tracking-widest text-[#1a6fc4] uppercase block">Password</label>
@@ -866,7 +852,7 @@ export default function LandingPage() {
                     </div>
                   </div>
 
-                  {/* Submit button */}
+                  {/* Submit */}
                   <button
                     type="submit"
                     disabled={loading}
@@ -895,9 +881,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ============================================================
-          SECTION 1: INTRO TEXT (GSAP TEXT SHIFT REVEAL)
-          ============================================================ */}
+      {/* Intro section */}
       <section ref={introRef} className="py-28 px-6 flex flex-col items-center justify-center text-center relative border-y border-blue-100 bg-white/40">
         <div className="max-w-4xl mx-auto">
           <p className="reveal-text text-3xl md:text-[40px] leading-relaxed text-slate-300 select-none font-medium text-center">
@@ -906,11 +890,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ============================================================
-          SECTION 2: SYSTEM ARCHITECTURE (GSAP & LENIS FLOATING CANVAS)
-          Scatters 15 cartoon IoT drawings absolutely across a scroll trigger
-          parallax canvas to wow the user with zero text overlaps.
-          ============================================================ */}
+      {/* Architecture section */}
       <section
         id="architecture-floating-sec"
         ref={archSectionRef}
@@ -971,9 +951,7 @@ export default function LandingPage() {
 
       </section>
 
-      {/* ============================================================
-          SECTION 3: SYSTEM ARCHITECTURE FLOWCHART
-          ============================================================ */}
+      {/* Flowchart section */}
       <section ref={flowSectionRef} className="py-28 px-6 bg-white/30 border-y border-blue-100 relative">
         <div className="max-w-6xl mx-auto text-center">
 
@@ -1059,9 +1037,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ============================================================
-          SECTION 4: RESEARCH AUTHORS & CREDITS (HORIZONTAL SCROLL)
-          ============================================================ */}
+      {/* Credits section */}
       <section ref={creditsSectionRef} className="py-24 overflow-hidden relative">
         <div className="text-center mb-16">
           <span className="font-black text-xs tracking-widest text-[#1e9bd4] uppercase block mb-2">PROJECT TEAM</span>
@@ -1096,9 +1072,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ============================================================
-          FOOTER
-          ============================================================ */}
+      {/* Footer */}
       <footer className="bg-[#f0f7ff] pt-24 pb-12 px-6 md:px-12 border-t border-blue-200/60 relative z-10">
         <div className="max-w-6xl mx-auto">
 
@@ -1180,7 +1154,7 @@ export default function LandingPage() {
         </div>
       </footer>
 
-      {/* Premium Toast Notification */}
+      {/* Toast */}
       {toast.show && (
         <div className={`toast-notification fixed top-24 right-6 z-50 flex items-center gap-3.5 px-6 py-4 rounded-2xl border backdrop-blur-xl shadow-2xl ${toast.type === "success"
           ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-800"

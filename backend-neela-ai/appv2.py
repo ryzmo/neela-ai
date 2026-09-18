@@ -27,9 +27,7 @@ from actuator import (
     update_actuator_state
 )
 
-# ==========================================
-# INIT
-# ==========================================
+# Init
 
 app = FastAPI(
     title="AQUAAGENT API",
@@ -50,9 +48,7 @@ app.add_middleware(
 rf = joblib.load("aquaagent_rf_v4_v3.pkl")
 latest_result = None
 
-# ==========================================
-# DATABASE INIT
-# ==========================================
+# Database init
 
 conn = sqlite3.connect(
     "aquaagent.db",
@@ -385,9 +381,7 @@ Gunakan cetak tebal **kata kunci penting** agar tampilan visual rapi. Keluarkan 
             f"**Prognosis:** {prognosis} **Panduan Pengelola:** {reassurance}"
         )
 
-# ==========================================
-# INPUT SCHEMA
-# ==========================================
+# Input schema
 
 class EmailInput(BaseModel):
     email: str
@@ -423,9 +417,7 @@ class FeedingScheduleInput(BaseModel):
     interval: int
     enabled: bool = True
 
-# ==========================================
-# EMAIL API
-# ==========================================
+# Email API
 
 @app.post("/emails")
 def add_email(data: EmailInput):
@@ -527,17 +519,13 @@ def save_settings(data: SettingsInput):
     get_actuator_state()["beep"] = True
     return {"message": "Settings updated"}
 
-# ==========================================
-# ROOT ROUTE
-# ==========================================
+# Root route
 
 @app.get("/")
 def root():
     return {"message": "AQUAAGENT API v2 Running (ExtraTrees 99.88% + Rule-Based)"}
 
-# ==========================================
-# ANALYZE ROUTE
-# ==========================================
+# Analyze route
 
 def calculate_do(temp):
     return round(
@@ -698,9 +686,7 @@ def analyze(sensor: SensorInput):
 
     return latest_result
 
-# ==========================================
-# LATEST RESULT API
-# ==========================================
+# Latest result API
 
 @app.get("/latest")
 def get_latest():
@@ -709,9 +695,7 @@ def get_latest():
         return {"message": "No analysis yet"}
     return latest_result
 
-# ==========================================
-# HISTORY API
-# ==========================================
+# History API
 
 @app.get("/history")
 def get_history():
@@ -784,9 +768,7 @@ def get_alert_cooldown_status():
         "active": remaining > 0
     }
 
-# ==========================================
-# EXTRATREES DECISION TREE VISUALIZER API
-# ==========================================
+# Decision tree visualizer API
 
 def build_extratrees_sample_df(sensor_data):
     """

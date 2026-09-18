@@ -70,7 +70,7 @@ export default function SettingsPage() {
     }, 0);
   }, []);
 
-  // === Alert Cooldown Live Status ===
+  // Alert cooldown status
   const [cooldownStatus, setCooldownStatus] = useState({ remaining: 0, active: false, cooldownTotal: 0, lastAlertTime: null });
   const remainingRef = useRef(0);
 

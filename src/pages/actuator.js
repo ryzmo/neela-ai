@@ -45,9 +45,7 @@ export default function ActuatorPage() {
     }, 4000);
   }
 
-  // ============================
-  // LOAD DATA DARI BACKEND
-  // ============================
+  // Load data backend
   async function loadActuator() {
     try {
       const res = await fetch(API_URL);
@@ -112,9 +110,7 @@ export default function ActuatorPage() {
 
 }, []);
 
-  // ============================
-  // KIRIM KE FASTAPI
-  // ============================
+  // Send to backend
   async function sendActuator(dataToSend) {
     try {
       // Map true/false values to "ON"/"OFF" string formats that the FastAPI backend expects
@@ -139,9 +135,7 @@ export default function ActuatorPage() {
     }
   }
 
-  // ============================
-  // GANTI MODE
-  // ============================
+  // Change mode
   async function changeMode(newMode) {
     setMode(newMode);
     showToast(`Mode operasi berhasil diubah ke ${newMode === "AUTONOMOUS" ? "Otomatis (AI)" : "Manual Override"}!`, "success");
@@ -151,9 +145,7 @@ export default function ActuatorPage() {
     });
   }
 
-  // ============================
-  // TOGGLE ACTUATOR
-  // ============================
+  // Toggle actuator
   async function toggleActuator(name) {
     if (mode !== "MANUAL") {
       showToast("Ubah ke Mode Manual terlebih dahulu untuk mengontrol actuator secara langsung!", "warning");

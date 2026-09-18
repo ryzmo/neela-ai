@@ -65,9 +65,7 @@ while not wifi.isconnected() and timeout > 0:
     time.sleep(1)
     timeout -= 1
 
-# ==========================
-# KONFIGURASI SERVER & API
-# ==========================
+# Server & API config
 BASE_URL = "http://172.20.10.3:8000"
 
 API_ANALYZE         = BASE_URL + "/analyze"
@@ -174,47 +172,35 @@ STOP = 77
 # Posisi awal servo
 servo.duty(STOP)
 
-# ==========================
-# PH SENSOR
-# ==========================
+# pH Sensor
 ph_pin = ADC(Pin(32))
 ph_pin.atten(ADC.ATTN_11DB)
 ph_pin.width(ADC.WIDTH_12BIT)
 
-# ==========================
-# TURBIDITY SENSOR
-# ==========================
+# Turbidity Sensor
 turbidity_pin = ADC(Pin(34))
 turbidity_pin.atten(ADC.ATTN_11DB)
 turbidity_pin.width(ADC.WIDTH_12BIT)
 
-# ==========================
-# DS18B20
-# ==========================
+# DS18B20 Temp Sensor
 data_pin = Pin(4)
 ds_sensor = ds18x20.DS18X20(onewire.OneWire(data_pin))
 roms = ds_sensor.scan()
 
 print("DS18B20 Found:", roms)
 
-# ==========================================
-# ULTRASONIC / WATER LEVEL
-# ==========================================
+# Ultrasonic / Water Level
 
 TRIG = Pin(26, Pin.OUT)
 ECHO = Pin(27, Pin.IN)
 
-# ==========================================
-# KALIBRASI WATER LEVEL
-# ==========================================
+# Kalibrasi Water Level
 
 SENSOR_HEIGHT = 8.5
 MAX_WATER_HEIGHT = 6.0
 
 
-# ==========================================
-# MEMBACA JARAK SENSOR KE PERMUKAAN AIR
-# ==========================================
+# Jarak sensor ke air
 
 def get_distance():
 
@@ -243,9 +229,7 @@ def get_distance():
     return distance
 
 
-# ==========================================
-# MENGHITUNG KETINGGIAN AIR
-# ==========================================
+# Ketinggian air
 
 def calculate_water_height(distance):
 
@@ -260,9 +244,7 @@ def calculate_water_height(distance):
     return water_height
 
 
-# ==========================================
-# MENGHITUNG PERSENTASE AIR
-# ==========================================
+# Persentase air
 
 def calculate_level(water_height):
 
@@ -279,9 +261,7 @@ def calculate_level(water_height):
     return level
 
 
-# ==========================================
-# FUNGSI WATER LEVEL
-# ==========================================
+# Status water level
 
 def get_water_level():
 
@@ -309,10 +289,7 @@ def get_ph():
     # Konversi ADC ke voltage
     voltage = adc * (3.3 / 4095)
 
-    # ==========================================
-    # KALIBRASI POLYNOMIAL
-    # pH = aV² + bV + c
-    # ==========================================
+    # Kalibrasi polynomial: pH = aV² + bV + c
 
     a = -13.021343985879776
     b = 52.51123561813835
@@ -334,9 +311,7 @@ def get_ph():
     return round(ph, 2)
 
 
-# ==========================================
-# TURBIDITY SENSOR
-# ==========================================
+# Turbidity Sensor
 
 turbidity_pin = ADC(Pin(34))
 
@@ -344,9 +319,7 @@ turbidity_pin.width(ADC.WIDTH_12BIT)
 turbidity_pin.atten(ADC.ATTN_11DB)
 
 
-# ==========================================
-# HASIL KALIBRASI TURBIDITY
-# ==========================================
+# Kalibrasi Turbidity
 
 V_PEKAT = 0.0000
 V_SEDANG = 0.6726
@@ -357,9 +330,7 @@ T_SEDANG = 50.0
 T_KERAN = 0.0
 
 
-# ==========================================
-# MENGHITUNG KEKERUHAN
-# ==========================================
+# Kekeruhan
 
 def calculate_turbidity(voltage):
 
@@ -394,9 +365,7 @@ def calculate_turbidity(voltage):
     return turbidity
 
 
-# ==========================================
-# MEMBACA TURBIDITY
-# ==========================================
+# Membaca turbidity
 
 def get_turbidity():
 
@@ -430,9 +399,7 @@ def get_turbidity():
     }
 
 
-# ==========================================
-# SENSOR SUHU DS18B20
-# ==========================================
+# Sensor suhu DS18B20
 
 data_pin = Pin(4)
 
@@ -450,17 +417,13 @@ if not roms:
 rom = roms[0]
 
 
-# ==========================================
-# HASIL KALIBRASI SUHU
-# ==========================================
+# Kalibrasi suhu
 
 SLOPE = 1.000632
 OFFSET = -0.396
 
 
-# ==========================================
-# MEMBACA SUHU
-# ==========================================
+# Membaca suhu
 
 def get_temperature():
 
