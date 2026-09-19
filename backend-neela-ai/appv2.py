@@ -260,7 +260,6 @@ def decision_engine(sensor, health_status, estimated_do):
         reasons.append(f"High pH detected ({sensor.ph} > {settings['phMax']}). Activating pH DOWN pump.")
 
     if sensor.water_level > settings["waterLevelMax"]:
-        buzzer = "ON"
         reasons.append(f"High water level detected ({sensor.water_level}% > {settings['waterLevelMax']}%).")
 
     if health_status == "At Risk":
@@ -616,6 +615,35 @@ def analyze(sensor: SensorInput):
         estimated_do
     )
 
+    # Send email notification with cooldown check
+    critical = (
+        decision["buzzer"] == "ON"
+        or health_status == "At Risk"
+    )
+
+    buzzer_triggered = False
+    if critical:
+        buzzer_triggered = send_email_notification(
+            {
+                "sensor_data": {
+                    "temperature": sensor.temperature,
+                    "do": estimated_do,
+                    "ph": sensor.ph,
+                    "turbidity": sensor.turbidity,
+                    "water_level": sensor.water_level,
+                    "hour": sensor.hour
+                },
+                "health_status": health_status,
+                "buzzer": "ON"
+            },
+            cooldown_minutes=settings["alertCooldownMinutes"],
+            cooldown_seconds=settings["alertCooldownSeconds"]
+        )
+
+    # Buzzer hanya ON jika email alert berhasil dipicu (sesuai interval cooldown)
+    final_buzzer_state = "ON" if buzzer_triggered else "OFF"
+    decision["buzzer"] = final_buzzer_state
+
     # Update actuator state jika mode AUTONOMOUS
     current = get_actuator_state()
     if current["mode"] == "AUTONOMOUS":
@@ -626,7 +654,7 @@ def analyze(sensor: SensorInput):
                 feeder=False,
                 pump=(decision["water_circulation"] == "ON"),
                 stabilizer=(decision["ph_neutralizer"] == "ON"),
-                buzzer=(decision["buzzer"] == "ON")
+                buzzer=(final_buzzer_state == "ON")
             )
         )
 
@@ -668,21 +696,9 @@ def analyze(sensor: SensorInput):
         "aerator": decision["aerator"],
         "water_circulation": decision["water_circulation"],
         "ph_neutralizer": decision["ph_neutralizer"],
-        "buzzer": decision["buzzer"],
+        "buzzer": final_buzzer_state,
         "reason": llm_reason
     }
-
-    critical = (
-        latest_result["buzzer"] == "ON"
-        or latest_result["health_status"] == "At Risk"
-    )
-
-    if critical:
-        send_email_notification(
-            latest_result,
-            cooldown_minutes=settings["alertCooldownMinutes"],
-            cooldown_seconds=settings["alertCooldownSeconds"]
-        )
 
     return latest_result
 

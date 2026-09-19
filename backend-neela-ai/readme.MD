@@ -47,7 +47,7 @@ python -m venv venv
 
 - Pada Linux / macOS:
   ```bash
-  source venv/bin/activate
+  source venv/Scripts/activate
   ```
 
 Setelah aktif, nama `(venv)` akan muncul di awal baris perintah terminal Anda.

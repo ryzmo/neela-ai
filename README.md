@@ -1,4 +1,5 @@
 # Neela AI Web - Frontend
+source venv/Scripts/activate
 
 Neela AI Web adalah antarmuka pengguna (frontend) berbasis Next.js dan Tailwind CSS untuk sistem pemantauan kualitas air tambak ikan cerdas. Aplikasi ini terhubung dengan backend FastAPI dan model Machine Learning untuk menampilkan data sensor realtime, status kesehatan tambak, kontrol aktuator otomatis/manual, simulasi kondisi air, serta rekomendasi keputusan berbasis AI.
 

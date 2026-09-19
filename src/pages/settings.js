@@ -443,46 +443,46 @@ export default function SettingsPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
               <InputField
                 label="Aerator Relay"
                 value={settings.aeratorDuration}
                 onChange={(v) => updateSetting("aeratorDuration", v)}
-                unit="sec"
+                unit="SEC"
                 icon={Wind}
-                iconColor="text-sky-600 bg-sky-50 border-sky-100"
+                iconColor="text-sky-600 bg-sky-50 border-sky-200"
               />
               <InputField
                 label="pH UP Pump"
                 value={settings.pumpDuration}
                 onChange={(v) => updateSetting("pumpDuration", v)}
-                unit="sec"
+                unit="SEC"
                 icon={Droplets}
-                iconColor="text-blue-600 bg-blue-50 border-blue-100"
+                iconColor="text-blue-600 bg-blue-50 border-blue-200"
               />
               <InputField
                 label="pH DOWN Pump"
                 value={settings.stabilizerDuration}
                 onChange={(v) => updateSetting("stabilizerDuration", v)}
-                unit="sec"
+                unit="SEC"
                 icon={FlaskConical}
-                iconColor="text-teal-600 bg-teal-50 border-teal-100"
+                iconColor="text-teal-600 bg-teal-50 border-teal-200"
               />
               <InputField
                 label="Buzzer Alarm"
                 value={settings.buzzerDuration}
                 onChange={(v) => updateSetting("buzzerDuration", v)}
-                unit="sec"
+                unit="SEC"
                 icon={ShieldAlert}
-                iconColor="text-rose-600 bg-rose-50 border-rose-100"
+                iconColor="text-rose-600 bg-rose-50 border-rose-200"
               />
               <InputField
                 label="Servo Feeder"
                 value={settings.feederDuration}
                 onChange={(v) => updateSetting("feederDuration", v)}
-                unit="sec"
+                unit="SEC"
                 icon={Utensils}
-                iconColor="text-amber-600 bg-amber-50 border-amber-100"
+                iconColor="text-amber-600 bg-amber-50 border-amber-200"
               />
             </div>
           </div>
@@ -504,31 +504,40 @@ export default function SettingsPage() {
 }
 
 function InputField({ label, value, onChange, unit, icon: Icon, iconColor }) {
+  const numVal = Number(value ?? 0);
+  const step = unit === "pH" || unit === "SEC" || unit === "sec" ? 0.1 : 1;
+
   return (
-    <div className="p-5 rounded-2xl bg-[#f8fafc] border border-slate-150 shadow-sm flex flex-col justify-between">
-      <div>
-        <div className="flex items-center gap-3 mb-4">
-          <div className={`p-2.5 rounded-xl border ${iconColor} flex-shrink-0`}>
-            <Icon size={18} />
-          </div>
-          <h3 className="font-black text-xs uppercase tracking-wide text-slate-800">
-            {label}
-          </h3>
+    <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-sm flex flex-col justify-between hover:border-blue-300 hover:shadow-md transition-all">
+      {/* Header */}
+      <div className="flex items-center gap-2.5 mb-3.5">
+        <div className={`p-2 rounded-xl border ${iconColor} flex-shrink-0 shadow-2xs`}>
+          <Icon size={16} />
         </div>
+        <h3 className="font-extrabold text-[11px] uppercase tracking-wider text-slate-800 leading-tight">
+          {label}
+        </h3>
       </div>
 
-      <div className="relative">
+      {/* Input Row */}
+      <div className="flex items-center gap-1.5 bg-slate-50/80 border border-slate-200 rounded-xl p-1.5 focus-within:bg-white focus-within:border-[#1a6fc4] focus-within:ring-2 focus-within:ring-blue-500/15 transition-all">
         <input
           type="number"
-          value={value ?? 0}
-          onChange={(e) => onChange(Number(e.target.value))}
-          step={unit === "pH" || unit === "sec" ? 0.1 : 1}
+          value={value !== undefined && value !== null ? value : ""}
+          onChange={(e) => {
+            const val = e.target.value;
+            onChange(val === "" ? 0 : Number(val));
+          }}
+          step={step}
           min={0}
-          className="w-full bg-white border border-slate-250 rounded-xl py-3 px-4 text-xs font-bold text-slate-800 focus:outline-none focus:border-[#1a6fc4] transition-colors pr-14"
+          className="w-full min-w-0 bg-transparent py-1 px-2 text-sm font-black text-slate-900 focus:outline-none placeholder:text-slate-400"
+          placeholder="0"
         />
-        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[9.5px] font-black uppercase text-slate-400">
+
+        {/* Unit Tag with Distinct Pill */}
+        <div className="flex-shrink-0 px-2.5 py-1 rounded-lg bg-slate-200/70 border border-slate-300/60 text-[10px] font-black uppercase tracking-wider text-slate-600 select-none">
           {unit}
-        </span>
+        </div>
       </div>
     </div>
   );

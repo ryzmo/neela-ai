@@ -123,6 +123,16 @@ html.lenis, html.lenis body {
   scrollbar-width: none;
 }
 
+/* Hide number input spin buttons */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
 /* Decision tree animations */
 @keyframes glowPulseGreen {
   0%, 100% { box-shadow: 0 0 8px 2px rgba(16, 185, 129, 0.3); }

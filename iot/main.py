@@ -65,8 +65,10 @@ while not wifi.isconnected() and timeout > 0:
     time.sleep(1)
     timeout -= 1
 
-# Server & API config
-BASE_URL = "http://172.20.10.3:8000"
+# ==========================
+# KONFIGURASI SERVER & API
+# ==========================
+BASE_URL = "http://172.20.10.4:8000"
 
 API_ANALYZE         = BASE_URL + "/analyze"
 API_BEEP_ACK        = BASE_URL + "/beep/ack"
@@ -172,35 +174,47 @@ STOP = 77
 # Posisi awal servo
 servo.duty(STOP)
 
-# pH Sensor
+# ==========================
+# PH SENSOR
+# ==========================
 ph_pin = ADC(Pin(32))
 ph_pin.atten(ADC.ATTN_11DB)
 ph_pin.width(ADC.WIDTH_12BIT)
 
-# Turbidity Sensor
+# ==========================
+# TURBIDITY SENSOR
+# ==========================
 turbidity_pin = ADC(Pin(34))
 turbidity_pin.atten(ADC.ATTN_11DB)
 turbidity_pin.width(ADC.WIDTH_12BIT)
 
-# DS18B20 Temp Sensor
+# ==========================
+# DS18B20
+# ==========================
 data_pin = Pin(4)
 ds_sensor = ds18x20.DS18X20(onewire.OneWire(data_pin))
 roms = ds_sensor.scan()
 
 print("DS18B20 Found:", roms)
 
-# Ultrasonic / Water Level
+# ==========================================
+# ULTRASONIC / WATER LEVEL
+# ==========================================
 
 TRIG = Pin(26, Pin.OUT)
 ECHO = Pin(27, Pin.IN)
 
-# Kalibrasi Water Level
+# ==========================================
+# KALIBRASI WATER LEVEL
+# ==========================================
 
 SENSOR_HEIGHT = 8.5
 MAX_WATER_HEIGHT = 6.0
 
 
-# Jarak sensor ke air
+# ==========================================
+# MEMBACA JARAK SENSOR KE PERMUKAAN AIR
+# ==========================================
 
 def get_distance():
 
@@ -229,7 +243,9 @@ def get_distance():
     return distance
 
 
-# Ketinggian air
+# ==========================================
+# MENGHITUNG KETINGGIAN AIR
+# ==========================================
 
 def calculate_water_height(distance):
 
@@ -244,7 +260,9 @@ def calculate_water_height(distance):
     return water_height
 
 
-# Persentase air
+# ==========================================
+# MENGHITUNG PERSENTASE AIR
+# ==========================================
 
 def calculate_level(water_height):
 
@@ -261,7 +279,9 @@ def calculate_level(water_height):
     return level
 
 
-# Status water level
+# ==========================================
+# FUNGSI WATER LEVEL
+# ==========================================
 
 def get_water_level():
 
@@ -281,37 +301,79 @@ def get_water_level():
         "level": round(level, 2)
     }
 
-def get_ph():
+# ==========================================
+# DATA KALIBRASI pH (Aktual)
+# ==========================================
+PH_1 = 4.01
+V_1 = 2.2132
 
-    # Baca ADC
-    adc = ph_pin.read()
+PH_2 = 6.86
+V_2 = 1.7668
 
-    # Konversi ADC ke voltage
-    voltage = adc * (3.3 / 4095)
+PH_3 = 7.00
+V_3 = 1.7339
 
-    # Kalibrasi polynomial: pH = aV² + bV + c
+PH_4 = 9.18
+V_4 = 1.3693
 
-    a = -13.021343985879776
-    b = 52.51123561813835
-    c = -43.04810862294683
+PH_5 = 10.01
+V_5 = 1.1714
 
-    ph = (
-        a * voltage * voltage
-        + b * voltage
-        + c
-    )
+
+def interpolate_ph(voltage, v_low, ph_low, v_high, ph_high):
+    return ph_low + ((voltage - v_low) * (ph_high - ph_low) / (v_high - v_low))
+
+
+def calculate_ph(voltage):
+    # Di antara pH 4.01 - 6.86
+    if voltage <= V_1 and voltage >= V_2:
+        ph = interpolate_ph(voltage, V_1, PH_1, V_2, PH_2)
+    # Di antara pH 6.86 - 7.00
+    elif voltage < V_2 and voltage >= V_3:
+        ph = interpolate_ph(voltage, V_2, PH_2, V_3, PH_3)
+    # Di antara pH 7.00 - 9.18
+    elif voltage < V_3 and voltage >= V_4:
+        ph = interpolate_ph(voltage, V_3, PH_3, V_4, PH_4)
+    # Di antara pH 9.18 - 10.01
+    elif voltage < V_4 and voltage >= V_5:
+        ph = interpolate_ph(voltage, V_4, PH_4, V_5, PH_5)
+    # Voltage lebih tinggi dari titik pH 4.01
+    elif voltage > V_1:
+        ph = PH_1
+    # Voltage lebih rendah dari titik pH 10.01
+    else:
+        ph = PH_5
 
     # Batasi nilai pH
     if ph < 0:
         ph = 0
-
     elif ph > 14:
         ph = 14
 
     return round(ph, 2)
 
 
-# Turbidity Sensor
+def get_ph():
+    samples = 50
+    total = 0
+
+    # Ambil 50 pembacaan untuk stabilitas
+    for _ in range(samples):
+        total += ph_pin.read()
+        time.sleep_ms(20)
+
+    # Rata-rata ADC
+    adc = total / samples
+
+    # Konversi ADC ke voltage
+    voltage = adc * (3.3 / 4095)
+
+    return calculate_ph(voltage)
+
+
+# ==========================================
+# TURBIDITY SENSOR
+# ==========================================
 
 turbidity_pin = ADC(Pin(34))
 
@@ -319,7 +381,9 @@ turbidity_pin.width(ADC.WIDTH_12BIT)
 turbidity_pin.atten(ADC.ATTN_11DB)
 
 
-# Kalibrasi Turbidity
+# ==========================================
+# HASIL KALIBRASI TURBIDITY
+# ==========================================
 
 V_PEKAT = 0.0000
 V_SEDANG = 0.6726
@@ -330,7 +394,9 @@ T_SEDANG = 50.0
 T_KERAN = 0.0
 
 
-# Kekeruhan
+# ==========================================
+# MENGHITUNG KEKERUHAN
+# ==========================================
 
 def calculate_turbidity(voltage):
 
@@ -365,7 +431,9 @@ def calculate_turbidity(voltage):
     return turbidity
 
 
-# Membaca turbidity
+# ==========================================
+# MEMBACA TURBIDITY
+# ==========================================
 
 def get_turbidity():
 
@@ -399,7 +467,9 @@ def get_turbidity():
     }
 
 
-# Sensor suhu DS18B20
+# ==========================================
+# SENSOR SUHU DS18B20
+# ==========================================
 
 data_pin = Pin(4)
 
@@ -417,13 +487,17 @@ if not roms:
 rom = roms[0]
 
 
-# Kalibrasi suhu
+# ==========================================
+# HASIL KALIBRASI SUHU
+# ==========================================
 
 SLOPE = 1.000632
 OFFSET = -0.396
 
 
-# Membaca suhu
+# ==========================================
+# MEMBACA SUHU
+# ==========================================
 
 def get_temperature():
 
@@ -653,9 +727,6 @@ while True:
 
     if actuator:
 
-        # Simpan state feeder di awal sebelum relay lain mengubah actuator via refresh
-        feeder_requested = actuator.get("feeder", False)
-
         if actuator["aerator"]:
 
             relay_aerator.value(ON)
@@ -713,11 +784,10 @@ while True:
             actuator = refresh_actuator()
         else:
             buzzer.off()
-
-        # Manual Feed — gunakan feeder_requested yang disimpan di awal
+        # Manual Feed
         if actuator["mode"] == "MANUAL":
 
-            if feeder_requested and not last_feeder:
+            if actuator["feeder"] and not last_feeder:
 
                 print("Manual Feeding")
 
@@ -735,7 +805,7 @@ while True:
 
                     print("Feeder Ack Error:", e)
 
-        last_feeder = feeder_requested
+        last_feeder = actuator["feeder"]
     
     if data:
 
@@ -800,4 +870,6 @@ while True:
     )
 
     time.sleep(interval)
+
+
 
